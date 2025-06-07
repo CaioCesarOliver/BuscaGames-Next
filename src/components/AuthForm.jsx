@@ -1,4 +1,4 @@
-"use client"; // se for Next.js app router
+"use client";
 
 import { useState } from "react";
 
@@ -15,154 +15,239 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="bloco card">
-      <div className="card-body py-4 px-md-5">
+    <div className="max-w-md mx-auto bg-black bg-opacity-90 rounded-2xl border border-purple-700 shadow-xl overflow-hidden">
+      <div className="p-6 md:p-8">
         {/* Abas */}
-        <ul className="nav nav-tabs mb-4">
-          <li className="nav-item">
+        <ul className="flex border-b border-purple-700 mb-6 select-none">
+          <li className="mr-4">
             <button
-              className={`nav-link ${mode === "login" ? "active" : ""}`}
+              className={`py-2 px-5 font-semibold transition-colors ${
+                mode === "login"
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-white hover:bg-purple-900 rounded-t"
+              }`}
               onClick={() => setMode("login")}
+              type="button"
             >
-              <i className="fas fa-sign-in-alt me-2"></i> Login
+              <i className="fas fa-sign-in-alt mr-2"></i>Login
             </button>
           </li>
-          <li className="nav-item">
+          <li>
             <button
-              className={`nav-link ${mode === "signup" ? "active" : ""}`}
+              className={`py-2 px-5 font-semibold transition-colors ${
+                mode === "signup"
+                  ? "text-blue-400 border-b-2 border-blue-400"
+                  : "text-white hover:bg-purple-900 rounded-t"
+              }`}
               onClick={() => setMode("signup")}
+              type="button"
             >
-              <i className="fas fa-user-plus me-2"></i> Cadastro
+              <i className="fas fa-user-plus mr-2"></i>Cadastro
             </button>
           </li>
         </ul>
 
         {/* Aviso */}
-        <div className="alert alert-info mb-4">
-          <i className="fas fa-info-circle me-2"></i>
+        <div className="bg-blue-900 bg-opacity-40 text-blue-300 rounded-md p-3 mb-6 flex items-center gap-2 text-sm">
+          <i className="fas fa-info-circle"></i>
           Se você ainda não tem conta, selecione a aba Cadastro.
         </div>
 
-        {/* Formulário */}
+        {/* Formulários */}
         {mode === "login" ? (
-          <form id="loginForm">
-            <div className="form-outline mb-4">
-              <label htmlFor="loginUsername" className="form-label">Usuário ou Email</label>
-              <input type="text" id="loginUsername" className="form-control" />
-              <div className="invalid-feedback">Informe seu usuário ou email</div>
+          <form id="loginForm" className="space-y-6">
+            <div>
+              <label htmlFor="loginUsername" className="block text-white font-medium mb-1">
+                Usuário ou Email
+              </label>
+              <input
+                type="text"
+                id="loginUsername"
+                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                placeholder="Digite seu usuário ou email"
+              />
+              <div className="text-red-500 text-sm mt-1 hidden">Informe seu usuário ou email</div>
             </div>
-            <div className="mb-4">
-              <label htmlFor="loginPassword" className="form-label">Senha</label>
-              <div className="input-group">
+
+            <div>
+              <label htmlFor="loginPassword" className="block text-white font-medium mb-1">
+                Senha
+              </label>
+              <div className="relative">
                 <input
                   type={showLoginPwd ? "text" : "password"}
                   id="loginPassword"
-                  className="form-control"
+                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
+                  placeholder="Digite sua senha"
                 />
-                <span className="input-group-text">
-                  <i
-                    className={`far fa-eye${showLoginPwd ? "" : "-slash"}`}
-                    onClick={() => togglePwd("login")}
-                    style={{ cursor: "pointer" }}
-                  ></i>
-                </span>
+                <button
+                  type="button"
+                  onClick={() => togglePwd("login")}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
+                  aria-label="Mostrar senha"
+                >
+                  <i className={`far fa-eye${showLoginPwd ? "" : "-slash"}`}></i>
+                </button>
               </div>
-              <div className="invalid-feedback">Informe sua senha</div>
+              <div className="text-red-500 text-sm mt-1 hidden">Informe sua senha</div>
             </div>
-            <div className="d-flex justify-content-between mb-4">
-              <div className="form-check">
-                <input className="form-check-input" type="checkbox" id="rememberMe" />
-                <label className="form-check-label" htmlFor="rememberMe">
-                  Lembrar-me
-                </label>
-              </div>
-              <a href="#" className="text-decoration-none">Esqueceu a senha?</a>
+
+            <div className="flex justify-between items-center text-white text-sm mb-4">
+              <label className="flex items-center space-x-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  className="w-4 h-4 text-blue-500 bg-black bg-opacity-70 border border-blue-600 rounded focus:ring-blue-400"
+                />
+                <span>Lembrar-me</span>
+              </label>
+              <a href="#" className="text-blue-400 hover:underline">
+                Esqueceu a senha?
+              </a>
             </div>
-            <button type="button" id="loginBtn" className="btn btn-primary w-100 mb-4">
-              <i className="fas fa-sign-in-alt me-2"></i> Login
+
+            <button
+              type="button"
+              id="loginBtn"
+              className="w-full bg-red-700 hover:bg-red-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105"
+            >
+              <i className="fas fa-sign-in-alt mr-2"></i>Login
             </button>
-            <div className="text-center">
-              <p>Ou entre com:</p>
-              <div className="social-login">
-                <button type="button" className="btn btn-link"><i className="fab fa-facebook-f"></i></button>
-                <button type="button" className="btn btn-link"><i className="fab fa-google"></i></button>
-                <button type="button" className="btn btn-link"><i className="fab fa-twitter"></i></button>
+
+            <div className="text-center mt-6 text-white">
+              <p className="mb-3">Ou entre com:</p>
+              <div className="flex justify-center gap-6 text-blue-400 text-2xl">
+                <button type="button" className="hover:text-white transition transform hover:scale-110" aria-label="Login com Facebook">
+                  <i className="fab fa-facebook-f"></i>
+                </button>
+                <button type="button" className="hover:text-white transition transform hover:scale-110" aria-label="Login com Google">
+                  <i className="fab fa-google"></i>
+                </button>
+                <button type="button" className="hover:text-white transition transform hover:scale-110" aria-label="Login com Twitter">
+                  <i className="fab fa-twitter"></i>
+                </button>
               </div>
             </div>
           </form>
         ) : (
-          <form id="signupForm">
-            <div className="row mb-4">
-              <div className="col-md-6">
-                <label htmlFor="firstName" className="form-label">Nome</label>
-                <input type="text" id="firstName" className="form-control" />
-                <div className="invalid-feedback">Informe seu nome</div>
+          <form id="signupForm" className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label htmlFor="firstName" className="block text-white font-medium mb-1">
+                  Nome
+                </label>
+                <input
+                  type="text"
+                  id="firstName"
+                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                  placeholder="Digite seu nome"
+                />
+                <div className="text-red-500 text-sm mt-1 hidden">Informe seu nome</div>
               </div>
-              <div className="col-md-6">
-                <label htmlFor="lastName" className="form-label">Sobrenome</label>
-                <input type="text" id="lastName" className="form-control" />
-                <div className="invalid-feedback">Informe seu sobrenome</div>
+              <div>
+                <label htmlFor="lastName" className="block text-white font-medium mb-1">
+                  Sobrenome
+                </label>
+                <input
+                  type="text"
+                  id="lastName"
+                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                  placeholder="Digite seu sobrenome"
+                />
+                <div className="text-red-500 text-sm mt-1 hidden">Informe seu sobrenome</div>
               </div>
             </div>
-            <div className="form-outline mb-4">
-              <label htmlFor="signupEmail" className="form-label">Email</label>
-              <input type="email" id="signupEmail" className="form-control" />
-              <div className="invalid-feedback">Informe um email válido</div>
+
+            <div>
+              <label htmlFor="signupEmail" className="block text-white font-medium mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                id="signupEmail"
+                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                placeholder="Digite seu email"
+              />
+              <div className="text-red-500 text-sm mt-1 hidden">Informe um email válido</div>
             </div>
-            <div className="mb-4">
-              <label htmlFor="signupPassword" className="form-label">Senha</label>
-              <div className="input-group">
+
+            <div>
+              <label htmlFor="signupPassword" className="block text-white font-medium mb-1">
+                Senha
+              </label>
+              <div className="relative">
                 <input
                   type={showSignupPwd ? "text" : "password"}
                   id="signupPassword"
-                  className="form-control"
-                  maxLength="16"
+                  maxLength={16}
+                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
+                  placeholder="Digite sua senha"
                 />
-                <span className="input-group-text">
-                  <i
-                    className={`far fa-eye${showSignupPwd ? "" : "-slash"}`}
-                    onClick={() => togglePwd("signup")}
-                    style={{ cursor: "pointer" }}
-                  ></i>
-                </span>
+                <button
+                  type="button"
+                  onClick={() => togglePwd("signup")}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
+                  aria-label="Mostrar senha"
+                >
+                  <i className={`far fa-eye${showSignupPwd ? "" : "-slash"}`}></i>
+                </button>
               </div>
-              <div className="invalid-feedback">Senha inváida</div>
-              {/* Aqui você pode adicionar requisitos de senha em React */}
+              <div className="text-red-500 text-sm mt-1 hidden">Senha inválida</div>
             </div>
-            <div className="mb-4">
-              <label htmlFor="confirmPassword" className="form-label">Confirme a senha</label>
-              <div className="input-group">
+
+            <div>
+              <label htmlFor="confirmPassword" className="block text-white font-medium mb-1">
+                Confirme a senha
+              </label>
+              <div className="relative">
                 <input
                   type={showConfirmPwd ? "text" : "password"}
                   id="confirmPassword"
-                  className="form-control"
-                  maxLength="16"
+                  maxLength={16}
+                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
+                  placeholder="Confirme sua senha"
                 />
-                <span className="input-group-text">
-                  <i
-                    className={`far fa-eye${showConfirmPwd ? "" : "-slash"}`}
-                    onClick={() => togglePwd("confirm")}
-                    style={{ cursor: "pointer" }}
-                  ></i>
-                </span>
+                <button
+                  type="button"
+                  onClick={() => togglePwd("confirm")}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
+                  aria-label="Mostrar senha"
+                >
+                  <i className={`far fa-eye${showConfirmPwd ? "" : "-slash"}`}></i>
+                </button>
               </div>
-              <div className="invalid-feedback">Senhas não conferem</div>
+              <div className="text-red-500 text-sm mt-1 hidden">Senhas não conferem</div>
             </div>
-            <div className="form-check d-flex mb-4">
-              <input className="form-check-input me-2" type="checkbox" id="agreeTerms" />
-              <label className="form-check-label" htmlFor="agreeTerms">
-                Quero receber notificações sobre novidades
-              </label>
-            </div>
-            <button type="button" id="signupBtn" className="btn btn-success w-100 mb-4">
-              <i className="fas fa-user-plus me-2"></i> Cadastrar
+
+            <label className="flex items-center space-x-2 cursor-pointer select-none text-white text-sm mb-6">
+              <input
+                type="checkbox"
+                id="agreeTerms"
+                className="w-4 h-4 text-blue-500 bg-black bg-opacity-70 border border-blue-600 rounded focus:ring-blue-400"
+              />
+              <span>Quero receber notificações sobre novidades</span>
+            </label>
+
+            <button
+              type="button"
+              id="signupBtn"
+              className="w-full bg-blue-700 hover:bg-blue-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105"
+            >
+              <i className="fas fa-user-plus mr-2"></i>Cadastrar
             </button>
-            <div className="text-center">
-              <p>Ou cadastre-se com:</p>
-              <div className="social-login">
-                <button type="button" className="btn btn-link"><i className="fab fa-facebook-f"></i></button>
-                <button type="button" className="btn btn-link"><i className="fab fa-google"></i></button>
-                <button type="button" className="btn btn-link"><i className="fab fa-twitter"></i></button>
+
+            <div className="text-center mt-6 text-white">
+              <p className="mb-3">Ou cadastre-se com:</p>
+              <div className="flex justify-center gap-6 text-blue-400 text-2xl">
+                <button type="button" className="hover:text-white transition transform hover:scale-110" aria-label="Cadastro com Facebook">
+                  <i className="fab fa-facebook-f"></i>
+                </button>
+                <button type="button" className="hover:text-white transition transform hover:scale-110" aria-label="Cadastro com Google">
+                  <i className="fab fa-google"></i>
+                </button>
+                <button type="button" className="hover:text-white transition transform hover:scale-110" aria-label="Cadastro com Twitter">
+                  <i className="fab fa-twitter"></i>
+                </button>
               </div>
             </div>
           </form>
