@@ -10,6 +10,9 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(express.json());
 
+const authRoutes = require('./auth/validation');
+app.use('/api/auth', authRoutes);
+
 // Servir imagens estáticas
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
@@ -26,7 +29,7 @@ app.get('/games', async (req, res) => {
 
 // Atualizar um jogo pelo ID
 app.put('/games/:id', async (req, res) => {
-    const { id } = req.params;  // id é string aqui
+    const { id } = req.params;
 
     const {
         title,
@@ -50,7 +53,7 @@ app.put('/games/:id', async (req, res) => {
 
     try {
         const updatedGame = await prisma.game.update({
-            where: { id },  // id como string, sem Number()
+            where: { id },
             data: {
                 title,
                 description,
@@ -75,14 +78,13 @@ app.put('/games/:id', async (req, res) => {
     }
 });
 
-
 // Deletar um jogo pelo ID
 app.delete('/games/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
         await prisma.game.delete({
-            where: { id }  // id string
+            where: { id }
         });
         res.json({ message: 'Jogo removido com sucesso' });
     } catch (error) {
@@ -90,7 +92,6 @@ app.delete('/games/:id', async (req, res) => {
         res.status(500).json({ error: 'Erro ao deletar o jogo' });
     }
 });
-
 
 app.listen(PORT, () => {
     console.log(`API rodando em http://localhost:${PORT}`);
