@@ -5,93 +5,104 @@ const bcrypt = require('bcrypt');
 
 const prisma = new PrismaClient();
 
+// Middleware para garantir que o corpo da requisição seja JSON
+router.use(express.json());
+
 // Rota para login
 router.post('/login', async (req, res) => {
-    const { emailOuUsuario, senha } = req.body;
+  const { email, senha } = req.body;
 
-    if (!emailOuUsuario || !senha) {
-        return res.status(400).json({ error: 'Email/Usuário e senha são obrigatórios' });
+  if (!email || !senha) {
+    return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Usuário não encontrado' });
     }
 
-    try {
-        const user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email: emailOuUsuario },
-                    { username: emailOuUsuario }
-                ]
-            }
-        });
+    const senhaValida = await bcrypt.compare(senha, user.password);
 
-        if (!user) {
-            return res.status(401).json({ error: 'Usuário não encontrado' });
-        }
-
-        const senhaValida = await bcrypt.compare(senha, user.password);
-
-        if (!senhaValida) {
-            return res.status(401).json({ error: 'Senha incorreta' });
-        }
-
-        res.json({
-            message: 'Login efetuado com sucesso',
-            user: {
-                id: user.id,
-                username: user.username,
-                email: user.email
-            }
-        });
-    } catch (error) {
-        console.error('Erro no login:', error);
-        res.status(500).json({ error: 'Erro interno no servidor' });
+    if (!senhaValida) {
+      return res.status(401).json({ error: 'Senha incorreta' });
     }
+
+    res.json({
+      message: 'Login efetuado com sucesso',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    console.error('Erro no login:', error);
+    res.status(500).json({ error: 'Erro interno no servidor' });
+  }
 });
 
 // Rota para registro de usuário
 router.post('/register', async (req, res) => {
-    const { username, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
-    if (!username || !email || !password) {
-        return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+  }
+
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return res.status(409).json({ error: 'Email já cadastrado' });
     }
 
-    try {
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email },
-                    { username }
-                ]
-            }
-        });
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        if (existingUser) {
-            return res.status(409).json({ error: 'Usuário ou email já cadastrado' });
-        }
+    const newUser = await prisma.user.create({
+      data: {
+        name: `${firstName} ${lastName}`,
+        email,
+        password: hashedPassword,
+      },
+    });
 
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+    res.status(201).json({
+      message: 'Usuário criado com sucesso',
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    console.error('Erro no cadastro:', error);
+    res.status(500).json({ error: 'Erro interno no servidor' });
+  }
+});
 
-        const newUser = await prisma.user.create({
-            data: {
-                username,
-                email,
-                password: hashedPassword
-            }
-        });
+// Rota para listar todos os usuários
+router.get('/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
 
-        res.status(201).json({
-            message: 'Usuário criado com sucesso',
-            user: {
-                id: newUser.id,
-                username: newUser.username,
-                email: newUser.email
-            }
-        });
-    } catch (error) {
-        console.error('Erro no cadastro:', error);
-        res.status(500).json({ error: 'Erro interno no servidor' });
-    }
+    res.json(users);
+  } catch (error) {
+    console.error('Erro ao buscar usuários:', error);
+    res.status(500).json({ error: 'Erro interno no servidor' });
+  }
 });
 
 module.exports = router;

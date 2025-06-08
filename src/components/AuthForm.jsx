@@ -19,11 +19,27 @@ import {
 
 export default function AuthForm() {
   const [mode, setMode] = useState("login");
+
+  // Estados visibilidade senha
   const [showLoginPwd, setShowLoginPwd] = useState(false);
   const [showSignupPwd, setShowSignupPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
+
+  // Estados inputs login
+  const [loginUser, setLoginUser] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+
+  // Estados inputs signup
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  // Estados feedback
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const togglePwd = (who) => {
     if (who === "login") setShowLoginPwd(!showLoginPwd);
@@ -31,7 +47,7 @@ export default function AuthForm() {
     if (who === "confirm") setShowConfirmPwd(!showConfirmPwd);
   };
 
-  // Validação dos requisitos da senha
+  // Função para validar requisitos da senha
   const checkPasswordRequirements = (pwd) => {
     return {
       length: pwd.length >= 8,
@@ -44,6 +60,98 @@ export default function AuthForm() {
 
   const requirements = checkPasswordRequirements(signupPassword);
 
+  // Função para enviar dados do login
+  async function handleLogin(e) {
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+    if (!loginUser || !loginPassword) {
+      setErrorMsg("Por favor, preencha usuário/email e senha.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user: loginUser, password: loginPassword }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.message || "Erro no login");
+      } else {
+        setSuccessMsg("Login realizado com sucesso!");
+        // Aqui você pode redirecionar ou guardar token no localStorage etc.
+      }
+    } catch (error) {
+      setErrorMsg("Erro na comunicação com o servidor.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Função para enviar dados do cadastro
+  async function handleSignup(e) {
+    e.preventDefault();
+    setErrorMsg("");
+    setSuccessMsg("");
+
+    // Validações básicas
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !signupEmail.trim() ||
+      !signupPassword ||
+      !confirmPassword
+    ) {
+      setErrorMsg("Por favor, preencha todos os campos.");
+      return;
+    }
+
+    if (signupPassword !== confirmPassword) {
+      setErrorMsg("As senhas não conferem.");
+      return;
+    }
+
+    // Valida requisitos da senha
+    if (Object.values(requirements).includes(false)) {
+      setErrorMsg("A senha não atende aos requisitos mínimos.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email: signupEmail,
+          password: signupPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.message || "Erro no cadastro");
+      } else {
+        setSuccessMsg("Cadastro realizado com sucesso!");
+        // Opcional: limpar form ou mudar para modo login
+        setFirstName("");
+        setLastName("");
+        setSignupEmail("");
+        setSignupPassword("");
+        setConfirmPassword("");
+        setMode("login");
+      }
+    } catch (error) {
+      setErrorMsg("Erro na comunicação com o servidor.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="max-w-md mx-auto bg-black bg-opacity-90 rounded-2xl border border-purple-700 shadow-xl overflow-hidden">
       <div className="p-6 md:p-8">
@@ -51,11 +159,16 @@ export default function AuthForm() {
         <ul className="flex border-b border-purple-700 mb-6 select-none">
           <li className="mr-4">
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${mode === "login"
+              className={`py-2 px-5 font-semibold transition-colors ${
+                mode === "login"
                   ? "text-blue-400 border-b-2 border-blue-400"
                   : "text-white hover:bg-purple-900 rounded-t"
-                }`}
-              onClick={() => setMode("login")}
+              }`}
+              onClick={() => {
+                setMode("login");
+                setErrorMsg("");
+                setSuccessMsg("");
+              }}
               type="button"
             >
               <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
@@ -64,11 +177,16 @@ export default function AuthForm() {
           </li>
           <li>
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${mode === "signup"
+              className={`py-2 px-5 font-semibold transition-colors ${
+                mode === "signup"
                   ? "text-blue-400 border-b-2 border-blue-400"
                   : "text-white hover:bg-purple-900 rounded-t"
-                }`}
-              onClick={() => setMode("signup")}
+              }`}
+              onClick={() => {
+                setMode("signup");
+                setErrorMsg("");
+                setSuccessMsg("");
+              }}
               type="button"
             >
               <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
@@ -77,16 +195,24 @@ export default function AuthForm() {
           </li>
         </ul>
 
-        {/* Aviso */}
-        <div className="bg-blue-900 bg-opacity-40 text-blue-300 rounded-md p-3 mb-6 flex items-center gap-2 text-sm">
-          <FontAwesomeIcon icon={faInfoCircle} />
-          Se você ainda não tem conta, selecione a aba Cadastro.
-        </div>
+        {/* Mostrar mensagens de erro/sucesso */}
+        {errorMsg && (
+          <div className="bg-red-700 text-white p-3 rounded mb-4">{errorMsg}</div>
+        )}
+        {successMsg && (
+          <div className="bg-green-700 text-white p-3 rounded mb-4">
+            {successMsg}
+          </div>
+        )}
 
         {/* Formulários */}
         {mode === "login" ? (
-          <form id="loginForm" className="space-y-6">
+          <form id="loginForm" className="space-y-6" onSubmit={handleLogin}>
             <div>
+              <div className="bg-blue-900 bg-opacity-40 text-blue-300 rounded-md p-3 mb-6 flex items-center gap-2 text-sm">
+                <FontAwesomeIcon icon={faInfoCircle} />
+                Se você ainda não tem conta, selecione a aba Cadastro.
+              </div>
               <label
                 htmlFor="loginUsername"
                 className="block text-white font-medium mb-1"
@@ -98,10 +224,9 @@ export default function AuthForm() {
                 id="loginUsername"
                 className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                 placeholder="Digite seu usuário ou email"
+                value={loginUser}
+                onChange={(e) => setLoginUser(e.target.value)}
               />
-              <div className="text-red-500 text-sm mt-1 hidden">
-                Informe seu usuário ou email
-              </div>
             </div>
 
             <div>
@@ -117,6 +242,8 @@ export default function AuthForm() {
                   id="loginPassword"
                   className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
                   placeholder="Digite sua senha"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
                 />
                 <button
                   type="button"
@@ -129,9 +256,6 @@ export default function AuthForm() {
                     fixedWidth
                   />
                 </button>
-              </div>
-              <div className="text-red-500 text-sm mt-1 hidden">
-                Informe sua senha
               </div>
             </div>
 
@@ -150,12 +274,13 @@ export default function AuthForm() {
             </div>
 
             <button
-              type="button"
+              type="submit"
               id="loginBtn"
-              className="w-full bg-red-700 hover:bg-red-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105"
+              disabled={loading}
+              className="w-full bg-red-700 hover:bg-red-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105 disabled:opacity-50"
             >
               <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
-              Login
+              {loading ? "Entrando..." : "Login"}
             </button>
 
             <div className="text-center mt-6 text-white">
@@ -189,7 +314,7 @@ export default function AuthForm() {
           <form
             id="signupForm"
             className="space-y-6"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={handleSignup}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -204,10 +329,9 @@ export default function AuthForm() {
                   id="firstName"
                   className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                   placeholder="Digite seu nome"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                 />
-                <div className="text-red-500 text-sm mt-1 hidden">
-                  Informe seu nome
-                </div>
               </div>
               <div>
                 <label
@@ -221,10 +345,9 @@ export default function AuthForm() {
                   id="lastName"
                   className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                   placeholder="Digite seu sobrenome"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
                 />
-                <div className="text-red-500 text-sm mt-1 hidden">
-                  Informe seu sobrenome
-                </div>
               </div>
             </div>
 
@@ -240,10 +363,9 @@ export default function AuthForm() {
                 id="signupEmail"
                 className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                 placeholder="Digite seu email"
+                value={signupEmail}
+                onChange={(e) => setSignupEmail(e.target.value)}
               />
-              <div className="text-red-500 text-sm mt-1 hidden">
-                Informe um email válido
-              </div>
             </div>
 
             <div>
@@ -257,17 +379,16 @@ export default function AuthForm() {
                 <input
                   type={showSignupPwd ? "text" : "password"}
                   id="signupPassword"
-                  maxLength={16}
                   className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
-                  placeholder="Digite sua senha"
+                  placeholder="Crie uma senha"
                   value={signupPassword}
                   onChange={(e) => setSignupPassword(e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => togglePwd("signup")}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none cursor-pointer"
-                  aria-label={showSignupPwd ? "Ocultar senha" : "Mostrar senha"}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
+                  aria-label="Mostrar senha"
                 >
                   <FontAwesomeIcon
                     icon={showSignupPwd ? faEye : faEyeSlash}
@@ -276,66 +397,53 @@ export default function AuthForm() {
                 </button>
               </div>
 
-              {/* Requisitos da senha */}
-              <div className="password-requirements mt-2 text-white text-sm">
-                <p className="mb-1">Sua senha deve conter:</p>
-                <ul className="ps-3 mb-0 list-inside">
-                  <li id="length-check" className="flex items-center gap-2">
-                    <FontAwesomeIcon
-                      icon={requirements.length ? faCheck : faTimes}
-                      className={
-                        requirements.length ? "text-green-500" : "text-red-500"
-                      }
-                      fixedWidth
-                    />
-                    Mínimo de 8 caracteres
-                  </li>
-                  <li id="uppercase-check" className="flex items-center gap-2">
-                    <FontAwesomeIcon
-                      icon={requirements.uppercase ? faCheck : faTimes}
-                      className={
-                        requirements.uppercase
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }
-                      fixedWidth
-                    />
-                    Pelo menos uma letra maiúscula
-                  </li>
-                  <li id="lowercase-check" className="flex items-center gap-2">
-                    <FontAwesomeIcon
-                      icon={requirements.lowercase ? faCheck : faTimes}
-                      className={
-                        requirements.lowercase
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }
-                      fixedWidth
-                    />
-                    Pelo menos uma letra minúscula
-                  </li>
-                  <li id="number-check" className="flex items-center gap-2">
-                    <FontAwesomeIcon
-                      icon={requirements.number ? faCheck : faTimes}
-                      className={
-                        requirements.number ? "text-green-500" : "text-red-500"
-                      }
-                      fixedWidth
-                    />
-                    Pelo menos um número
-                  </li>
-                  <li id="special-check" className="flex items-center gap-2">
-                    <FontAwesomeIcon
-                      icon={requirements.special ? faCheck : faTimes}
-                      className={
-                        requirements.special ? "text-green-500" : "text-red-500"
-                      }
-                      fixedWidth
-                    />
-                    Pelo menos um caractere especial (@$!%*?&#)
-                  </li>
-                </ul>
-              </div>
+              <ul className="mt-2 text-white text-sm list-inside">
+                <li>
+                  <FontAwesomeIcon
+                    icon={requirements.length ? faCheck : faTimes}
+                    className={`inline mr-2 ${
+                      requirements.length ? "text-green-500" : "text-red-600"
+                    }`}
+                  />
+                  Mínimo 8 caracteres
+                </li>
+                <li>
+                  <FontAwesomeIcon
+                    icon={requirements.uppercase ? faCheck : faTimes}
+                    className={`inline mr-2 ${
+                      requirements.uppercase ? "text-green-500" : "text-red-600"
+                    }`}
+                  />
+                  Letra maiúscula
+                </li>
+                <li>
+                  <FontAwesomeIcon
+                    icon={requirements.lowercase ? faCheck : faTimes}
+                    className={`inline mr-2 ${
+                      requirements.lowercase ? "text-green-500" : "text-red-600"
+                    }`}
+                  />
+                  Letra minúscula
+                </li>
+                <li>
+                  <FontAwesomeIcon
+                    icon={requirements.number ? faCheck : faTimes}
+                    className={`inline mr-2 ${
+                      requirements.number ? "text-green-500" : "text-red-600"
+                    }`}
+                  />
+                  Número
+                </li>
+                <li>
+                  <FontAwesomeIcon
+                    icon={requirements.special ? faCheck : faTimes}
+                    className={`inline mr-2 ${
+                      requirements.special ? "text-green-500" : "text-red-600"
+                    }`}
+                  />
+                  Caractere especial (@$!%*?&#)
+                </li>
+              </ul>
             </div>
 
             <div>
@@ -349,20 +457,16 @@ export default function AuthForm() {
                 <input
                   type={showConfirmPwd ? "text" : "password"}
                   id="confirmPassword"
-                  maxLength={16}
-                  className={`w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border ${confirmPassword === signupPassword && confirmPassword !== ""
-                      ? "border-green-500"
-                      : "border-purple-700"
-                    } text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10`}
-                  placeholder="Confirme sua senha"
+                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
+                  placeholder="Confirme a senha"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => togglePwd("confirm")}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none cursor-pointer"
-                  aria-label={showConfirmPwd ? "Ocultar senha" : "Mostrar senha"}
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
+                  aria-label="Mostrar senha"
                 >
                   <FontAwesomeIcon
                     icon={showConfirmPwd ? faEye : faEyeSlash}
@@ -370,36 +474,16 @@ export default function AuthForm() {
                   />
                 </button>
               </div>
-              <div
-                className={`text-sm mt-1 ${confirmPassword === signupPassword && confirmPassword !== ""
-                    ? "text-green-500"
-                    : "text-red-500"
-                  }`}
-              >
-                {confirmPassword === signupPassword && confirmPassword !== ""
-                  ? "Senha confirmada"
-                  : "As senhas não coincidem"}
-              </div>
             </div>
 
             <button
               type="submit"
               id="signupBtn"
-              className="w-full bg-red-700 hover:bg-red-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105"
-              disabled={
-                !(
-                  requirements.length &&
-                  requirements.uppercase &&
-                  requirements.lowercase &&
-                  requirements.number &&
-                  requirements.special &&
-                  confirmPassword === signupPassword &&
-                  confirmPassword !== ""
-                )
-              }
+              disabled={loading}
+              className="w-full bg-red-700 hover:bg-red-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105 disabled:opacity-50"
             >
               <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
-              Cadastrar
+              {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
           </form>
         )}
