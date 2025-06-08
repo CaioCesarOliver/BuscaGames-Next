@@ -10,11 +10,13 @@ router.use(express.json());
 
 // Rota para login
 router.post('/login', async (req, res) => {
-  const { email, senha } = req.body;
+  let { email, password } = req.body;
 
-  if (!email || !senha) {
+  if (!email || !password) {
     return res.status(400).json({ error: 'Email e senha são obrigatórios' });
   }
+
+  email = email.toLowerCase();  // <-- força lowercase
 
   try {
     const user = await prisma.user.findUnique({
@@ -25,7 +27,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Usuário não encontrado' });
     }
 
-    const senhaValida = await bcrypt.compare(senha, user.password);
+    const senhaValida = await bcrypt.compare(password, user.password);
 
     if (!senhaValida) {
       return res.status(401).json({ error: 'Senha incorreta' });
@@ -45,13 +47,16 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
 // Rota para registro de usuário
 router.post('/register', async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  let { firstName, lastName, email, password } = req.body;
 
   if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
   }
+
+  email = email.toLowerCase();  // <-- força lowercase aqui também
 
   try {
     const existingUser = await prisma.user.findUnique({
@@ -86,6 +91,7 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ error: 'Erro interno no servidor' });
   }
 });
+
 
 // Rota para listar todos os usuários
 router.get('/users', async (req, res) => {

@@ -57,6 +57,14 @@ export default function AuthForm() {
   async function handleLogin(e) {
     e.preventDefault();
 
+    console.log("loginUser:", loginUser);
+    console.log("loginPassword:", loginPassword);
+
+    if (!loginUser.includes('@')) {
+      setLoginError('Por favor, insira um e-mail válido.');
+      return;
+    }
+
     if (!loginUser || !loginPassword) {
       return Swal.fire({
         icon: "warning",
@@ -68,14 +76,22 @@ export default function AuthForm() {
     try {
       const res = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user: loginUser, password: loginPassword }),
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body:
+          JSON.stringify({
+            email: loginUser,
+            password: loginPassword
+          }),
       });
       const data = await res.json();
+      console.log('Resposta do login:', res.status, data);
+
       if (!res.ok) {
         return Swal.fire({
           icon: "error",
-          title: data.message || "Erro no login",
+          title: data.error || "Erro no login",
         });
       }
       Swal.fire({
@@ -91,6 +107,8 @@ export default function AuthForm() {
       setLoading(false);
     }
   }
+
+
 
   async function handleSignup(e) {
     e.preventDefault();
@@ -194,11 +212,10 @@ export default function AuthForm() {
         <ul className="flex border-b border-purple-700 mb-6 select-none">
           <li className="mr-4">
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${
-                mode === "login"
-                  ? "text-blue-400 border-b-2 border-blue-400"
-                  : "text-white hover:bg-purple-900 rounded-t"
-              }`}
+              className={`py-2 px-5 font-semibold transition-colors ${mode === "login"
+                ? "text-blue-400 border-b-2 border-blue-400"
+                : "text-white hover:bg-purple-900 rounded-t"
+                }`}
               onClick={() => setMode("login")}
               type="button"
             >
@@ -208,11 +225,10 @@ export default function AuthForm() {
           </li>
           <li>
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${
-                mode === "signup"
-                  ? "text-blue-400 border-b-2 border-blue-400"
-                  : "text-white hover:bg-purple-900 rounded-t"
-              }`}
+              className={`py-2 px-5 font-semibold transition-colors ${mode === "signup"
+                ? "text-blue-400 border-b-2 border-blue-400"
+                : "text-white hover:bg-purple-900 rounded-t"
+                }`}
               onClick={() => setMode("signup")}
               type="button"
             >
@@ -239,7 +255,7 @@ export default function AuthForm() {
                 type="text"
                 id="loginUsername"
                 className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                placeholder="Digite seu usuário ou email"
+                placeholder="Digite seu e-mail"
                 value={loginUser}
                 onChange={(e) => setLoginUser(e.target.value)}
               />
