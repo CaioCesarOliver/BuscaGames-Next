@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
@@ -20,25 +21,19 @@ import {
 export default function AuthForm() {
   const [mode, setMode] = useState("login");
 
-  // Estados visibilidade senha
   const [showLoginPwd, setShowLoginPwd] = useState(false);
   const [showSignupPwd, setShowSignupPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
-  // Estados inputs login
   const [loginUser, setLoginUser] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
-  // Estados inputs signup
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // Estados feedback
-  const [errorMsg, setErrorMsg] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
   const togglePwd = (who) => {
@@ -47,7 +42,6 @@ export default function AuthForm() {
     if (who === "confirm") setShowConfirmPwd(!showConfirmPwd);
   };
 
-  // Função para validar requisitos da senha
   const checkPasswordRequirements = (pwd) => {
     return {
       length: pwd.length >= 8,
@@ -60,14 +54,14 @@ export default function AuthForm() {
 
   const requirements = checkPasswordRequirements(signupPassword);
 
-  // Função para enviar dados do login
   async function handleLogin(e) {
     e.preventDefault();
-    setErrorMsg("");
-    setSuccessMsg("");
+
     if (!loginUser || !loginPassword) {
-      setErrorMsg("Por favor, preencha usuário/email e senha.");
-      return;
+      return Swal.fire({
+        icon: "warning",
+        title: "Por favor, preencha usuário/email e senha.",
+      });
     }
 
     setLoading(true);
@@ -79,25 +73,28 @@ export default function AuthForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setErrorMsg(data.message || "Erro no login");
-      } else {
-        setSuccessMsg("Login realizado com sucesso!");
-        // Aqui você pode redirecionar ou guardar token no localStorage etc.
+        return Swal.fire({
+          icon: "error",
+          title: data.message || "Erro no login",
+        });
       }
+      Swal.fire({
+        icon: "success",
+        title: "Login realizado com sucesso!",
+      });
     } catch (error) {
-      setErrorMsg("Erro na comunicação com o servidor.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro na comunicação com o servidor.",
+      });
     } finally {
       setLoading(false);
     }
   }
 
-  // Função para enviar dados do cadastro
   async function handleSignup(e) {
     e.preventDefault();
-    setErrorMsg("");
-    setSuccessMsg("");
 
-    // Validações básicas
     if (
       !firstName.trim() ||
       !lastName.trim() ||
@@ -105,19 +102,26 @@ export default function AuthForm() {
       !signupPassword ||
       !confirmPassword
     ) {
-      setErrorMsg("Por favor, preencha todos os campos.");
-      return;
+      return Swal.fire({
+        icon: "warning",
+        title: "Por favor, preencha os campos necessários",
+      });
     }
 
     if (signupPassword !== confirmPassword) {
-      setErrorMsg("As senhas não conferem.");
-      return;
+      return Swal.fire({
+        icon: "error",
+        title: "Senha Inválida! Tente novamente",
+        text: "As senhas não conferem.",
+      });
     }
 
-    // Valida requisitos da senha
     if (Object.values(requirements).includes(false)) {
-      setErrorMsg("A senha não atende aos requisitos mínimos.");
-      return;
+      return Swal.fire({
+        icon: "error",
+        title: "Senha Inválida! Tente novamente",
+        text: "A senha não atende aos requisitos mínimos.",
+      });
     }
 
     setLoading(true);
@@ -133,11 +137,40 @@ export default function AuthForm() {
         }),
       });
       const data = await res.json();
+
       if (!res.ok) {
-        setErrorMsg(data.message || "Erro no cadastro");
+        if (data.error) {
+          if (data.error.includes("nome")) {
+            Swal.fire({
+              icon: "error",
+              title: "Este nome de usuário já existe",
+            });
+          } else if (data.error.includes("email")) {
+            Swal.fire({
+              icon: "error",
+              title: "Este e-mail de usuário já existe",
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Erro no cadastro",
+              text: data.error,
+            });
+          }
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erro no cadastro",
+            text: data.message || "Erro inesperado",
+          });
+        }
       } else {
-        setSuccessMsg("Cadastro realizado com sucesso!");
-        // Opcional: limpar form ou mudar para modo login
+        Swal.fire({
+          icon: "success",
+          title: `Cadastro realizado com sucesso!`,
+          text: `Seja bem-vindo(a) ${data.user.name || firstName}`,
+        });
+
         setFirstName("");
         setLastName("");
         setSignupEmail("");
@@ -146,7 +179,10 @@ export default function AuthForm() {
         setMode("login");
       }
     } catch (error) {
-      setErrorMsg("Erro na comunicação com o servidor.");
+      Swal.fire({
+        icon: "error",
+        title: "Erro na comunicação com o servidor.",
+      });
     } finally {
       setLoading(false);
     }
@@ -155,19 +191,15 @@ export default function AuthForm() {
   return (
     <div className="max-w-md mx-auto bg-black bg-opacity-90 rounded-2xl border border-purple-700 shadow-xl overflow-hidden">
       <div className="p-6 md:p-8">
-        {/* Abas */}
         <ul className="flex border-b border-purple-700 mb-6 select-none">
           <li className="mr-4">
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${
-                mode === "login"
+              className={`py-2 px-5 font-semibold transition-colors ${mode === "login"
                   ? "text-blue-400 border-b-2 border-blue-400"
                   : "text-white hover:bg-purple-900 rounded-t"
-              }`}
+                }`}
               onClick={() => {
                 setMode("login");
-                setErrorMsg("");
-                setSuccessMsg("");
               }}
               type="button"
             >
@@ -177,15 +209,12 @@ export default function AuthForm() {
           </li>
           <li>
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${
-                mode === "signup"
+              className={`py-2 px-5 font-semibold transition-colors ${mode === "signup"
                   ? "text-blue-400 border-b-2 border-blue-400"
                   : "text-white hover:bg-purple-900 rounded-t"
-              }`}
+                }`}
               onClick={() => {
                 setMode("signup");
-                setErrorMsg("");
-                setSuccessMsg("");
               }}
               type="button"
             >
@@ -195,17 +224,6 @@ export default function AuthForm() {
           </li>
         </ul>
 
-        {/* Mostrar mensagens de erro/sucesso */}
-        {errorMsg && (
-          <div className="bg-red-700 text-white p-3 rounded mb-4">{errorMsg}</div>
-        )}
-        {successMsg && (
-          <div className="bg-green-700 text-white p-3 rounded mb-4">
-            {successMsg}
-          </div>
-        )}
-
-        {/* Formulários */}
         {mode === "login" ? (
           <form id="loginForm" className="space-y-6" onSubmit={handleLogin}>
             <div>
@@ -248,107 +266,82 @@ export default function AuthForm() {
                 <button
                   type="button"
                   onClick={() => togglePwd("login")}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
-                  aria-label="Mostrar senha"
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400"
                 >
                   <FontAwesomeIcon
-                    icon={showLoginPwd ? faEye : faEyeSlash}
-                    fixedWidth
+                    icon={showLoginPwd ? faEyeSlash : faEye}
+                    className="text-lg"
                   />
                 </button>
               </div>
             </div>
 
-            <div className="flex justify-between items-center text-white text-sm mb-4">
-              <label className="flex items-center space-x-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  id="rememberMe"
-                  className="w-4 h-4 text-blue-500 bg-black bg-opacity-70 border border-blue-600 rounded focus:ring-blue-400"
-                />
-                <span>Lembrar-me</span>
-              </label>
-              <a href="#" className="text-blue-400 hover:underline">
-                Esqueceu a senha?
-              </a>
-            </div>
-
             <button
               type="submit"
-              id="loginBtn"
               disabled={loading}
-              className="w-full bg-red-700 hover:bg-red-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105 disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-semibold py-3 rounded-lg transition"
             >
-              <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
-              {loading ? "Entrando..." : "Login"}
+              {loading ? "Entrando..." : "Entrar"}
             </button>
 
-            <div className="text-center mt-6 text-white">
-              <p className="mb-3">Ou entre com:</p>
-              <div className="flex justify-center gap-6 text-blue-400 text-2xl">
-                <button
-                  type="button"
-                  className="hover:text-white transition transform hover:scale-110"
-                  aria-label="Login com Facebook"
-                >
-                  <FontAwesomeIcon icon={faFacebookF} fixedWidth />
-                </button>
-                <button
-                  type="button"
-                  className="hover:text-white transition transform hover:scale-110"
-                  aria-label="Login com Google"
-                >
-                  <FontAwesomeIcon icon={faGoogle} fixedWidth />
-                </button>
-                <button
-                  type="button"
-                  className="hover:text-white transition transform hover:scale-110"
-                  aria-label="Login com Twitter"
-                >
-                  <FontAwesomeIcon icon={faTwitter} fixedWidth />
-                </button>
-              </div>
+            <div className="mt-6 flex justify-center gap-4">
+              <button
+                type="button"
+                className="text-blue-500 hover:text-blue-400"
+                title="Login com Facebook"
+              >
+                <FontAwesomeIcon icon={faFacebookF} size="lg" />
+              </button>
+              <button
+                type="button"
+                className="text-red-600 hover:text-red-500"
+                title="Login com Google"
+              >
+                <FontAwesomeIcon icon={faGoogle} size="lg" />
+              </button>
+              <button
+                type="button"
+                className="text-sky-400 hover:text-sky-300"
+                title="Login com Twitter"
+              >
+                <FontAwesomeIcon icon={faTwitter} size="lg" />
+              </button>
             </div>
           </form>
         ) : (
-          <form
-            id="signupForm"
-            className="space-y-6"
-            onSubmit={handleSignup}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-white font-medium mb-1"
-                >
-                  Nome
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                  placeholder="Digite seu nome"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-white font-medium mb-1"
-                >
-                  Sobrenome
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                  placeholder="Digite seu sobrenome"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </div>
+          <form id="signupForm" className="space-y-6" onSubmit={handleSignup}>
+            <div>
+              <label
+                htmlFor="firstName"
+                className="block text-white font-medium mb-1"
+              >
+                Primeiro Nome
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                placeholder="Digite seu primeiro nome"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="lastName"
+                className="block text-white font-medium mb-1"
+              >
+                Sobrenome
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                placeholder="Digite seu sobrenome"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
             </div>
 
             <div>
@@ -380,68 +373,67 @@ export default function AuthForm() {
                   type={showSignupPwd ? "text" : "password"}
                   id="signupPassword"
                   className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
-                  placeholder="Crie uma senha"
+                  placeholder="Digite sua senha"
                   value={signupPassword}
                   onChange={(e) => setSignupPassword(e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => togglePwd("signup")}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
-                  aria-label="Mostrar senha"
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400"
                 >
                   <FontAwesomeIcon
-                    icon={showSignupPwd ? faEye : faEyeSlash}
-                    fixedWidth
+                    icon={showSignupPwd ? faEyeSlash : faEye}
+                    className="text-lg"
                   />
                 </button>
               </div>
 
-              <ul className="mt-2 text-white text-sm list-inside">
-                <li>
+              <ul className="mt-2 text-xs list-none space-y-1">
+                <li className="flex items-center gap-2">
                   <FontAwesomeIcon
                     icon={requirements.length ? faCheck : faTimes}
-                    className={`inline mr-2 ${
-                      requirements.length ? "text-green-500" : "text-red-600"
-                    }`}
+                    className={requirements.length ? "text-green-400" : "text-red-400"}
                   />
-                  Mínimo 8 caracteres
+                  <span className={requirements.length ? "text-green-400" : "text-red-400"}>
+                    Mínimo 8 caracteres
+                  </span>
                 </li>
-                <li>
+                <li className="flex items-center gap-2">
                   <FontAwesomeIcon
                     icon={requirements.uppercase ? faCheck : faTimes}
-                    className={`inline mr-2 ${
-                      requirements.uppercase ? "text-green-500" : "text-red-600"
-                    }`}
+                    className={requirements.uppercase ? "text-green-400" : "text-red-400"}
                   />
-                  Letra maiúscula
+                  <span className={requirements.uppercase ? "text-green-400" : "text-red-400"}>
+                    Uma letra maiúscula
+                  </span>
                 </li>
-                <li>
+                <li className="flex items-center gap-2">
                   <FontAwesomeIcon
                     icon={requirements.lowercase ? faCheck : faTimes}
-                    className={`inline mr-2 ${
-                      requirements.lowercase ? "text-green-500" : "text-red-600"
-                    }`}
+                    className={requirements.lowercase ? "text-green-400" : "text-red-400"}
                   />
-                  Letra minúscula
+                  <span className={requirements.lowercase ? "text-green-400" : "text-red-400"}>
+                    Uma letra minúscula
+                  </span>
                 </li>
-                <li>
+                <li className="flex items-center gap-2">
                   <FontAwesomeIcon
                     icon={requirements.number ? faCheck : faTimes}
-                    className={`inline mr-2 ${
-                      requirements.number ? "text-green-500" : "text-red-600"
-                    }`}
+                    className={requirements.number ? "text-green-400" : "text-red-400"}
                   />
-                  Número
+                  <span className={requirements.number ? "text-green-400" : "text-red-400"}>
+                    Um número
+                  </span>
                 </li>
-                <li>
+                <li className="flex items-center gap-2">
                   <FontAwesomeIcon
                     icon={requirements.special ? faCheck : faTimes}
-                    className={`inline mr-2 ${
-                      requirements.special ? "text-green-500" : "text-red-600"
-                    }`}
+                    className={requirements.special ? "text-green-400" : "text-red-400"}
                   />
-                  Caractere especial (@$!%*?&#)
+                  <span className={requirements.special ? "text-green-400" : "text-red-400"}>
+                    Um caractere especial @$!%*?&#{/* (ou o conjunto que você usa) */}
+                  </span>
                 </li>
               </ul>
             </div>
@@ -451,26 +443,25 @@ export default function AuthForm() {
                 htmlFor="confirmPassword"
                 className="block text-white font-medium mb-1"
               >
-                Confirme a senha
+                Confirme a Senha
               </label>
               <div className="relative">
                 <input
                   type={showConfirmPwd ? "text" : "password"}
                   id="confirmPassword"
                   className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
-                  placeholder="Confirme a senha"
+                  placeholder="Confirme sua senha"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <button
                   type="button"
                   onClick={() => togglePwd("confirm")}
-                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400 focus:outline-none"
-                  aria-label="Mostrar senha"
+                  className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-blue-400"
                 >
                   <FontAwesomeIcon
-                    icon={showConfirmPwd ? faEye : faEyeSlash}
-                    fixedWidth
+                    icon={showConfirmPwd ? faEyeSlash : faEye}
+                    className="text-lg"
                   />
                 </button>
               </div>
@@ -478,13 +469,35 @@ export default function AuthForm() {
 
             <button
               type="submit"
-              id="signupBtn"
               disabled={loading}
-              className="w-full bg-red-700 hover:bg-red-800 transition rounded-lg py-3 text-white font-semibold shadow-md transform hover:scale-105 disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-semibold py-3 rounded-lg transition"
             >
-              <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
               {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
+
+            <div className="mt-6 flex justify-center gap-4">
+              <button
+                type="button"
+                className="text-blue-500 hover:text-blue-400"
+                title="Cadastrar com Facebook"
+              >
+                <FontAwesomeIcon icon={faFacebookF} size="lg" />
+              </button>
+              <button
+                type="button"
+                className="text-red-600 hover:text-red-500"
+                title="Cadastrar com Google"
+              >
+                <FontAwesomeIcon icon={faGoogle} size="lg" />
+              </button>
+              <button
+                type="button"
+                className="text-sky-400 hover:text-sky-300"
+                title="Cadastrar com Twitter"
+              >
+                <FontAwesomeIcon icon={faTwitter} size="lg" />
+              </button>
+            </div>
           </form>
         )}
       </div>
