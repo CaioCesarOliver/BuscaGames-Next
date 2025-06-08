@@ -66,7 +66,7 @@ export default function AuthForm() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
+      const res = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user: loginUser, password: loginPassword }),
@@ -194,13 +194,12 @@ export default function AuthForm() {
         <ul className="flex border-b border-purple-700 mb-6 select-none">
           <li className="mr-4">
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${mode === "login"
+              className={`py-2 px-5 font-semibold transition-colors ${
+                mode === "login"
                   ? "text-blue-400 border-b-2 border-blue-400"
                   : "text-white hover:bg-purple-900 rounded-t"
-                }`}
-              onClick={() => {
-                setMode("login");
-              }}
+              }`}
+              onClick={() => setMode("login")}
               type="button"
             >
               <FontAwesomeIcon icon={faSignInAlt} className="mr-2" />
@@ -209,13 +208,12 @@ export default function AuthForm() {
           </li>
           <li>
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${mode === "signup"
+              className={`py-2 px-5 font-semibold transition-colors ${
+                mode === "signup"
                   ? "text-blue-400 border-b-2 border-blue-400"
                   : "text-white hover:bg-purple-900 rounded-t"
-                }`}
-              onClick={() => {
-                setMode("signup");
-              }}
+              }`}
+              onClick={() => setMode("signup")}
               type="button"
             >
               <FontAwesomeIcon icon={faUserPlus} className="mr-2" />
@@ -315,7 +313,7 @@ export default function AuthForm() {
                 htmlFor="firstName"
                 className="block text-white font-medium mb-1"
               >
-                Primeiro Nome
+                Primeiro nome
               </label>
               <input
                 type="text"
@@ -389,51 +387,41 @@ export default function AuthForm() {
                 </button>
               </div>
 
-              <ul className="mt-2 text-xs list-none space-y-1">
-                <li className="flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={requirements.length ? faCheck : faTimes}
-                    className={requirements.length ? "text-green-400" : "text-red-400"}
-                  />
-                  <span className={requirements.length ? "text-green-400" : "text-red-400"}>
-                    Mínimo 8 caracteres
-                  </span>
+              <ul className="mt-2 ml-4 list-disc text-sm text-gray-300">
+                <li
+                  className={
+                    requirements.length ? "text-green-400" : "text-red-400"
+                  }
+                >
+                  Pelo menos 8 caracteres
                 </li>
-                <li className="flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={requirements.uppercase ? faCheck : faTimes}
-                    className={requirements.uppercase ? "text-green-400" : "text-red-400"}
-                  />
-                  <span className={requirements.uppercase ? "text-green-400" : "text-red-400"}>
-                    Uma letra maiúscula
-                  </span>
+                <li
+                  className={
+                    requirements.uppercase ? "text-green-400" : "text-red-400"
+                  }
+                >
+                  Uma letra maiúscula
                 </li>
-                <li className="flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={requirements.lowercase ? faCheck : faTimes}
-                    className={requirements.lowercase ? "text-green-400" : "text-red-400"}
-                  />
-                  <span className={requirements.lowercase ? "text-green-400" : "text-red-400"}>
-                    Uma letra minúscula
-                  </span>
+                <li
+                  className={
+                    requirements.lowercase ? "text-green-400" : "text-red-400"
+                  }
+                >
+                  Uma letra minúscula
                 </li>
-                <li className="flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={requirements.number ? faCheck : faTimes}
-                    className={requirements.number ? "text-green-400" : "text-red-400"}
-                  />
-                  <span className={requirements.number ? "text-green-400" : "text-red-400"}>
-                    Um número
-                  </span>
+                <li
+                  className={
+                    requirements.number ? "text-green-400" : "text-red-400"
+                  }
+                >
+                  Um número
                 </li>
-                <li className="flex items-center gap-2">
-                  <FontAwesomeIcon
-                    icon={requirements.special ? faCheck : faTimes}
-                    className={requirements.special ? "text-green-400" : "text-red-400"}
-                  />
-                  <span className={requirements.special ? "text-green-400" : "text-red-400"}>
-                    Um caractere especial @$!%*?&#{/* (ou o conjunto que você usa) */}
-                  </span>
+                <li
+                  className={
+                    requirements.special ? "text-green-400" : "text-red-400"
+                  }
+                >
+                  Um caractere especial (@$!%*?&#)
                 </li>
               </ul>
             </div>
@@ -443,7 +431,7 @@ export default function AuthForm() {
                 htmlFor="confirmPassword"
                 className="block text-white font-medium mb-1"
               >
-                Confirme a Senha
+                Confirmar senha
               </label>
               <div className="relative">
                 <input
@@ -474,30 +462,6 @@ export default function AuthForm() {
             >
               {loading ? "Cadastrando..." : "Cadastrar"}
             </button>
-
-            <div className="mt-6 flex justify-center gap-4">
-              <button
-                type="button"
-                className="text-blue-500 hover:text-blue-400"
-                title="Cadastrar com Facebook"
-              >
-                <FontAwesomeIcon icon={faFacebookF} size="lg" />
-              </button>
-              <button
-                type="button"
-                className="text-red-600 hover:text-red-500"
-                title="Cadastrar com Google"
-              >
-                <FontAwesomeIcon icon={faGoogle} size="lg" />
-              </button>
-              <button
-                type="button"
-                className="text-sky-400 hover:text-sky-300"
-                title="Cadastrar com Twitter"
-              >
-                <FontAwesomeIcon icon={faTwitter} size="lg" />
-              </button>
-            </div>
           </form>
         )}
       </div>

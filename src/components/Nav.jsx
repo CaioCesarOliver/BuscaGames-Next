@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,10 +13,23 @@ import {
   faTasks,
   faInfoCircle,
   faBars,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function Nav() {
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    // Recuperar dados do usuário do localStorage (se existir)
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setIsAuthenticated(true);
+      setUsername(user.name);
+    }
+  }, []);
 
   return (
     <nav className="fixed top-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur border-b border-blue-600 z-50">
@@ -43,9 +56,8 @@ export default function Nav() {
 
         {/* Menu Items */}
         <div
-          className={`w-full lg:w-auto lg:flex lg:items-center lg:space-x-10 ${
-            isNavOpen ? "block" : "hidden"
-          }`}
+          className={`w-full lg:w-auto lg:flex lg:items-center lg:space-x-10 ${isNavOpen ? "block" : "hidden"
+            }`}
         >
           <ul className="flex flex-col lg:flex-row lg:space-x-8">
             {[
@@ -89,15 +101,22 @@ export default function Nav() {
               </span>
             </Link>
 
-            {/* Login */}
+            {/* Login/Profile */}
             <div id="loginNavItem">
-              <Link
-                href="/login"
-                className="flex items-center text-white hover:text-gray-300 transition"
-              >
-                <FontAwesomeIcon icon={faSignInAlt} className="mr-1" />
-                <span>Login</span>
-              </Link>
+              {isAuthenticated ? (
+                <div className="flex items-center text-white">
+                  <FontAwesomeIcon icon={faUser} className="mr-1" />
+                  <span>{username.split(" ")[0]}</span>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  className="flex items-center text-white hover:text-gray-300 transition"
+                >
+                  <FontAwesomeIcon icon={faSignInAlt} className="mr-1" />
+                  <span>Login</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>
