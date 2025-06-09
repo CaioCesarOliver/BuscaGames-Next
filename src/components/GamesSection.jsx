@@ -71,85 +71,83 @@ export default function GamesSection() {
         return stars;
     };
 
-    // Aqui usamos todos os jogos diretamente
-    const allGames = games;
-
     return (
-        <section className="bg-white dark:bg-gray-900 py-16 px-4 transition-colors duration-500">
-            <div className="container mx-auto max-w-7xl">
-                <h2 className="text-4xl font-bold mb-12 text-center text-purple-900 dark:text-white transition-colors duration-500">
-                    Todos os Jogos
-                </h2>
+        <section className="py-16 px-4 transition-colors duration-500">
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    {allGames.map((game) => {
-                        const imageUrl = game.image
-                            ? `http://localhost:4000/${encodeURI(game.image)}`
-                            : "/fallback-image.png";
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {games.map((game) => {
+                    const imageUrl = game.image
+                        ? `http://localhost:4000/${encodeURI(game.image)}`
+                        : "/fallback-image.png";
 
-                        return (
-                            <div
-                                key={game.id}
-                                className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-[0_0_15px_5px_rgba(135,206,250,0.5)]"
-                            >
-                                <img
-                                    src={imageUrl}
-                                    alt={game.title ?? "Game image"}
-                                    className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110 group-hover:blur-sm"
-                                    loading="lazy"
-                                />
-
-                                <div className="absolute inset-0 pointer-events-none">
-                                    <div className="w-full h-full bg-black bg-opacity-75 opacity-0 group-hover:opacity-70 transition-opacity duration-300"></div>
+                    return (
+                        <div
+                            key={game.id}
+                            className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-[0_0_15px_5px_rgba(135,206,250,0.5)]"
+                        >
+                            {game.discount > 0 && (
+                                <div className="absolute top-2 left-2 bg-green-700 text-white text-xs font-bold px-2 py-1 rounded z-10 shadow">
+                                    -{game.discount}%
                                 </div>
+                            )}
 
-                                <div className="absolute inset-0 flex flex-col justify-between p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <h3 className="text-xl font-semibold mb-2">
-                                        {game.title ?? "Título não disponível"}
-                                    </h3>
+                            <img
+                                src={imageUrl}
+                                alt={game.title ?? "Game image"}
+                                className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110 group-hover:blur-sm"
+                                loading="lazy"
+                            />
 
-                                    <div className="mb-2 flex items-center gap-3">
-                                        {game.discount > 0 ? (
-                                            <>
-                                                <span className="line-through text-gray-400 text-sm">
-                                                    R$ {game.originalPrice?.toFixed(2)}
-                                                </span>
-                                                <span className="text-green-400 font-bold text-lg">
-                                                    R$ {game.price?.toFixed(2)}
-                                                </span>
-                                            </>
-                                        ) : (
+                            <div className="absolute inset-0 pointer-events-none">
+                                <div className="w-full h-full bg-black bg-opacity-75 opacity-0 group-hover:opacity-70 transition-opacity duration-300"></div>
+                            </div>
+
+                            <div className="absolute inset-0 flex flex-col justify-between p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <h3 className="text-xl font-semibold mb-2">
+                                    {game.title ?? "Título não disponível"}
+                                </h3>
+
+                                <div className="mb-2 flex items-center gap-3">
+                                    {game.discount > 0 ? (
+                                        <>
+                                            <span className="line-through text-gray-400 text-sm">
+                                                R$ {game.originalPrice?.toFixed(2)}
+                                            </span>
                                             <span className="text-green-400 font-bold text-lg">
                                                 R$ {game.price?.toFixed(2)}
                                             </span>
-                                        )}
-                                    </div>
+                                        </>
+                                    ) : (
+                                        <span className="text-green-400 font-bold text-lg">
+                                            R$ {game.price?.toFixed(2)}
+                                        </span>
+                                    )}
+                                </div>
 
-                                    <div className="flex flex-wrap gap-2 mb-2">
-                                        {game.genres?.map((genre, idx) => (
-                                            <span
-                                                key={idx}
-                                                className="bg-blue-600 text-sm px-2 py-1 rounded-full"
-                                            >
-                                                {genre}
-                                            </span>
-                                        ))}
-                                    </div>
-
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center">{renderStars(game.rating ?? 0)}</div>
-                                        <button
-                                            type="button"
-                                            className="bg-green-600 hover:bg-green-700 active:bg-green-800 transition-colors text-white font-semibold px-4 py-2 rounded"
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                    {game.genres?.map((genre, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="bg-blue-600 text-sm px-2 py-1 rounded-full"
                                         >
-                                            + Carrinho
-                                        </button>
-                                    </div>
+                                            {genre}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">{renderStars(game.rating ?? 0)}</div>
+                                    <button
+                                        type="button"
+                                        className="bg-green-600 hover:bg-green-700 active:bg-green-800 transition-colors text-white font-semibold px-4 py-2 rounded"
+                                    >
+                                        + Carrinho
+                                    </button>
                                 </div>
                             </div>
-                        );
-                    })}
-                </div>
+                        </div>
+                    );
+                })}
             </div>
         </section>
     );

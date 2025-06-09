@@ -80,6 +80,56 @@ app.get('/games', async (req, res) => {
     }
 });
 
+app.get('/games', async (req, res) => {
+    try {
+        // Recebe filtros via query params
+        const { genres, platform, minPrice, maxPrice, discount } = req.query;
+
+        // Monta o filtro dinamicamente
+        const filters = {};
+
+        // Filtro por gêneros (array ou string separados por vírgula)
+        if (genres) {
+            const genresArray = Array.isArray(genres) ? genres : genres.split(',');
+            filters.genres = {
+                hasSome: genresArray,
+            };
+        }
+
+        // Filtro por plataformas (array ou string separados por vírgula)
+        if (platform) {
+            const platformsArray = Array.isArray(platform) ? platform : platform.split(',');
+            filters.platforms = {
+                hasSome: platformsArray,
+            };
+        }
+
+        // Filtro por faixa de preço
+        if (minPrice || maxPrice) {
+            filters.price = {};
+            if (minPrice) filters.price.gte = Number(minPrice);
+            if (maxPrice) filters.price.lte = Number(maxPrice);
+        }
+
+        // Filtro por desconto mínimo
+        if (discount) {
+            filters.discount = {
+                gte: Number(discount),
+            };
+        }
+
+        // Busca jogos com filtros aplicados
+        const games = await prisma.game.findMany({
+            where: filters,
+        });
+
+        res.json(games);
+    } catch (error) {
+        console.error('Erro ao buscar jogos com filtros:', error);
+        res.status(500).json({ error: 'Erro ao buscar jogos com filtros' });
+    }
+});
+
 // Atualizar um jogo pelo ID
 app.put('/games/:id', async (req, res) => {
     const { id } = req.params;
