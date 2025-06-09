@@ -16,6 +16,59 @@ app.use('/api/auth', authRoutes);
 // Servir imagens estáticas
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
+// Criar um novo jogo
+app.post('/games', async (req, res) => {
+    const {
+        title,
+        description,
+        image,
+        price,
+        originalPrice,
+        rating,
+        platforms,
+        genres,
+        releaseDate,
+        developer,
+        publisher,
+        tags,
+    } = req.body;
+
+    if (!title || !description || !image || price == null) {
+        return res.status(400).json({ error: 'Campos obrigatórios ausentes: title, description, image e price' });
+    }
+
+    // Calcula o desconto com base no preço e preço original
+    const discount = (originalPrice && price && originalPrice > price)
+        ? Math.round(((originalPrice - price) / originalPrice) * 100)
+        : 0;
+
+    try {
+        const newGame = await prisma.game.create({
+            data: {
+                title,
+                description,
+                image,
+                price,
+                originalPrice,
+                discount,
+                rating,
+                platforms,
+                genres,
+                releaseDate: releaseDate ? new Date(releaseDate) : undefined,
+                developer,
+                publisher,
+                tags,
+            },
+        });
+
+        res.status(201).json(newGame);
+    } catch (error) {
+        console.error('Erro ao criar jogo:', error);
+        res.status(500).json({ error: 'Erro ao criar o jogo', details: error.message });
+    }
+});
+
+
 // Buscar todos os jogos
 app.get('/games', async (req, res) => {
     try {

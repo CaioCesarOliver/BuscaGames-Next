@@ -1,5 +1,5 @@
 import LaunchCountdownCube from '../../components/LaunchCountdown'
-import GamesSection from '../../components/GamesSection'
+import GamesSection from '../../components/GamesSectionHome'
 import { DailyQuests, Newsletter } from '../../components/DailyQuests'
 
 const Homepage = () => {
