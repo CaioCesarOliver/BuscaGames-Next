@@ -211,7 +211,7 @@ export default function AuthForm() {
             <button
               className={`py-2 px-5 font-semibold transition-colors ${mode === "login"
                 ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
-                : "text-purple-900 dark:text-white hover:bg-purple-900 rounded-t"
+                : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
                 }`}
               onClick={() => setMode("login")}
               type="button"
@@ -222,9 +222,9 @@ export default function AuthForm() {
           </li>
           <li>
             <button
-              className={`py-2 px-5 font-semibold transition-colors ${mode === "signup"
-                ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
-                : "text-purple-900 dark:text-white hover:bg-purple-900 rounded-t"
+              className={`py-2 px-5 font-semibold transition-colors ${mode === "login"
+                  ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
+                  : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
                 }`}
               onClick={() => setMode("signup")}
               type="button"
