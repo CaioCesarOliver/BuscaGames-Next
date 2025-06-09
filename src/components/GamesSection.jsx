@@ -19,7 +19,6 @@ export default function GamesSection() {
     fetchGames();
   }, []);
 
-  // Renderiza as estrelas baseado na avaliação
   const renderStars = (rating) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -72,27 +71,22 @@ export default function GamesSection() {
     return stars;
   };
 
-  // Filtra e combina os jogos para exibir
   const getFeaturedGames = () => {
     if (games.length === 0) return [];
 
-    // 2 jogos mais baratos
     const cheapest = games
       .slice()
       .sort((a, b) => a.price - b.price)
       .slice(0, 2);
 
-    // 2 melhores avaliados que não estejam nos baratos
     const bestRated = games
       .slice()
       .filter((game) => !cheapest.some((c) => c.id === game.id))
       .sort((a, b) => b.rating - a.rating)
       .slice(0, 2);
 
-    // Combina os jogos
     let combinedGames = [...cheapest, ...bestRated];
 
-    // Completa até 4 jogos, se necessário
     if (combinedGames.length < 4) {
       const excludedIds = combinedGames.map((g) => g.id);
       const extraGames = games
@@ -107,9 +101,9 @@ export default function GamesSection() {
   const featuredGames = getFeaturedGames();
 
   return (
-    <section className="bg-gray-900 py-16 px-4">
+    <section className="bg-white dark:bg-gray-900 py-16 px-4 transition-colors duration-500">
       <div className="container mx-auto max-w-7xl">
-        <h2 className="text-4xl font-bold mb-12 text-center text-white">
+        <h2 className="text-4xl font-bold mb-12 text-center text-purple-900 dark:text-white transition-colors duration-500">
           Jogos em Destaque
         </h2>
 
@@ -131,12 +125,10 @@ export default function GamesSection() {
                   loading="lazy"
                 />
 
-                {/* Fundo preto semi-transparente */}
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="w-full h-full bg-black bg-opacity-75 opacity-0 group-hover:opacity-70 transition-opacity duration-300"></div>
                 </div>
 
-                {/* Conteúdo que aparece no hover */}
                 <div className="absolute inset-0 flex flex-col justify-between p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <h3 className="text-xl font-semibold mb-2">
                     {game.title ?? "Título não disponível"}
