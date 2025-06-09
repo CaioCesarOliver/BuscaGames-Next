@@ -57,11 +57,11 @@ export default function AuthForm() {
   async function handleLogin(e) {
     e.preventDefault();
 
-    console.log("loginUser:", loginUser);
-    console.log("loginPassword:", loginPassword);
-
     if (!loginUser.includes('@')) {
-      setLoginError('Por favor, insira um e-mail válido.');
+      Swal.fire({
+        icon: "warning",
+        title: "Por favor, insira um e-mail válido.",
+      });
       return;
     }
 
@@ -86,7 +86,6 @@ export default function AuthForm() {
           }),
       });
       const data = await res.json();
-      console.log('Resposta do login:', res.status, data);
 
       if (!res.ok) {
         return Swal.fire({
@@ -107,8 +106,6 @@ export default function AuthForm() {
       setLoading(false);
     }
   }
-
-
 
   async function handleSignup(e) {
     e.preventDefault();
@@ -207,14 +204,14 @@ export default function AuthForm() {
   }
 
   return (
-    <div className="max-w-md mx-auto bg-black bg-opacity-90 rounded-2xl border border-purple-700 shadow-xl overflow-hidden">
+    <div className="max-w-md mx-auto bg-white dark:bg-black bg-opacity-90 rounded-2xl border border-purple-700 shadow-xl overflow-hidden">
       <div className="p-6 md:p-8">
         <ul className="flex border-b border-purple-700 mb-6 select-none">
           <li className="mr-4">
             <button
               className={`py-2 px-5 font-semibold transition-colors ${mode === "login"
-                ? "text-blue-400 border-b-2 border-blue-400"
-                : "text-white hover:bg-purple-900 rounded-t"
+                ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
+                : "text-purple-900 dark:text-white hover:bg-purple-900 rounded-t"
                 }`}
               onClick={() => setMode("login")}
               type="button"
@@ -226,8 +223,8 @@ export default function AuthForm() {
           <li>
             <button
               className={`py-2 px-5 font-semibold transition-colors ${mode === "signup"
-                ? "text-blue-400 border-b-2 border-blue-400"
-                : "text-white hover:bg-purple-900 rounded-t"
+                ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
+                : "text-purple-900 dark:text-white hover:bg-purple-900 rounded-t"
                 }`}
               onClick={() => setMode("signup")}
               type="button"
@@ -241,20 +238,20 @@ export default function AuthForm() {
         {mode === "login" ? (
           <form id="loginForm" className="space-y-6" onSubmit={handleLogin}>
             <div>
-              <div className="bg-blue-900 bg-opacity-40 text-blue-300 rounded-md p-3 mb-6 flex items-center gap-2 text-sm">
+              <div className="bg-purple-900 bg-opacity-100 text-white dark:bg-blue-900 bg-opacity-40 text-blue-300 rounded-md p-3 mb-6 flex items-center gap-2 text-sm">
                 <FontAwesomeIcon icon={faInfoCircle} />
                 Se você ainda não tem conta, selecione a aba Cadastro.
               </div>
               <label
                 htmlFor="loginUsername"
-                className="block text-white font-medium mb-1"
+                className="block text-purple-900 dark:text-white font-medium mb-1"
               >
-                Usuário ou Email
+                Email
               </label>
               <input
                 type="text"
                 id="loginUsername"
-                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                 placeholder="Digite seu e-mail"
                 value={loginUser}
                 onChange={(e) => setLoginUser(e.target.value)}
@@ -264,7 +261,7 @@ export default function AuthForm() {
             <div>
               <label
                 htmlFor="loginPassword"
-                className="block text-white font-medium mb-1"
+                className="block text-purple-900 dark:text-white font-medium mb-1"
               >
                 Senha
               </label>
@@ -272,7 +269,7 @@ export default function AuthForm() {
                 <input
                   type={showLoginPwd ? "text" : "password"}
                   id="loginPassword"
-                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
+                  className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
                   placeholder="Digite sua senha"
                   value={loginPassword}
                   onChange={(e) => setLoginPassword(e.target.value)}
@@ -308,14 +305,14 @@ export default function AuthForm() {
               </button>
               <button
                 type="button"
-                className="text-red-600 hover:text-red-500"
+                className="text-blue-500 hover:text-blue-400"
                 title="Login com Google"
               >
                 <FontAwesomeIcon icon={faGoogle} size="lg" />
               </button>
               <button
                 type="button"
-                className="text-sky-400 hover:text-sky-300"
+                className="text-blue-500 hover:text-blue-400"
                 title="Login com Twitter"
               >
                 <FontAwesomeIcon icon={faTwitter} size="lg" />
@@ -327,14 +324,14 @@ export default function AuthForm() {
             <div>
               <label
                 htmlFor="firstName"
-                className="block text-white font-medium mb-1"
+                className="block text-purple-900 dark:text-white font-medium mb-1"
               >
                 Primeiro nome
               </label>
               <input
                 type="text"
                 id="firstName"
-                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                 placeholder="Digite seu primeiro nome"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
@@ -344,14 +341,14 @@ export default function AuthForm() {
             <div>
               <label
                 htmlFor="lastName"
-                className="block text-white font-medium mb-1"
+                className="block text-purple-900 dark:text-white font-medium mb-1"
               >
                 Sobrenome
               </label>
               <input
                 type="text"
                 id="lastName"
-                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                 placeholder="Digite seu sobrenome"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
@@ -361,14 +358,14 @@ export default function AuthForm() {
             <div>
               <label
                 htmlFor="signupEmail"
-                className="block text-white font-medium mb-1"
+                className="block text-purple-900 dark:text-white font-medium mb-1"
               >
                 Email
               </label>
               <input
                 type="email"
                 id="signupEmail"
-                className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                 placeholder="Digite seu email"
                 value={signupEmail}
                 onChange={(e) => setSignupEmail(e.target.value)}
@@ -378,7 +375,7 @@ export default function AuthForm() {
             <div>
               <label
                 htmlFor="signupPassword"
-                className="block text-white font-medium mb-1"
+                className="block text-purple-900 dark:text-white font-medium mb-1"
               >
                 Senha
               </label>
@@ -386,7 +383,7 @@ export default function AuthForm() {
                 <input
                   type={showSignupPwd ? "text" : "password"}
                   id="signupPassword"
-                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
+                  className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
                   placeholder="Digite sua senha"
                   value={signupPassword}
                   onChange={(e) => setSignupPassword(e.target.value)}
@@ -403,41 +400,46 @@ export default function AuthForm() {
                 </button>
               </div>
 
-              <ul className="mt-2 ml-4 list-disc text-sm text-gray-300">
-                <li
-                  className={
-                    requirements.length ? "text-green-400" : "text-red-400"
-                  }
-                >
-                  Pelo menos 8 caracteres
+              <ul className="text-xs mt-2 space-y-1 text-purple-900 dark:text-white">
+                <li>
+                  {requirements.length ? (
+                    <FontAwesomeIcon icon={faCheck} className="text-green-500 mr-1" />
+                  ) : (
+                    <FontAwesomeIcon icon={faTimes} className="text-red-500 mr-1" />
+                  )}
+                  Mínimo 8 caracteres
                 </li>
-                <li
-                  className={
-                    requirements.uppercase ? "text-green-400" : "text-red-400"
-                  }
-                >
-                  Uma letra maiúscula
+                <li>
+                  {requirements.uppercase ? (
+                    <FontAwesomeIcon icon={faCheck} className="text-green-500 mr-1" />
+                  ) : (
+                    <FontAwesomeIcon icon={faTimes} className="text-red-500 mr-1" />
+                  )}
+                  Letra maiúscula
                 </li>
-                <li
-                  className={
-                    requirements.lowercase ? "text-green-400" : "text-red-400"
-                  }
-                >
-                  Uma letra minúscula
+                <li>
+                  {requirements.lowercase ? (
+                    <FontAwesomeIcon icon={faCheck} className="text-green-500 mr-1" />
+                  ) : (
+                    <FontAwesomeIcon icon={faTimes} className="text-red-500 mr-1" />
+                  )}
+                  Letra minúscula
                 </li>
-                <li
-                  className={
-                    requirements.number ? "text-green-400" : "text-red-400"
-                  }
-                >
-                  Um número
+                <li>
+                  {requirements.number ? (
+                    <FontAwesomeIcon icon={faCheck} className="text-green-500 mr-1" />
+                  ) : (
+                    <FontAwesomeIcon icon={faTimes} className="text-red-500 mr-1" />
+                  )}
+                  Número
                 </li>
-                <li
-                  className={
-                    requirements.special ? "text-green-400" : "text-red-400"
-                  }
-                >
-                  Um caractere especial (@$!%*?&#)
+                <li>
+                  {requirements.special ? (
+                    <FontAwesomeIcon icon={faCheck} className="text-green-500 mr-1" />
+                  ) : (
+                    <FontAwesomeIcon icon={faTimes} className="text-red-500 mr-1" />
+                  )}
+                  Caracter especial (@$!%*?&#)
                 </li>
               </ul>
             </div>
@@ -445,7 +447,7 @@ export default function AuthForm() {
             <div>
               <label
                 htmlFor="confirmPassword"
-                className="block text-white font-medium mb-1"
+                className="block text-purple-900 dark:text-white font-medium mb-1"
               >
                 Confirmar senha
               </label>
@@ -453,7 +455,7 @@ export default function AuthForm() {
                 <input
                   type={showConfirmPwd ? "text" : "password"}
                   id="confirmPassword"
-                  className="w-full px-4 py-3 rounded-lg bg-black bg-opacity-70 border border-purple-700 text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
+                  className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition pr-10"
                   placeholder="Confirme sua senha"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
