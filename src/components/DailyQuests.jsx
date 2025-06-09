@@ -11,11 +11,11 @@ export function DailyQuests() {
   const progressPercent = 33;
 
   return (
-    <section className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white py-12 transition-colors duration-500">
+    <section className="dark:bg-gray-900 text-white py-12 transition-colors duration-500">
       <div className="container mx-auto px-4 max-w-4xl">
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 space-y-6 transition-colors duration-500">
+        <div className="bg-gray-800 rounded-lg p-6 space-y-6 transition-colors duration-500">
           <div className="flex items-center justify-between">
-            <div className="text-blue-600 dark:text-blue-400 text-3xl">
+            <div className="text-blue-400 text-3xl">
               <FaCalendarDay />
             </div>
             <h3 className="text-2xl font-semibold flex-grow text-center">
@@ -33,7 +33,7 @@ export function DailyQuests() {
           </div>
 
           <div>
-            <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+            <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
               <div
                 className="bg-blue-600 h-4 rounded-full"
                 style={{ width: `${progressPercent}%` }}
