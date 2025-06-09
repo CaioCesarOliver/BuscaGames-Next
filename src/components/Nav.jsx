@@ -16,13 +16,16 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
+import useTheme from "../hooks/useTheme";
+
 export default function Nav() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
 
+  const { theme, toggleTheme } = useTheme();
+
   useEffect(() => {
-    // Recuperar dados do usuário do localStorage (se existir)
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
@@ -32,7 +35,7 @@ export default function Nav() {
   }, []);
 
   return (
-    <nav className="fixed top-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur border-b border-blue-600 z-50">
+    <nav className="fixed top-0 w-full bg-white dark:bg-gray-900 bg-opacity-90 backdrop-blur border-b border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white z-50">
       <div className="container mx-auto px-4 lg:px-8 flex flex-wrap items-center justify-between py-3">
         {/* Logo */}
         <Link href="/" className="flex items-center justify-center">
@@ -47,7 +50,7 @@ export default function Nav() {
 
         {/* Hamburger Button */}
         <button
-          className="lg:hidden text-gray-100 focus:outline-none"
+          className="lg:hidden focus:outline-none text-purple-900 dark:text-white"
           aria-label="Toggle menu"
           onClick={() => setIsNavOpen(!isNavOpen)}
         >
@@ -69,7 +72,7 @@ export default function Nav() {
               <li key={label}>
                 <Link
                   href={href}
-                  className="relative flex items-center text-white font-medium tracking-wide px-3 py-2 nav-link group"
+                  className="relative flex items-center font-medium tracking-wide px-3 py-2 nav-link group text-purple-900 dark:text-white"
                 >
                   <FontAwesomeIcon icon={icon} className="me-2" />
                   <span>{label}</span>
@@ -85,7 +88,8 @@ export default function Nav() {
             <button
               id="themeToggle"
               aria-label="Toggle dark/light mode"
-              className="text-white hover:text-gray-300 transition"
+              className="transition hover:text-purple-700 text-purple-900 dark:text-white"
+              onClick={toggleTheme}
             >
               <FontAwesomeIcon icon={faMoon} />
             </button>
@@ -93,25 +97,25 @@ export default function Nav() {
             {/* Cart */}
             <Link
               href="/cart"
-              className="relative flex items-center text-white hover:text-gray-300 transition"
+              className="relative flex items-center transition text-purple-900 dark:text-white"
             >
               <FontAwesomeIcon icon={faShoppingCart} className="text-xl" />
-              <span className="absolute -top-1 -right-2 bg-red-600 rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-1 -right-2 bg-red-600 rounded-full text-xs w-5 h-5 flex items-center justify-center text-white">
                 0
               </span>
             </Link>
 
             {/* Login/Profile */}
-            <div id="loginNavItem">
+            <div id="loginNavItem" className="text-purple-900 dark:text-white">
               {isAuthenticated ? (
-                <div className="flex items-center text-white">
+                <div className="flex items-center">
                   <FontAwesomeIcon icon={faUser} className="mr-1" />
                   <span>{username.split(" ")[0]}</span>
                 </div>
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center text-white hover:text-gray-300 transition"
+                  className="flex items-center hover:opacity-80 transition text-purple-900 dark:text-white"
                 >
                   <FontAwesomeIcon icon={faSignInAlt} className="mr-1" />
                   <span>Login</span>
