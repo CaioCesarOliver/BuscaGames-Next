@@ -20,7 +20,7 @@ import {
 
 export default function Footer() {
     return (
-        <footer className="bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200 py-10 transition-colors duration-300">
+        <footer className="bg-white text-gray-800 border-blue-400 dark:bg-gray-900 dark:text-gray-200 dark:border-purple-700 py-10 transition-colors duration-300 border-t-4 ">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Logo e descrição */}
