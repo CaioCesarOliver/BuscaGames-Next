@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGamepad,
@@ -37,28 +36,18 @@ const categories = [
   { label: "Terror", icon: faGhost, genero: "Terror" },
 ];
 
-const SidebarFilters = () => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [price, setPrice] = useState(300);
-  const [platforms, setPlatforms] = useState({
-    pc: true,
-    playstation: true,
-    xbox: true,
-  });
-  const [showDiscounts, setShowDiscounts] = useState(false);
-
+const SidebarFilters = ({
+  selectedCategory,
+  setSelectedCategory,
+  price,
+  setPrice,
+  platforms,
+  setPlatforms,
+  showDiscounts,
+  setShowDiscounts,
+}) => {
   const togglePlatform = (key) => {
     setPlatforms((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
-
-  const applyFilters = () => {
-    // Implementar lógica de filtro ou enviar estados para o pai
-    console.log({
-      selectedCategory,
-      price,
-      platforms,
-      showDiscounts,
-    });
   };
 
   return (
@@ -156,15 +145,6 @@ const SidebarFilters = () => {
             Apenas descontos
           </label>
         </div>
-
-        {/* Botão Aplicar */}
-        <button
-          onClick={applyFilters}
-          className="w-full bg-blue-600 hover:bg-blue-700 transition text-white font-semibold py-2 rounded flex items-center justify-center gap-2"
-        >
-          <FontAwesomeIcon icon={faFilter} />
-          Aplicar Filtros
-        </button>
       </div>
     </div>
   );
