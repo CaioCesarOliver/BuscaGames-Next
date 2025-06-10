@@ -130,14 +130,14 @@ export default function SidebarFilters({
             id="priceRange"
             type="range"
             min="0"
-            max="300"
+            max="500"
             value={price}
             onChange={handlePriceChange}
             className="w-full accent-blue-600 cursor-pointer"
           />
           <div className="flex justify-between text-sm mt-1">
             <span>R$ 0</span>
-            <span>R$ 300</span>
+            <span>R$ 500</span>
           </div>
         </div>
 
