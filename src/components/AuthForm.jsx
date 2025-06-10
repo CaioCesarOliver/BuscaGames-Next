@@ -550,49 +550,49 @@ export default function AuthForm() {
             >
               <FontAwesomeIcon icon={faTimesIcon} size="lg" />
             </button>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+            <h2 className="text-4xl font-bold mb-4 text-gray-900 text-center dark:text-white">
               Termos de Uso
             </h2>
 
             <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed max-h-[60vh] overflow-y-auto text-gray-700 dark:text-gray-300">
-              <p><strong>Última atualização:</strong> 10 de junho de 2025</p>
+              <p className="text-2xl text-center mb-3"><strong>Última atualização:</strong> 10 de junho de 2025</p>
 
-              <p>Seja bem-vindo à nossa plataforma!</p>
+              <p className="text-xl text-center my-3">Seja bem-vindo à nossa plataforma!</p>
 
               <p>Estes Termos de Uso (“Termos”) regulam o acesso e o uso dos serviços oferecidos por este site. Ao se cadastrar, acessar ou utilizar nossos serviços, você concorda com os presentes Termos.</p>
 
-              <h3>Aceitação dos Termos</h3>
+              <h3 className="text-2xl my-4 font-bold text-center">Aceitação dos Termos</h3>
               <p>Ao criar uma conta ou utilizar qualquer funcionalidade do site, você declara que leu, entendeu e concorda com estes Termos de Uso. Caso não concorde, por favor, não utilize o serviço.</p>
 
-              <h3>Cadastro e Conta de Usuário</h3>
+              <h3 className="text-2xl my-4 font-bold text-center">Cadastro e Conta de Usuário</h3>
               <ul>
                 <li>Para acessar certas funcionalidades, é necessário criar uma conta, fornecendo informações verdadeiras, completas e atualizadas.</li>
                 <li>Você é responsável por manter a confidencialidade de sua senha e conta.</li>
                 <li>O uso da sua conta é pessoal e intransferível.</li>
               </ul>
 
-              <h3>Uso da Plataforma</h3>
-              <p>Você se compromete a:</p>
-              <ul>
-                <li>Não utilizar o serviço para fins ilegais, abusivos ou discriminatórios.</li>
-                <li>Não tentar obter acesso não autorizado ao sistema.</li>
-                <li>Respeitar a legislação vigente e os direitos de terceiros.</li>
+              <h3 className="text-2xl my-4 font-bold text-center">Uso da Plataforma</h3>
+              <p className=" text-xl">Você se compromete a:</p>
+              <ul className="list-disc">
+                <li className="mx-5">Não utilizar o serviço para fins ilegais, abusivos ou discriminatórios.</li>
+                <li className="mx-5">Não tentar obter acesso não autorizado ao sistema.</li>
+                <li className="mx-5">Respeitar a legislação vigente e os direitos de terceiros.</li>
               </ul>
 
-              <h3>Privacidade</h3>
+              <h3 className="text-2xl my-4 font-bold text-center">Privacidade</h3>
               <p>Suas informações pessoais serão tratadas de acordo com nossa <strong>Política de Privacidade</strong>, a qual está disponível para leitura e aceitação durante o processo de cadastro.</p>
 
-              <h3>Propriedade Intelectual</h3>
+              <h3 className="text-2xl my-4 font-bold text-center">Propriedade Intelectual</h3>
               <p>Todos os direitos sobre o conteúdo da plataforma (textos, imagens, códigos, marca, logotipo etc.) pertencem ao titular do site ou são usados com autorização. É proibida a reprodução ou uso não autorizado.</p>
 
-              <h3>Modificações nos Termos</h3>
+              <h3 className="text-2xl my-4 font-bold text-center">Modificações nos Termos</h3>
               <p>Reservamo-nos o direito de alterar estes Termos a qualquer momento. As modificações entrarão em vigor após a publicação no site. O uso contínuo dos serviços após essa data representa sua concordância com as novas condições.</p>
 
-              <h3>Encerramento de Conta</h3>
+              <h3 className="text-2xl my-4 font-bold text-center">Encerramento de Conta</h3>
               <p>Podemos suspender ou encerrar sua conta a qualquer momento, caso você viole estes Termos ou haja suspeita de uso indevido.</p>
 
-              <h3>Contato</h3>
-              <p>Caso tenha dúvidas ou precise de suporte, entre em contato conosco pelo email: <strong>suporte@seudominio.com</strong>.</p>
+              <h3 className="text-2xl my-4 font-bold text-center">Contato</h3>
+              <p>Caso tenha dúvidas ou precise de suporte, entre em contato conosco pelo email: <strong>equipebuscagames@gmail.com</strong>.</p>
 
               <p className="pt-2 font-medium text-gray-900 dark:text-white">
                 Ao utilizar a plataforma, você declara ter lido, compreendido e aceito integralmente os presentes Termos de Uso.
