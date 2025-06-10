@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGamepad,
@@ -17,15 +17,8 @@ import {
   faArrowRotateLeft
 } from "@fortawesome/free-solid-svg-icons";
 
-import {
-  faWandSparkles,
-  faGhost,
-} from "@fortawesome/free-solid-svg-icons"; // Aqui tá no "solid", faWandSparkles e faGhost fazem parte do pacote pro, mas vamos usar solid ou parecidos.
-
-// Obs: faWandSparkles e faGhost são do Font Awesome 6+ e parte do Pro, então podemos usar faMagic ou faGhost do free, se tiver.
-
-import { faMagic } from "@fortawesome/free-solid-svg-icons"; // Substitui faWandSparkles
-import { faGhost as faGhostAlt } from "@fortawesome/free-solid-svg-icons"; // Substitui faGhost
+import { faMagic } from "@fortawesome/free-solid-svg-icons"; // substitui faWandSparkles
+import { faGhost as faGhostAlt } from "@fortawesome/free-solid-svg-icons"; // substitui faGhost
 
 const categories = [
   { label: "Todos os Jogos", value: "all", icon: faGamepad },
@@ -46,17 +39,13 @@ const categories = [
 ];
 
 export default function SidebarFilters({
-  onCategoryChange,
-  onPriceChange,
-  onPlatformsChange,
-  onShowDiscountsChange,
   onApplyFilters,
   initialFilters,
 }) {
   const [selectedCategory, setSelectedCategory] = useState(
     initialFilters?.selectedCategory || "all"
   );
-  const [price, setPrice] = useState(initialFilters?.price || 300);
+ const [price, setPrice] = useState(initialFilters?.price ?? 400);
   const [platforms, setPlatforms] = useState(
     initialFilters?.platforms || {
       pc: true,
@@ -68,29 +57,51 @@ export default function SidebarFilters({
     initialFilters?.showDiscounts || false
   );
 
+  // Sempre que algum filtro mudar, chama onApplyFilters automaticamente
+  useEffect(() => {
+    onApplyFilters &&
+      onApplyFilters({
+        selectedCategory,
+        price,
+        platforms,
+        showDiscounts,
+      });
+  }, [selectedCategory, price, platforms, showDiscounts, onApplyFilters]);
+
   const handleCategoryClick = (value) => {
     setSelectedCategory(value);
-    onCategoryChange && onCategoryChange(value);
   };
 
   const handlePriceChange = (e) => {
-    const val = Number(e.target.value);
-    setPrice(val);
-    onPriceChange && onPriceChange(val);
+    setPrice(Number(e.target.value));
   };
 
   const handlePlatformChange = (e) => {
     const { id, checked } = e.target;
     const platformKey = id.replace("platform-", "");
-    const newPlatforms = { ...platforms, [platformKey]: checked };
-    setPlatforms(newPlatforms);
-    onPlatformsChange && onPlatformsChange(newPlatforms);
+    setPlatforms((prev) => ({ ...prev, [platformKey]: checked }));
   };
 
   const handleShowDiscountsChange = (e) => {
-    const checked = e.target.checked;
-    setShowDiscounts(checked);
-    onShowDiscountsChange && onShowDiscountsChange(checked);
+    setShowDiscounts(e.target.checked);
+  };
+
+  const handleResetFilters = () => {
+    const reset = {
+      selectedCategory: "all",
+      price: 400,
+      platforms: { pc: true, playstation: true, xbox: true },
+      showDiscounts: false,
+    };
+    setSelectedCategory(reset.selectedCategory);
+    setPrice(reset.price);
+    setPlatforms(reset.platforms);
+    setShowDiscounts(reset.showDiscounts);
+
+    // Como a atualização do estado é async, garante o apply com timeout zero
+    setTimeout(() => {
+      onApplyFilters && onApplyFilters(reset);
+    }, 0);
   };
 
   return (
@@ -104,10 +115,9 @@ export default function SidebarFilters({
               <button
                 type="button"
                 onClick={() => handleCategoryClick(value)}
-                className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded ${selectedCategory === value
-                    ? "bg-blue-600 font-bold"
-                    : "hover:bg-blue-700"
-                  }`}
+                className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded ${
+                  selectedCategory === value ? "bg-blue-600 font-bold" : "hover:bg-blue-700"
+                }`}
               >
                 <FontAwesomeIcon icon={icon} className="me-2 w-5" />
                 {label}
@@ -178,53 +188,15 @@ export default function SidebarFilters({
           </label>
         </div>
 
-        {/* Botão aplicar */}
-        <button
-          onClick={() =>
-            onApplyFilters &&
-            onApplyFilters({
-              selectedCategory,
-              price,
-              platforms,
-              showDiscounts,
-            })
-          }
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded flex items-center justify-center gap-2"
-          type="button"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            viewBox="0 0 24 24"
-          >
-            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 12h18M5 16h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
-          </svg>
-          Aplicar Filtros
-        </button>
-
         {/* Botão Resetar Filtros */}
         <button
-          onClick={() =>
-            onApplyFilters &&
-            onApplyFilters({
-              selectedCategory: "all",
-              price: 300,
-              platforms: { pc: true, playstation: true, xbox: true },
-              showDiscounts: false,
-            })
-          }
+          onClick={handleResetFilters}
           className="w-full bg-red-700 hover:bg-red-900 text-white font-semibold py-2 rounded flex items-center justify-center gap-2 mt-5"
           type="button"
         >
-            <FontAwesomeIcon icon={faArrowRotateLeft} className="w-5 h-5"/>
-            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 12h18M5 16h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
+          <FontAwesomeIcon icon={faArrowRotateLeft} className="w-5 h-5" />
           Resetar filtros
         </button>
-
       </div>
     </div>
   );
