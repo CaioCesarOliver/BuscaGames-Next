@@ -86,7 +86,7 @@ export default function GamesSection() {
                             className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-[0_0_15px_5px_rgba(135,206,250,0.5)]"
                         >
                             {game.discount > 0 && (
-                                <div className="absolute top-2 left-2 bg-green-700 text-white text-xs font-bold px-2 py-1 rounded z-10 shadow">
+                                <div className="absolute top-2 right-2 bg-green-700 text-white text-base font-bold px-2 py-1 rounded z-10 shadow">
                                     -{game.discount}%
                                 </div>
                             )}
