@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function GamesSection() {
   const [games, setGames] = useState([]);
@@ -163,7 +164,9 @@ export default function GamesSection() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center">{renderStars(game.rating ?? 0)}</div>
+                    <div className="flex items-center">
+                      {renderStars(game.rating ?? 0)}
+                    </div>
                     <button
                       type="button"
                       className="bg-green-600 hover:bg-green-700 active:bg-green-800 transition-colors text-white font-semibold px-4 py-2 rounded"
@@ -175,6 +178,15 @@ export default function GamesSection() {
               </div>
             );
           })}
+        </div>
+
+        {/* Botão Ver todos os jogos */}
+        <div className="mt-12 text-center">
+          <Link href="/games" passHref>
+           <button className="bg-blue-600 hover:bg-green-500 hover:text-black text-white font-semibold px-8 py-4 rounded-lg text-xl transition-colors duration-300">
+              Ver todos os jogos
+            </button>
+          </Link>
         </div>
       </div>
     </section>

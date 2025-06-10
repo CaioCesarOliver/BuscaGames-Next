@@ -47,7 +47,7 @@ export function DailyQuests() {
           <div className="text-center">
             <a
               href="/games"
-              className="inline-block bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-2 px-6 rounded-lg transition"
+              className="inline-block bg-blue-600 hover:bg-green-500 hover:text-black active:bg-blue-800 text-white font-semibold py-2 px-6 rounded-lg transition"
             >
               Iniciar Missão
             </a>
@@ -111,7 +111,7 @@ export function Newsletter() {
               </label>
               <button
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 rounded-lg flex justify-center items-center gap-2 transition"
+                className="w-full bg-blue-600 hover:bg-green-500 hover:text-black active:bg-blue-800 text-white font-semibold py-3 rounded-lg flex justify-center items-center gap-2 transition"
               >
                 <FaEnvelope />
                 Inscrever-se
