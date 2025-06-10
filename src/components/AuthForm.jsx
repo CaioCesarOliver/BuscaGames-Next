@@ -214,8 +214,8 @@ export default function AuthForm() {
           <li className="mr-4 flex-shrink-0">
             <button
               className={`py-2 px-5 font-semibold transition-colors whitespace-nowrap ${mode === "login"
-                  ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
-                  : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
+                ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
+                : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
                 }`}
               onClick={() => setMode("login")}
               type="button"
@@ -227,8 +227,8 @@ export default function AuthForm() {
           <li className="flex-shrink-0">
             <button
               className={`py-2 px-5 font-semibold transition-colors whitespace-nowrap ${mode === "signup"
-                  ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
-                  : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
+                ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
+                : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
                 }`}
               onClick={() => setMode("signup")}
               type="button"
@@ -286,6 +286,22 @@ export default function AuthForm() {
                 >
                   <FontAwesomeIcon icon={showLoginPwd ? faEyeSlash : faEye} />
                 </button>
+
+                <div className="flex items-center justify-between my-4 text-sm text-purple-900 dark:text-white">
+                  <label className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      className="form-checkbox h-4 w-4 text-purple-700 dark:text-purple-400"
+                    />
+                    <span>Lembrar-me</span>
+                  </label>
+                  <a
+                    href="#"
+                    className="text-purple-700 dark:text-purple-400 hover:underline"
+                  >
+                    Esqueceu a senha?
+                  </a>
+                </div>
               </div>
             </div>
 
