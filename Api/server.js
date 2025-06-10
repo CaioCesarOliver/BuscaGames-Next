@@ -82,26 +82,20 @@ app.get('/games', async (req, res) => {
 
 app.get('/games', async (req, res) => {
     try {
-        // Recebe filtros via query params
         const { genres, platform, minPrice, maxPrice, discount } = req.query;
 
-        // Monta o filtro dinamicamente
         const filters = {};
 
-        // Filtro por gêneros (array ou string separados por vírgula)
+        // Filtro por gêneros (array ou string com vírgula)
         if (genres) {
             const genresArray = Array.isArray(genres) ? genres : genres.split(',');
-            filters.genres = {
-                hasSome: genresArray,
-            };
+            filters.genres = { hasSome: genresArray };
         }
 
-        // Filtro por plataformas (array ou string separados por vírgula)
+        // Filtro por plataformas (array ou string com vírgula)
         if (platform) {
             const platformsArray = Array.isArray(platform) ? platform : platform.split(',');
-            filters.platforms = {
-                hasSome: platformsArray,
-            };
+            filters.platforms = { hasSome: platformsArray };
         }
 
         // Filtro por faixa de preço
@@ -111,14 +105,11 @@ app.get('/games', async (req, res) => {
             if (maxPrice) filters.price.lte = Number(maxPrice);
         }
 
-        // Filtro por desconto mínimo
+        // Filtro por desconto mínimo (ex: desconto=1 filtra todos que tenham algum desconto)
         if (discount) {
-            filters.discount = {
-                gte: Number(discount),
-            };
+            filters.discount = { gte: Number(discount) };
         }
 
-        // Busca jogos com filtros aplicados
         const games = await prisma.game.findMany({
             where: filters,
         });

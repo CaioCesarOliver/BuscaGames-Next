@@ -40,7 +40,7 @@ export default function LoginPage() {
           </div>
 
           {/* Lado direito - formulário */}
-          <div className="flex-1 max-w-md">
+          <div className="flex-1 max-w-5xl">
             <AuthForm />
           </div>
         </div>
