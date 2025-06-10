@@ -137,7 +137,7 @@ export default function ContatoForm() {
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 dark:bg-indigo-500 text-white hover:bg-green-500 hover:text-black transition-colors font-semibold py-3 rounded-md shadow-md flex items-center justify-center gap-2"
+            className="w-full bg-indigo-500 text-white hover:bg-green-500 hover:text-black transition-colors font-semibold py-3 rounded-md shadow-md flex items-center justify-center gap-2"
           >
             <FontAwesomeIcon icon={faPaperPlane} />
             Enviar Mensagem

@@ -1,222 +1,231 @@
-"use client";
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faGamepad,
+  faRunning,
+  faMountain,
+  faHatWizard,
+  faFootballBall,
+  faTractor,
+  faCrosshairs,
+  faChess,
+  faPuzzlePiece,
+  faLightbulb,
+  faFistRaised,
+  faHatCowboy,
+  faBiohazard,
+  faArrowRotateLeft
+} from "@fortawesome/free-solid-svg-icons";
 
-import { useState, useEffect } from "react";
-import SidebarFilters from "./SidebarFilters"; // Ajuste o caminho conforme seu projeto
+import {
+  faWandSparkles,
+  faGhost,
+} from "@fortawesome/free-solid-svg-icons"; // Aqui tá no "solid", faWandSparkles e faGhost fazem parte do pacote pro, mas vamos usar solid ou parecidos.
 
-export default function GamesPage() {
-  const [filters, setFilters] = useState({
-    selectedCategory: "all",
-    price: 300,
-    platforms: {
+// Obs: faWandSparkles e faGhost são do Font Awesome 6+ e parte do Pro, então podemos usar faMagic ou faGhost do free, se tiver.
+
+import { faMagic } from "@fortawesome/free-solid-svg-icons"; // Substitui faWandSparkles
+import { faGhost as faGhostAlt } from "@fortawesome/free-solid-svg-icons"; // Substitui faGhost
+
+const categories = [
+  { label: "Todos os Jogos", value: "all", icon: faGamepad },
+  { label: "Ação", value: "Ação", icon: faRunning },
+  { label: "Aventura", value: "Aventura", icon: faMountain },
+  { label: "RPG", value: "RPG", icon: faHatWizard },
+  { label: "Fantasia", value: "Fantasia", icon: faMagic },
+  { label: "Esportes", value: "Esportes", icon: faFootballBall },
+  { label: "Simulação", value: "Simulação", icon: faTractor },
+  { label: "Tiro", value: "Tiro", icon: faCrosshairs },
+  { label: "Estratégia", value: "Estratégia", icon: faChess },
+  { label: "Puzzle", value: "Puzzle", icon: faPuzzlePiece },
+  { label: "Indie", value: "Indie", icon: faLightbulb },
+  { label: "Luta", value: "Luta", icon: faFistRaised },
+  { label: "Velho Oeste", value: "Velho Oeste", icon: faHatCowboy },
+  { label: "Zumbis", value: "Zumbis", icon: faBiohazard },
+  { label: "Terror", value: "Terror", icon: faGhostAlt },
+];
+
+export default function SidebarFilters({
+  onCategoryChange,
+  onPriceChange,
+  onPlatformsChange,
+  onShowDiscountsChange,
+  onApplyFilters,
+  initialFilters,
+}) {
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialFilters?.selectedCategory || "all"
+  );
+  const [price, setPrice] = useState(initialFilters?.price || 300);
+  const [platforms, setPlatforms] = useState(
+    initialFilters?.platforms || {
       pc: true,
       playstation: true,
       xbox: true,
-    },
-    showDiscounts: false,
-  });
+    }
+  );
+  const [showDiscounts, setShowDiscounts] = useState(
+    initialFilters?.showDiscounts || false
+  );
 
-  const [games, setGames] = useState([]);
-
-  // Função para receber os filtros atualizados da sidebar
-  const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
+  const handleCategoryClick = (value) => {
+    setSelectedCategory(value);
+    onCategoryChange && onCategoryChange(value);
   };
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        // Montar query string para filtro
-        const query = new URLSearchParams();
+  const handlePriceChange = (e) => {
+    const val = Number(e.target.value);
+    setPrice(val);
+    onPriceChange && onPriceChange(val);
+  };
 
-        // Categoria (gênero)
-        if (filters.selectedCategory && filters.selectedCategory !== "all") {
-          query.append("genres", filters.selectedCategory);
-        }
+  const handlePlatformChange = (e) => {
+    const { id, checked } = e.target;
+    const platformKey = id.replace("platform-", "");
+    const newPlatforms = { ...platforms, [platformKey]: checked };
+    setPlatforms(newPlatforms);
+    onPlatformsChange && onPlatformsChange(newPlatforms);
+  };
 
-        // Plataformas: enviar só as selecionadas
-        const selectedPlatforms = Object.entries(filters.platforms)
-          .filter(([, value]) => value)
-          .map(([key]) => key);
-
-        if (selectedPlatforms.length > 0 && selectedPlatforms.length < 3) {
-          // só envia se não for todas as plataformas
-          query.append("platform", selectedPlatforms.join(","));
-        }
-
-        // Preço máximo
-        if (filters.price !== 300) {
-          query.append("maxPrice", filters.price.toString());
-        }
-
-        // Desconto mínimo 1% se marcar apenas descontos
-        if (filters.showDiscounts) {
-          query.append("discount", "1");
-        }
-
-        const url = `http://localhost:4000/games?${query.toString()}`;
-
-        const res = await fetch(url);
-        const data = await res.json();
-        setGames(data);
-      } catch (error) {
-        console.error("Erro ao buscar os jogos:", error);
-      }
-    };
-
-    fetchGames();
-  }, [filters]);
+  const handleShowDiscountsChange = (e) => {
+    const checked = e.target.checked;
+    setShowDiscounts(checked);
+    onShowDiscountsChange && onShowDiscountsChange(checked);
+  };
 
   return (
-    <div className="flex gap-8 p-8">
-      <SidebarFilters
-        onApplyFilters={handleApplyFilters}
-        initialFilters={filters}
-      />
-      <GamesSection games={games} />
-    </div>
-  );
-}
+    <div className="p-6 bg-zinc-800 rounded-lg text-white w-56">
+      {/* Categorias */}
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-4">Categorias</h3>
+        <ul className="space-y-2">
+          {categories.map(({ label, value, icon }) => (
+            <li key={value}>
+              <button
+                type="button"
+                onClick={() => handleCategoryClick(value)}
+                className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded ${selectedCategory === value
+                    ? "bg-blue-600 font-bold"
+                    : "hover:bg-blue-700"
+                  }`}
+              >
+                <FontAwesomeIcon icon={icon} className="me-2 w-5" />
+                {label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-// GamesSection modificado para receber games como prop
-function GamesSection({ games }) {
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+      {/* Filtros */}
+      <div>
+        <h3 className="text-xl font-semibold mb-4">Filtros</h3>
 
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <svg
-          key={`full-${i}`}
-          className="w-5 h-5 text-yellow-400 inline-block"
-          fill="currentColor"
-          viewBox="0 0 20 20"
+        {/* Preço */}
+        <div className="mb-6">
+          <label htmlFor="priceRange" className="block mb-2 font-medium">
+            Preço máximo: R$ {price}
+          </label>
+          <input
+            id="priceRange"
+            type="range"
+            min="0"
+            max="300"
+            value={price}
+            onChange={handlePriceChange}
+            className="w-full accent-blue-600 cursor-pointer"
+          />
+          <div className="flex justify-between text-sm mt-1">
+            <span>R$ 0</span>
+            <span>R$ 300</span>
+          </div>
+        </div>
+
+        {/* Plataformas */}
+        <div className="mb-6">
+          <label className="block mb-2 font-medium">Plataforma</label>
+          <div className="flex flex-col gap-2">
+            {["pc", "playstation", "xbox"].map((platform) => (
+              <label
+                key={platform}
+                htmlFor={`platform-${platform}`}
+                className="inline-flex items-center gap-2 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  id={`platform-${platform}`}
+                  checked={platforms[platform]}
+                  onChange={handlePlatformChange}
+                  className="accent-blue-600 cursor-pointer"
+                />
+                <span className="capitalize">{platform}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Apenas descontos */}
+        <div className="mb-6">
+          <label className="inline-flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              id="show-discounts"
+              checked={showDiscounts}
+              onChange={handleShowDiscountsChange}
+              className="accent-blue-600 cursor-pointer"
+            />
+            <span>Apenas descontos</span>
+          </label>
+        </div>
+
+        {/* Botão aplicar */}
+        <button
+          onClick={() =>
+            onApplyFilters &&
+            onApplyFilters({
+              selectedCategory,
+              price,
+              platforms,
+              showDiscounts,
+            })
+          }
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded flex items-center justify-center gap-2"
+          type="button"
         >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.384 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.538 1.118L10 13.347l-3.384 2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 1 0 00-.364-1.118L3.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z" />
-        </svg>
-      );
-    }
-    if (halfStar) {
-      stars.push(
-        <svg
-          key="half"
-          className="w-5 h-5 text-yellow-400 inline-block"
-          fill="currentColor"
-          viewBox="0 0 20 20"
-        >
-          <path d="M10 15.27l-5.18 3.03 1.11-6.49L.45 7.97l6.53-.95L10 1l2.99 5.02 6.53.95-4.52 4.84 1.11 6.49z" />
-        </svg>
-      );
-    }
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <svg
-          key={`empty-${i}`}
-          className="w-5 h-5 text-gray-500 inline-block"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-        >
-          <path
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.384 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.538 1.118L12 13.347l-3.384 2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 1 0 00-.364-1.118L4.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z"
-          />
-        </svg>
-      );
-    }
+            viewBox="0 0 24 24"
+          >
+            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 12h18M5 16h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
+          </svg>
+          Aplicar Filtros
+        </button>
 
-    return stars;
-  };
+        {/* Botão Resetar Filtros */}
+        <button
+          onClick={() =>
+            onApplyFilters &&
+            onApplyFilters({
+              selectedCategory: "all",
+              price: 300,
+              platforms: { pc: true, playstation: true, xbox: true },
+              showDiscounts: false,
+            })
+          }
+          className="w-full bg-red-700 hover:bg-red-900 text-white font-semibold py-2 rounded flex items-center justify-center gap-2 mt-5"
+          type="button"
+        >
+            <FontAwesomeIcon icon={faArrowRotateLeft} className="w-5 h-5"/>
+            <path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 12h18M5 16h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z" />
+          Resetar filtros
+        </button>
 
-  return (
-    <section className="flex-1 py-16 px-4 transition-colors duration-500">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {games.map((game) => {
-          const imageUrl = game.image
-            ? `http://localhost:4000/${encodeURI(game.image)}`
-            : "/fallback-image.png";
-
-          return (
-            <div
-              key={game.id}
-              className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-[0_0_15px_5px_rgba(135,206,250,0.5)]"
-            >
-              {game.discount > 0 && (
-                <div className="absolute top-2 right-2 bg-green-700 text-white text-base font-bold px-2 py-1 rounded z-10 shadow">
-                  -{game.discount}%
-                </div>
-              )}
-
-              <img
-                src={imageUrl}
-                alt={game.title ?? "Game image"}
-                className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110 group-hover:blur-sm"
-                loading="lazy"
-              />
-
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="w-full h-full bg-black bg-opacity-75 opacity-0 group-hover:opacity-70 transition-opacity duration-300"></div>
-              </div>
-
-              <div className="absolute inset-0 flex flex-col justify-between p-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <h3 className="text-xl font-semibold mb-2">
-                  {game.title ?? "Título não disponível"}
-                </h3>
-
-                <div className="mb-2 flex items-center gap-3">
-                  {game.discount > 0 ? (
-                    <>
-                      <span className="line-through text-gray-400 text-sm">
-                        R$ {game.originalPrice?.toFixed(2)}
-                      </span>
-                      <span className="text-green-400 font-bold text-lg">
-                        R$ {game.price?.toFixed(2)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-green-400 font-bold text-lg">
-                      R$ {game.price?.toFixed(2)}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {game.genres?.map((genre, idx) => (
-                    <span
-                      key={idx}
-                      className="bg-blue-600 text-sm px-2 py-1 rounded-full"
-                    >
-                      {genre}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img
-                      src={`/icons/${game.platform}.svg`}
-                      alt={game.platform}
-                      className="w-6 h-6"
-                      loading="lazy"
-                    />
-                    <span className="text-sm">{game.platform}</span>
-                  </div>
-
-                  <div className="flex items-center gap-1">
-                    {renderStars(game.rating)}
-                    <span className="ml-1 text-sm">
-                      ({game.rating.toFixed(1)})
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
       </div>
-    </section>
+    </div>
   );
 }
