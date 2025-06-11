@@ -1,4 +1,4 @@
-import { FaHeart, FaSkull, FaCalendar, FaCheckCircle, FaSpinner, FaShoppingCart, FaSearch } from "react-icons/fa";
+import { FaHeart, FaSkull, FaCalendar, FaCheckCircle, FaSpinner, FaShoppingCart, FaSearch, FaTrophy, FaCommentAlt, FaShareAlt, FaUsers } from "react-icons/fa";
 
 const iconMap = {
   heart: FaHeart,
@@ -6,6 +6,10 @@ const iconMap = {
   calendar: FaCalendar,
   cart: FaShoppingCart,
   lupa: FaSearch,
+  trophy: FaTrophy,
+  chat: FaCommentAlt,
+  share: FaShareAlt,
+  users: FaUsers
 };
 
 export default function QuestCard({ quest }) {

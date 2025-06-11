@@ -37,6 +37,11 @@ model Game {
   tags          String[]
 }
 
+enum QuestType {
+  DAILY
+  WEEKLY
+}
+
 model Quest {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
@@ -45,6 +50,7 @@ model Quest {
   progress    Int?    
   totalSteps  Int?     
   iconName    String?   
+  type        QuestType?
   createdAt   DateTime @default(now())
 }
 

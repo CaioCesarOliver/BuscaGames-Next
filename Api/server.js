@@ -13,31 +13,20 @@ app.use(express.json());
 const authRoutes = require('./auth/validation');
 app.use('/api/auth', authRoutes);
 
-// Servir imagens estáticas
 app.use('/upload', express.static(path.join(__dirname, 'upload')));
 
-// Criar um novo jogo
+// Criar jogo
 app.post('/games', async (req, res) => {
     const {
-        title,
-        description,
-        image,
-        price,
-        originalPrice,
-        rating,
-        platforms,
-        genres,
-        releaseDate,
-        developer,
-        publisher,
-        tags,
+        title, description, image, price, originalPrice,
+        rating, platforms, genres, releaseDate,
+        developer, publisher, tags,
     } = req.body;
 
     if (!title || !description || !image || price == null) {
         return res.status(400).json({ error: 'Campos obrigatórios ausentes: title, description, image e price' });
     }
 
-    // Calcula o desconto com base no preço e preço original
     const discount = (originalPrice && price && originalPrice > price)
         ? Math.round(((originalPrice - price) / originalPrice) * 100)
         : 0;
@@ -60,7 +49,6 @@ app.post('/games', async (req, res) => {
                 tags,
             },
         });
-
         res.status(201).json(newGame);
     } catch (error) {
         console.error('Erro ao criar jogo:', error);
@@ -68,52 +56,33 @@ app.post('/games', async (req, res) => {
     }
 });
 
-
-// Buscar todos os jogos
-app.get('/games', async (req, res) => {
-    try {
-        const games = await prisma.game.findMany();
-        res.json(games);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Erro ao buscar jogos' });
-    }
-});
-
+// Buscar jogos com filtros
 app.get('/games', async (req, res) => {
     try {
         const { genres, platform, minPrice, maxPrice, discount } = req.query;
-
         const filters = {};
 
-        // Filtro por gêneros (array ou string com vírgula)
         if (genres) {
             const genresArray = Array.isArray(genres) ? genres : genres.split(',');
             filters.genres = { hasSome: genresArray };
         }
 
-        // Filtro por plataformas (array ou string com vírgula)
         if (platform) {
             const platformsArray = Array.isArray(platform) ? platform : platform.split(',');
             filters.platforms = { hasSome: platformsArray };
         }
 
-        // Filtro por faixa de preço
         if (minPrice || maxPrice) {
             filters.price = {};
             if (minPrice) filters.price.gte = Number(minPrice);
             if (maxPrice) filters.price.lte = Number(maxPrice);
         }
 
-        // Filtro por desconto mínimo (ex: desconto=1 filtra todos que tenham algum desconto)
         if (discount) {
             filters.discount = { gte: Number(discount) };
         }
 
-        const games = await prisma.game.findMany({
-            where: filters,
-        });
-
+        const games = await prisma.game.findMany({ where: filters });
         res.json(games);
     } catch (error) {
         console.error('Erro ao buscar jogos com filtros:', error);
@@ -121,24 +90,12 @@ app.get('/games', async (req, res) => {
     }
 });
 
-// Atualizar um jogo pelo ID
+// Atualizar jogo
 app.put('/games/:id', async (req, res) => {
     const { id } = req.params;
-
     const {
-        title,
-        description,
-        image,
-        price,
-        originalPrice,
-        discount,
-        rating,
-        platforms,
-        genres,
-        releaseDate,
-        developer,
-        publisher,
-        tags
+        title, description, image, price, originalPrice, discount,
+        rating, platforms, genres, releaseDate, developer, publisher, tags
     } = req.body;
 
     if (!title || !description || !image) {
@@ -164,7 +121,6 @@ app.put('/games/:id', async (req, res) => {
                 tags
             }
         });
-
         res.json(updatedGame);
     } catch (error) {
         console.error('Erro ao atualizar jogo:', error);
@@ -172,14 +128,11 @@ app.put('/games/:id', async (req, res) => {
     }
 });
 
-// Deletar um jogo pelo ID
+// Deletar jogo
 app.delete('/games/:id', async (req, res) => {
     const { id } = req.params;
-
     try {
-        await prisma.game.delete({
-            where: { id }
-        });
+        await prisma.game.delete({ where: { id } });
         res.json({ message: 'Jogo removido com sucesso' });
     } catch (error) {
         console.error(error);
@@ -187,24 +140,20 @@ app.delete('/games/:id', async (req, res) => {
     }
 });
 
-// Criar nova quest
+// Criar quest
 app.post('/quests', async (req, res) => {
-    const { title, description, points, progress = 0, totalSteps = 1, iconName = "heart" } = req.body;
+    const { title, description, points, progress = 0, totalSteps = 1, iconName = "heart", type } = req.body;
 
-    if (!title || !description || points == null) {
-        return res.status(400).json({ error: 'Campos obrigatórios ausentes: title, description e points' });
+    if (!title || !description || points == null || !type) {
+        return res.status(400).json({ error: 'Campos obrigatórios: title, description, points e type' });
+    }
+    if (!['DAILY', 'WEEKLY'].includes(type)) {
+        return res.status(400).json({ error: 'O campo "type" deve ser DAILY ou WEEKLY.' });
     }
 
     try {
         const newQuest = await prisma.quest.create({
-            data: {
-                title,
-                description,
-                points,
-                progress,
-                totalSteps,
-                iconName,
-            },
+            data: { title, description, points, progress, totalSteps, iconName, type }
         });
         res.status(201).json(newQuest);
     } catch (error) {
@@ -213,46 +162,68 @@ app.post('/quests', async (req, res) => {
     }
 });
 
-// Listar todas as quests
+// Listar quests
 app.get('/quests', async (req, res) => {
     try {
         const quests = await prisma.quest.findMany();
-        res.json(quests);
+        const formatted = quests.map(q => ({
+            id: q.id,
+            title: q.title,
+            description: q.description,
+            points: q.points,
+            progress: q.progress,
+            totalSteps: q.totalSteps,
+            status: q.progress >= q.totalSteps ? 'complete' : 'in_progress',
+            iconName: q.iconName,
+            type: q.type
+        }));
+        res.json(formatted);
     } catch (error) {
         console.error('Erro ao buscar quests:', error);
         res.status(500).json({ error: 'Erro ao buscar quests' });
     }
 });
 
-// Atualizar uma quest pelo ID
+// Atualizar quest
 app.put('/quests/:id', async (req, res) => {
     const { id } = req.params;
-    const { title, description, points } = req.body;
+    const { title, description, points, progress, totalSteps, iconName, type } = req.body;
 
-    if (!title || !description || points == null) {
-        return res.status(400).json({ error: 'Campos obrigatórios ausentes: title, description e points' });
+    if (
+        !title ||
+        !description ||
+        points == null ||
+        progress == null ||
+        totalSteps == null ||
+        !iconName ||
+        !type
+    ) {
+        return res.status(400).json({ error: 'Campos obrigatórios ausentes: title, description, points, progress, totalSteps, iconName e type' });
+    }
+    if (!['DAILY', 'WEEKLY'].includes(type)) {
+        return res.status(400).json({ error: 'O campo "type" deve ser DAILY ou WEEKLY.' });
     }
 
     try {
         const updatedQuest = await prisma.quest.update({
             where: { id },
-            data: { title, description, points },
+            data: { title, description, points, progress, totalSteps, iconName, type }
         });
         res.json(updatedQuest);
     } catch (error) {
         console.error('Erro ao atualizar quest:', error);
+        if (error.code === 'P2025') {
+            return res.status(404).json({ error: 'Quest não encontrada.' });
+        }
         res.status(500).json({ error: 'Erro ao atualizar a quest', details: error.message });
     }
 });
 
-// Deletar uma quest pelo ID
+// Deletar quest
 app.delete('/quests/:id', async (req, res) => {
     const { id } = req.params;
-
     try {
-        await prisma.quest.delete({
-            where: { id }
-        });
+        await prisma.quest.delete({ where: { id } });
         res.json({ message: 'Quest removida com sucesso' });
     } catch (error) {
         console.error('Erro ao deletar quest:', error);
