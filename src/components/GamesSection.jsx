@@ -106,6 +106,7 @@ export default function GamesSection({
   const [games, setGames] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [previewGame, setPreviewGame] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -294,75 +295,81 @@ export default function GamesSection({
           </div>
 
           {previewGame && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-6"
-              onClick={() => setPreviewGame(null)}
-            >
+            <>
               <div
-                className="bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden max-w-5xl w-full max-h-[80vh] flex flex-col"
-                onClick={(e) => e.stopPropagation()}
+                className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-40"
+                onClick={() => setIsModalOpen(false)} // clicar no fundo fecha a modal
+              ></div>
+              <div
+                className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-6"
+                onClick={() => setPreviewGame(null)}
               >
-                {/* Conteúdo da imagem com título e badges */}
-                <div className="relative h-1/2 w-full flex">
-                  <img
-                    src={previewGame.image ? `http://localhost:4000/${encodeURI(previewGame.image)}` : "/fallback-image.png"}
-                    alt={previewGame.title}
-                    className="object-cover w-full h-full"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/65 pointer-events-none"></div>
+                <div
+                  className="bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Conteúdo da imagem com título e badges */}
+                  <div className="relative h-1/2 w-full flex">
+                    <img
+                      src={previewGame.image ? `http://localhost:4000/${encodeURI(previewGame.image)}` : "/fallback-image.png"}
+                      alt={previewGame.title}
+                      className="object-cover w-full h-full"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/65 pointer-events-none"></div>
 
-                  <div className="absolute bottom-4 left-4 rounded-lg p-4 max-w-[60%]">
-                    <h2 className="text-white text-3xl font-bold mb-2">{previewGame.title}</h2>
-                    <div className="flex flex-wrap gap-2 text-sm text-gray-300">
-                      <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
-                        <FontAwesomeIcon icon={faStar} className="mr-1" /> {previewGame.rating || "N/A"}
-                      </span>
-                      <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
-                        <FontAwesomeIcon icon={faGamepad} className="mr-1" /> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
-                      </span>
-                      <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
-                        <FontAwesomeIcon icon={faCalendar} className="mr-1" /> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
-                      </span>
+                    <div className="absolute bottom-4 left-4 rounded-lg p-4 max-w-[60%]">
+                      <h2 className="text-white text-3xl font-bold mb-2">{previewGame.title}</h2>
+                      <div className="flex flex-wrap gap-2 text-sm text-gray-300">
+                        <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
+                          <FontAwesomeIcon icon={faStar} className="mr-1" /> {previewGame.rating || "N/A"}
+                        </span>
+                        <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
+                          <FontAwesomeIcon icon={faGamepad} className="mr-1" /> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
+                        </span>
+                        <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
+                          <FontAwesomeIcon icon={faCalendar} className="mr-1" /> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Descrição */}
+                  <div className="p-6 overflow-auto flex-grow text-purple-950 dark:text-gray-300">
+                    <h3 className="text-2xl font-semibold mb-2">Descrição</h3>
+                    <p className="text-lg">{previewGame.description || "Descrição não disponível."}</p>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex justify-between items-center p-6 border-t border-gray-700">
+                    <div className="flex flex-row gap-4">
+                      {previewGame.discount > 0 && (
+                        <span className="line-through text-gray-400">R$ {previewGame.originalPrice.toFixed(2)}</span>
+                      )}
+                      <span className="text-green-600 dark:text-green-400 font-bold text-3xl">R$ {previewGame.price.toFixed(2)}</span>
+                    </div>
+
+                    <div className="flex gap-4 ">
+                      <button
+                        type="button"
+                        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
+                      >
+                        + Carrinho
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => toggleFavorite(previewGame.id)}
+                        aria-label={favorites.includes(previewGame.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                        className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
+                      >
+                        <HeartIcon filled={favorites.includes(previewGame.id)} />
+                      </button>
                     </div>
                   </div>
                 </div>
-
-                {/* Descrição */}
-                <div className="p-6 overflow-auto flex-grow text-purple-950 dark:text-gray-300">
-                  <h3 className="text-xl font-semibold mb-2">Descrição</h3>
-                  <p>{previewGame.description || "Descrição não disponível."}</p>
-                </div>
-
-                {/* Footer */}
-                <div className="flex justify-between items-center p-6 border-t border-gray-700">
-                  <div className="flex flex-row gap-4">
-                    {previewGame.discount > 0 && (
-                      <span className="line-through text-gray-400">R$ {previewGame.originalPrice.toFixed(2)}</span>
-                    )}
-                    <span className="text-green-600 dark:text-green-400 font-bold text-3xl">R$ {previewGame.price.toFixed(2)}</span>
-                  </div>
-
-                  <div className="flex gap-4 ">
-                    <button
-                      type="button"
-                      className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
-                    >
-                      + Carrinho
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleFavorite(previewGame.id)}
-                      aria-label={favorites.includes(previewGame.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                      className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
-                    >
-                      <HeartIcon filled={favorites.includes(previewGame.id)} />
-                    </button>
-                  </div>
-                </div>
               </div>
-            </div>
+            </>
           )}
         </>
       )}
