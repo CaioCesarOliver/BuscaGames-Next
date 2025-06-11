@@ -21,6 +21,11 @@ export default function AuthForm() {
   const [showSignupPwd, setShowSignupPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
+  const [username, setUsername] = useState("");
+
+  const [usernameAvailable, setUsernameAvailable] = useState(null);
+  const [usernameError, setUsernameError] = useState("");
+
   const [loginUser, setLoginUser] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
@@ -304,41 +309,69 @@ export default function AuthForm() {
             </form>
           ) : (
             <form id="signupForm" className="space-y-6" onSubmit={handleSignup}>
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-purple-900 dark:text-white font-medium mb-1"
-                >
-                  Primeiro Nome *
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-                  placeholder="Seu primeiro nome"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                />
+              <div className="flex space-x-4">
+                <div className="flex-1">
+                  <label
+                    htmlFor="firstName"
+                    className="block text-purple-900 dark:text-white font-medium mb-1"
+                  >
+                    Nome *
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                    placeholder="Seu primeiro nome"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <label
+                    htmlFor="lastName"
+                    className="block text-purple-900 dark:text-white font-medium mb-1"
+                  >
+                    Sobrenome *
+                  </label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                    placeholder="Seu sobrenome"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
 
               <div>
                 <label
-                  htmlFor="lastName"
+                  htmlFor="username"
                   className="block text-purple-900 dark:text-white font-medium mb-1"
                 >
-                  Sobrenome *
+                  Usuário *
                 </label>
                 <input
                   type="text"
-                  id="lastName"
+                  id="username"
                   className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                   placeholder="Seu sobrenome"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  onBlur={() => {
+                    if (username.length >= 3) {
+                      checkUsernameExists(username);
+                    } else {
+                      setUsernameAvailable(null);
+                    }
+                  }}
                   required
                 />
               </div>
+
 
               <div>
                 <label
