@@ -6,6 +6,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoon,
+  faSun,
   faShoppingCart,
   faSignInAlt,
   faHome,
@@ -91,7 +92,7 @@ export default function Nav() {
               className="transition hover:text-purple-700 text-purple-900 dark:text-white"
               onClick={toggleTheme}
             >
-              <FontAwesomeIcon icon={faMoon} />
+              <FontAwesomeIcon icon={theme === "light" ? faMoon : faSun} />
             </button>
 
             {/* Cart */}

@@ -11,14 +11,24 @@ const StarFull = () => (
 );
 
 const StarHalf = () => (
-  <svg className="w-5 h-5 text-yellow-400 inline-block" fill="currentColor" viewBox="0 0 20 20">
+  <svg className="w-5 h-5 text-yellow-400 inline-block" viewBox="0 0 20 20">
     <defs>
-      <linearGradient id="half-grad">
+      <linearGradient id="half-grad" x1="0%" y1="0%" x2="100%" y2="0%">
         <stop offset="50%" stopColor="currentColor" />
         <stop offset="50%" stopColor="transparent" />
       </linearGradient>
     </defs>
-    <path fill="url(#half-grad)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0..." />
+    <path
+      fill="url(#half-grad)"
+      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 
+         1 0 00.95.69h4.178c.969 0 1.371 1.24.588 
+         1.81l-3.384 2.455a1 1 0 00-.364 
+         1.118l1.287 3.966c.3.922-.755 
+         1.688-1.538 1.118L10 13.347l-3.384 
+         2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 
+         1 0 00-.364-1.118L3.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 
+         1 0 00.95-.69l1.286-3.967z"
+    />
   </svg>
 );
 
@@ -278,148 +288,7 @@ export default function GamesSection({
               );
             })}
           </div>
-          {previewGame && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-6"
-              onClick={() => setPreviewGame(null)}
-            >
-              <div
-                className="bg-gray-900 rounded-lg overflow-hidden max-w-5xl w-full max-h-[80vh] flex flex-col"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Conteúdo da imagem com título e badges */}
-                <div className="relative h-1/2 w-full flex">
-                  <img
-                    src={previewGame.image ? `http://localhost:4000/${encodeURI(previewGame.image)}` : "/fallback-image.png"}
-                    alt={previewGame.title}
-                    className="object-cover w-full"
-                    style={{ height: "100%" }}
-                    loading="lazy"
-                  />
 
-                  <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 rounded p-4 max-w-[60%]">
-                    <h2 className="text-white text-3xl font-bold mb-2">{previewGame.title}</h2>
-                    <div className="flex flex-wrap gap-2 text-sm text-gray-300">
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-star"></i> {previewGame.rating || "N/A"}
-                      </span>
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-gamepad"></i> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
-                      </span>
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-calendar"></i> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Descrição */}
-                <div className="p-6 overflow-auto flex-grow text-gray-300">
-                  <h3 className="text-xl font-semibold mb-2">Descrição</h3>
-                  <p>{previewGame.description || "Descrição não disponível."}</p>
-                </div>
-
-                {/* Footer */}
-                <div className="flex justify-between items-center p-6 border-t border-gray-700">
-                  <div className="flex flex-col">
-                    {previewGame.discount > 0 && (
-                      <span className="line-through text-gray-400">R$ {previewGame.originalPrice.toFixed(2)}</span>
-                    )}
-                    <span className="text-green-400 font-bold text-lg">R$ {previewGame.price.toFixed(2)}</span>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
-                    >
-                      + Carrinho
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleFavorite(previewGame.id)}
-                      aria-label={favorites.includes(previewGame.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                      className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
-                    >
-                      <HeartIcon filled={favorites.includes(previewGame.id)} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          {previewGame && (
-            <div
-              className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-6"
-              onClick={() => setPreviewGame(null)}
-            >
-              <div
-                className="bg-gray-900 rounded-lg overflow-hidden max-w-5xl w-full max-h-[80vh] flex flex-col"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Conteúdo da imagem com título e badges */}
-                <div className="relative h-1/2 w-full flex">
-                  <img
-                    src={previewGame.image ? `http://localhost:4000/${encodeURI(previewGame.image)}` : "/fallback-image.png"}
-                    alt={previewGame.title}
-                    className="object-cover w-full"
-                    style={{ height: "100%" }}
-                    loading="lazy"
-                  />
-
-                  <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 rounded p-4 max-w-[60%]">
-                    <h2 className="text-white text-3xl font-bold mb-2">{previewGame.title}</h2>
-                    <div className="flex flex-wrap gap-2 text-sm text-gray-300">
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-star"></i> {previewGame.rating || "N/A"}
-                      </span>
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-gamepad"></i> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
-                      </span>
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-calendar"></i> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Descrição */}
-                <div className="p-6 overflow-auto flex-grow text-gray-300">
-                  <h3 className="text-xl font-semibold mb-2">Descrição</h3>
-                  <p>{previewGame.description || "Descrição não disponível."}</p>
-                </div>
-
-                {/* Footer */}
-                <div className="flex justify-between items-center p-6 border-t border-gray-700">
-                  <div className="flex flex-col">
-                    {previewGame.discount > 0 && (
-                      <span className="line-through text-gray-400">R$ {previewGame.originalPrice.toFixed(2)}</span>
-                    )}
-                    <span className="text-green-400 font-bold text-lg">R$ {previewGame.price.toFixed(2)}</span>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
-                    >
-                      + Carrinho
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => toggleFavorite(previewGame.id)}
-                      aria-label={favorites.includes(previewGame.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                      className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
-                    >
-                      <HeartIcon filled={favorites.includes(previewGame.id)} />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
           {previewGame && (
             <div
               className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-6"
