@@ -20,7 +20,7 @@ const Games = () => {
   return (
     <div>
       <Nav />
-      <main className="mt-16 px-4 md:px-8 min-h-[calc(100vh-56px)] bg-zinc-900">
+      <main className="mt-16 px-4 md:px-8 min-h-[calc(100vh-56px)] bg-gray-300 dark:bg-zinc-900">
         <div className="flex flex-col md:flex-row md:gap-4 gap-6">
           {/* Sidebar com filtros */}
           <div className="w-full md:w-[220px] sticky top-20 self-start">

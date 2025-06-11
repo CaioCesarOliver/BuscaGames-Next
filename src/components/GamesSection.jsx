@@ -419,7 +419,6 @@ export default function GamesSection({
                 </div>
               </div>
             </div>
-            
           )}
           {previewGame && (
             <div
@@ -492,7 +491,6 @@ export default function GamesSection({
               </div>
             </div>
           )}
-
         </>
       )}
     </section>

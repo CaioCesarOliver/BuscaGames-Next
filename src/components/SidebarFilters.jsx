@@ -14,11 +14,15 @@ import {
   faFistRaised,
   faHatCowboy,
   faBiohazard,
-  faArrowRotateLeft
+  faArrowRotateLeft,
+  faSun,
+  faMoon
 } from "@fortawesome/free-solid-svg-icons";
 
-import { faMagic } from "@fortawesome/free-solid-svg-icons"; // substitui faWandSparkles
-import { faGhost as faGhostAlt } from "@fortawesome/free-solid-svg-icons"; // substitui faGhost
+import { faMagic } from "@fortawesome/free-solid-svg-icons";
+import { faGhost as faGhostAlt } from "@fortawesome/free-solid-svg-icons";
+
+import useTheme from "../hooks/useTheme"; 
 
 const categories = [
   { label: "Todos os Jogos", value: "all", icon: faGamepad },
@@ -42,10 +46,12 @@ export default function SidebarFilters({
   onApplyFilters,
   initialFilters,
 }) {
+  const { theme, toggleTheme } = useTheme();
+
   const [selectedCategory, setSelectedCategory] = useState(
     initialFilters?.selectedCategory || "all"
   );
- const [price, setPrice] = useState(initialFilters?.price ?? 400);
+  const [price, setPrice] = useState(initialFilters?.price ?? 400);
   const [platforms, setPlatforms] = useState(
     initialFilters?.platforms || {
       pc: true,
@@ -57,7 +63,6 @@ export default function SidebarFilters({
     initialFilters?.showDiscounts || false
   );
 
-  // Sempre que algum filtro mudar, chama onApplyFilters automaticamente
   useEffect(() => {
     onApplyFilters &&
       onApplyFilters({
@@ -98,14 +103,19 @@ export default function SidebarFilters({
     setPlatforms(reset.platforms);
     setShowDiscounts(reset.showDiscounts);
 
-    // Como a atualização do estado é async, garante o apply com timeout zero
     setTimeout(() => {
       onApplyFilters && onApplyFilters(reset);
     }, 0);
   };
 
   return (
-    <div className="p-6 bg-zinc-800 rounded-lg text-white w-56">
+    <div
+      className={`p-6 rounded-lg w-56
+      bg-white text-zinc-900
+      dark:bg-zinc-800 dark:text-white
+      `}
+    >
+
       {/* Categorias */}
       <div className="mb-8">
         <h3 className="text-xl font-semibold mb-4">Categorias</h3>
@@ -115,9 +125,12 @@ export default function SidebarFilters({
               <button
                 type="button"
                 onClick={() => handleCategoryClick(value)}
-                className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded ${
-                  selectedCategory === value ? "bg-blue-600 font-bold" : "hover:bg-blue-700"
-                }`}
+                className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded
+                  ${
+                    selectedCategory === value
+                      ? "bg-blue-600 font-bold text-white"
+                      : "hover:bg-blue-300 dark:hover:bg-blue-700 dark:text-white"
+                  }`}
               >
                 <FontAwesomeIcon icon={icon} className="me-2 w-5" />
                 {label}
@@ -133,9 +146,10 @@ export default function SidebarFilters({
 
         {/* Preço */}
         <div className="mb-6">
-          <label htmlFor="priceRange" className="block mb-2 font-medium">
-            Preço máximo: R$ {price}
-          </label>
+          <label
+            htmlFor="priceRange"
+            className="block mb-2 font-medium"
+          >{`Preço máximo: R$ ${price}`}</label>
           <input
             id="priceRange"
             type="range"
