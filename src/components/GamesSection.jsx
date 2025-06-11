@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendar,
+  faGamepad,
+  faStar
+} from "@fortawesome/free-solid-svg-icons";
 
 const StarFull = () => (
   <svg className="w-5 h-5 text-yellow-400 inline-block" fill="currentColor" viewBox="0 0 20 20">
@@ -303,22 +307,22 @@ export default function GamesSection({
                   <img
                     src={previewGame.image ? `http://localhost:4000/${encodeURI(previewGame.image)}` : "/fallback-image.png"}
                     alt={previewGame.title}
-                    className="object-cover w-full"
-                    style={{ height: "100%" }}
+                    className="object-cover w-full h-full"
                     loading="lazy"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/65 pointer-events-none"></div>
 
-                  <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 rounded p-4 max-w-[60%]">
+                  <div className="absolute bottom-4 left-4 rounded-lg p-4 max-w-[60%]">
                     <h2 className="text-white text-3xl font-bold mb-2">{previewGame.title}</h2>
                     <div className="flex flex-wrap gap-2 text-sm text-gray-300">
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-star"></i> {previewGame.rating || "N/A"}
+                      <span className="flex items-center gap-1 bg-gray-900 bg-opacity-80 px-3 py-1 rounded-full">
+                        <FontAwesomeIcon icon={faStar} className="mr-2" /> {previewGame.rating || "N/A"}
                       </span>
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-gamepad"></i> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
+                      <span className="flex items-center gap-1 bg-gray-900 bg-opacity-80 px-3 py-1 rounded-full">
+                        <FontAwesomeIcon icon={faGamepad} className="mr-2" /> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
                       </span>
-                      <span className="flex items-center gap-1 bg-gray-800 bg-opacity-60 px-3 py-1 rounded-full">
-                        <i className="fas fa-calendar"></i> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
+                      <span className="flex items-center gap-1 bg-gray-900 bg-opacity-80 px-3 py-1 rounded-full">
+                        <FontAwesomeIcon icon={faCalendar} className="mr-2" /> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
                       </span>
                     </div>
                   </div>

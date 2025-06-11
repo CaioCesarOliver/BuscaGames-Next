@@ -13,13 +13,13 @@ export default function LoginPage() {
         <div
           className="absolute inset-0 bg-black/60 bg-cover bg-center"
           style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('/freepik__expand__92115.png')`
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('/freepik__expand__92115.png')`,
           }}
         />
         {/* Conteúdo do formulário em primeiro plano */}
-        <div className="relative z-10 flex max-w-6xl w-full px-6 gap-12">
-          {/* Lado esquerdo - conteúdo estático */}
-          <div className="hidden lg:flex flex-col justify-center max-w-lg text-white space-y-6">
+        <div className="relative z-10 max-w-6xl w-full px-6 gap-12 flex flex-col lg:flex-row">
+          {/* Conteúdo estático, aparece sempre */}
+          <div className="flex flex-col justify-center max-w-lg text-white space-y-6 mb-8 lg:mb-0">
             <h1 className="text-5xl font-extrabold leading-tight">
               As melhores ofertas <br />
               <span className="text-indigo-500">para seus jogos</span>
@@ -39,7 +39,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Lado direito - formulário */}
+          {/* Formulário, sempre abaixo em telas pequenas, ao lado em telas grandes */}
           <div className="flex-1 max-w-5xl">
             <AuthForm />
           </div>
