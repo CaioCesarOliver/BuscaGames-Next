@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGamepad } from "@fortawesome/free-solid-svg-icons";
+
 export default function GamesSection() {
   const [games, setGames] = useState([]);
 
@@ -184,7 +187,7 @@ export default function GamesSection() {
         <div className="mt-12 text-center">
           <Link href="/games" passHref>
            <button className="bg-blue-600 hover:bg-green-500 hover:text-black text-white font-semibold px-8 py-4 rounded-lg text-xl transition-colors duration-300">
-              Ver todos os jogos
+             <FontAwesomeIcon icon={faGamepad} className="mr-1"/> Ver todos os jogos
             </button>
           </Link>
         </div>
