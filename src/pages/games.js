@@ -21,9 +21,11 @@ const Games = () => {
     <div>
       <Nav />
       <main className="mt-16 px-4 md:px-8 min-h-[calc(100vh-56px)] bg-gray-300 dark:bg-zinc-900">
-        <div className="flex flex-col md:flex-row md:gap-4 gap-6">
-          {/* Sidebar com filtros */}
-          <div className="w-full md:w-[220px] sticky top-20 self-start">
+        {/* Layout principal: sidebar embaixo no mobile, à esquerda no desktop */}
+        <div className="flex flex-col md:flex-row gap-6 md:gap-4">
+          
+          {/* Sidebar de filtros */}
+          <div className="w-full md:w-[220px] md:sticky md:top-20 md:self-start md:order-1 order-2">
             <SidebarFilters
               selectedCategory={selectedCategory}
               setSelectedCategory={setSelectedCategory}
@@ -49,8 +51,8 @@ const Games = () => {
           </div>
 
           {/* Conteúdo principal */}
-          <div className="w-full flex-1 bg-transparent">
-            {/* Input de busca e ordenação */}
+          <div className="w-full flex-1 bg-transparent md:order-2 order-1">
+            {/* Barra de busca e ordenação */}
             <div className="mt-10 flex justify-center">
               <div className="w-full md:w-4/5 lg:w-3/4">
                 <Search
@@ -60,8 +62,7 @@ const Games = () => {
               </div>
             </div>
 
-
-            {/* Listagem de jogos com filtros aplicados */}
+            {/* Listagem de jogos */}
             <GamesSection
               searchTerm={searchTerm}
               sortOption={sortOption}

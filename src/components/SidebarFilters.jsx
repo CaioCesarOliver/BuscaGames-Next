@@ -22,7 +22,7 @@ import {
 import { faMagic } from "@fortawesome/free-solid-svg-icons";
 import { faGhost as faGhostAlt } from "@fortawesome/free-solid-svg-icons";
 
-import useTheme from "../hooks/useTheme"; 
+import useTheme from "../hooks/useTheme";
 
 const categories = [
   { label: "Todos os Jogos", value: "all", icon: faGamepad },
@@ -110,10 +110,10 @@ export default function SidebarFilters({
 
   return (
     <div
-      className={`p-6 rounded-lg w-56
-      bg-white text-zinc-900
-      dark:bg-zinc-800 dark:text-white
-      `}
+      className={`p-6 rounded-lg w-full md:w-56
+  bg-white text-zinc-900
+  dark:bg-zinc-800 dark:text-white
+  `}
     >
 
       {/* Categorias */}
@@ -126,10 +126,9 @@ export default function SidebarFilters({
                 type="button"
                 onClick={() => handleCategoryClick(value)}
                 className={`flex items-center gap-2 w-full text-left px-3 py-2 rounded
-                  ${
-                    selectedCategory === value
-                      ? "bg-blue-600 font-bold text-white"
-                      : "hover:bg-blue-300 dark:hover:bg-blue-700 dark:text-white"
+                  ${selectedCategory === value
+                    ? "bg-blue-600 font-bold text-white"
+                    : "hover:bg-blue-300 dark:hover:bg-blue-700 dark:text-white"
                   }`}
               >
                 <FontAwesomeIcon icon={icon} className="me-2 w-5" />
