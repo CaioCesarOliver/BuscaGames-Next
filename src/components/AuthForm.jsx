@@ -21,7 +21,7 @@ export default function AuthForm() {
   const [showSignupPwd, setShowSignupPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
-  const [username, setUsername] = useState("");
+  const [userName, setUserName] = useState("");
 
   const [usernameAvailable, setUsernameAvailable] = useState(null);
   const [usernameError, setUsernameError] = useState("");
@@ -56,6 +56,22 @@ export default function AuthForm() {
       number: /[0-9]/.test(pwd),
       special: /[@$!%*?&#]/.test(pwd),
     };
+  };
+
+  const checkUsernameExists = async (username) => {
+    try {
+      const response = await fetch(`http://localhost:4000/api/auth/users/${username}`);
+      const data = await response.json();
+
+      if (data.exists) {
+        setUsernameAvailable(false);
+      } else {
+        setUsernameAvailable(true);
+      }
+    } catch (error) {
+      console.error('Erro ao verificar username:', error);
+      setUsernameAvailable(null); // ou algum estado de erro
+    }
   };
 
   const requirements = checkPasswordRequirements(signupPassword);
@@ -118,6 +134,7 @@ export default function AuthForm() {
     if (
       !firstName.trim() ||
       !lastName.trim() ||
+      !userName.trim() ||
       !signupEmail.trim() ||
       !signupPassword ||
       !confirmPassword
@@ -159,6 +176,7 @@ export default function AuthForm() {
         body: JSON.stringify({
           firstName,
           lastName,
+          userName,
           email: signupEmail,
           password: signupPassword,
         }),
@@ -359,11 +377,11 @@ export default function AuthForm() {
                   id="username"
                   className="w-full px-4 py-3 rounded-lg bg-white dark:bg-black bg-opacity-70 border border-purple-700 text-black dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
                   placeholder="Seu sobrenome"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
                   onBlur={() => {
-                    if (username.length >= 3) {
-                      checkUsernameExists(username);
+                    if (userName.length >= 3) {
+                      checkUsernameExists(userName);
                     } else {
                       setUsernameAvailable(null);
                     }
