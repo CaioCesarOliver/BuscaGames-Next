@@ -299,7 +299,7 @@ export default function GamesSection({
               onClick={() => setPreviewGame(null)}
             >
               <div
-                className="bg-gray-900 rounded-lg overflow-hidden max-w-5xl w-full max-h-[80vh] flex flex-col"
+                className="bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden max-w-5xl w-full max-h-[80vh] flex flex-col"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Conteúdo da imagem com título e badges */}
@@ -315,35 +315,35 @@ export default function GamesSection({
                   <div className="absolute bottom-4 left-4 rounded-lg p-4 max-w-[60%]">
                     <h2 className="text-white text-3xl font-bold mb-2">{previewGame.title}</h2>
                     <div className="flex flex-wrap gap-2 text-sm text-gray-300">
-                      <span className="flex items-center gap-1 bg-gray-900 bg-opacity-80 px-3 py-1 rounded-full">
-                        <FontAwesomeIcon icon={faStar} className="mr-2" /> {previewGame.rating || "N/A"}
+                      <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
+                        <FontAwesomeIcon icon={faStar} className="mr-1" /> {previewGame.rating || "N/A"}
                       </span>
-                      <span className="flex items-center gap-1 bg-gray-900 bg-opacity-80 px-3 py-1 rounded-full">
-                        <FontAwesomeIcon icon={faGamepad} className="mr-2" /> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
+                      <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
+                        <FontAwesomeIcon icon={faGamepad} className="mr-1" /> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
                       </span>
-                      <span className="flex items-center gap-1 bg-gray-900 bg-opacity-80 px-3 py-1 rounded-full">
-                        <FontAwesomeIcon icon={faCalendar} className="mr-2" /> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
+                      <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
+                        <FontAwesomeIcon icon={faCalendar} className="mr-1" /> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
                       </span>
                     </div>
                   </div>
                 </div>
 
                 {/* Descrição */}
-                <div className="p-6 overflow-auto flex-grow text-gray-300">
+                <div className="p-6 overflow-auto flex-grow text-purple-950 dark:text-gray-300">
                   <h3 className="text-xl font-semibold mb-2">Descrição</h3>
                   <p>{previewGame.description || "Descrição não disponível."}</p>
                 </div>
 
                 {/* Footer */}
                 <div className="flex justify-between items-center p-6 border-t border-gray-700">
-                  <div className="flex flex-col">
+                  <div className="flex flex-row gap-4">
                     {previewGame.discount > 0 && (
                       <span className="line-through text-gray-400">R$ {previewGame.originalPrice.toFixed(2)}</span>
                     )}
-                    <span className="text-green-400 font-bold text-lg">R$ {previewGame.price.toFixed(2)}</span>
+                    <span className="text-green-600 dark:text-green-400 font-bold text-3xl">R$ {previewGame.price.toFixed(2)}</span>
                   </div>
 
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 ">
                     <button
                       type="button"
                       className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
