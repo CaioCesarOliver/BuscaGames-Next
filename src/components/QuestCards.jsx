@@ -29,10 +29,10 @@ export default function QuestCard({ quest }) {
     <div className="w-64 h-64 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 flex flex-col justify-between">
       {/* Top bar */}
       <div className="flex justify-between items-start mb-4">
-        <div className="text-pink-500 text-3xl">
+        <div className=" text-pink-800 dark:text-pink-500 text-3xl">
           <QuestIcon />
         </div>
-        <div className="text-green-500 text-3xl">
+        <div className="text-blue-700 dark:text-blue-400 text-3xl">
           {isComplete ? (
             <FaCheckCircle title="Completo" />
           ) : (
@@ -62,10 +62,10 @@ export default function QuestCard({ quest }) {
 
       {/* Footer */}
       <div className="flex justify-between items-center">
-        <span className="text-sm font-medium text-yellow-500">{points} XP</span>
+        <span className="text-md font-medium text-green-600 dark:text-green-400">{points} XP</span>
         <button
           className={`py-2 px-4 rounded-lg font-semibold text-white transition-colors ${
-            isComplete ? "bg-green-600 cursor-default" : "bg-pink-600 hover:bg-pink-700"
+            isComplete ? "bg-green-600 cursor-default" : "bg-pink-600 hover:bg-green-700"
           }`}
           disabled={isComplete}
         >
