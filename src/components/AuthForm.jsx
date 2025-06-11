@@ -79,14 +79,6 @@ export default function AuthForm() {
   async function handleLogin(e) {
     e.preventDefault();
 
-    if (!loginUser.includes("@")) {
-      Swal.fire({
-        icon: "warning",
-        title: "Por favor, insira um e-mail válido.",
-      });
-      return;
-    }
-
     if (!loginUser || !loginPassword) {
       return Swal.fire({
         icon: "warning",
@@ -278,7 +270,7 @@ export default function AuthForm() {
                   htmlFor="loginUsername"
                   className="block text-purple-900 dark:text-white font-medium mb-1"
                 >
-                  Email
+                  Email ou Username
                 </label>
                 <input
                   type="text"
