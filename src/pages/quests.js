@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import QuestCard from "../components/QuestCards";
+import QuestHeader from '../components/QuestHeader';
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 
@@ -31,19 +32,22 @@ export default function QuestsList() {
     return (
         <>
             <Nav />
-            <div className="p-6 max-w-7xl mx-auto">
-                <h1 className="text-3xl font-bold mb-6 text-center dark:text-white">
-                    Quests da Comunidade
-                </h1>
+            <div className="mt-10"><QuestHeader /></div>
+            <div className="w-full bg-gray-100 dark:bg-slate-950 py-6 px-4">
+                <div className="max-w-7xl mx-auto">
+                    <h1 className="text-3xl font-bold mb-6 text-center text-purple-950 dark:text-white">
+                        Quests da Comunidade
+                    </h1>
 
-                <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                    {quests.length === 0 ? (
-                        <p className="col-span-full text-center text-gray-500 dark:text-gray-400">
-                            Nenhuma quest disponível.
-                        </p>
-                    ) : (
-                        quests.map((quest) => <QuestCard key={quest.id} quest={quest} />)
-                    )}
+                    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                        {quests.length === 0 ? (
+                            <p className="col-span-full text-center text-gray-400">
+                                Nenhuma quest disponível.
+                            </p>
+                        ) : (
+                            quests.map((quest) => <QuestCard key={quest.id} quest={quest} />)
+                        )}
+                    </div>
                 </div>
             </div>
             <Footer />
