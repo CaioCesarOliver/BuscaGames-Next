@@ -5,11 +5,13 @@ import { DailyQuests, Newsletter } from '../../components/DailyQuests'
 const Homepage = () => {
     return (
         <div>
-            <div className="pt-16"></div>
-            <LaunchCountdownCube />
-            <GamesSection />
-            <DailyQuests />
-            <Newsletter />
+            <div className="overflow-x-hidden pt-16">
+                <LaunchCountdownCube />
+                <GamesSection />
+                <DailyQuests />
+                <Newsletter />
+            </div>
+
         </div>
     )
 }
