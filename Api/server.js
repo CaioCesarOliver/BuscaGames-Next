@@ -187,6 +187,79 @@ app.delete('/games/:id', async (req, res) => {
     }
 });
 
+// Criar nova quest
+app.post('/quests', async (req, res) => {
+    const { title, description, points, progress = 0, totalSteps = 1, iconName = "heart" } = req.body;
+
+    if (!title || !description || points == null) {
+        return res.status(400).json({ error: 'Campos obrigatórios ausentes: title, description e points' });
+    }
+
+    try {
+        const newQuest = await prisma.quest.create({
+            data: {
+                title,
+                description,
+                points,
+                progress,
+                totalSteps,
+                iconName,
+            },
+        });
+        res.status(201).json(newQuest);
+    } catch (error) {
+        console.error('Erro ao criar quest:', error);
+        res.status(500).json({ error: 'Erro ao criar a quest', details: error.message });
+    }
+});
+
+// Listar todas as quests
+app.get('/quests', async (req, res) => {
+    try {
+        const quests = await prisma.quest.findMany();
+        res.json(quests);
+    } catch (error) {
+        console.error('Erro ao buscar quests:', error);
+        res.status(500).json({ error: 'Erro ao buscar quests' });
+    }
+});
+
+// Atualizar uma quest pelo ID
+app.put('/quests/:id', async (req, res) => {
+    const { id } = req.params;
+    const { title, description, points } = req.body;
+
+    if (!title || !description || points == null) {
+        return res.status(400).json({ error: 'Campos obrigatórios ausentes: title, description e points' });
+    }
+
+    try {
+        const updatedQuest = await prisma.quest.update({
+            where: { id },
+            data: { title, description, points },
+        });
+        res.json(updatedQuest);
+    } catch (error) {
+        console.error('Erro ao atualizar quest:', error);
+        res.status(500).json({ error: 'Erro ao atualizar a quest', details: error.message });
+    }
+});
+
+// Deletar uma quest pelo ID
+app.delete('/quests/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        await prisma.quest.delete({
+            where: { id }
+        });
+        res.json({ message: 'Quest removida com sucesso' });
+    } catch (error) {
+        console.error('Erro ao deletar quest:', error);
+        res.status(500).json({ error: 'Erro ao deletar a quest' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`API rodando em http://localhost:${PORT}`);
 });

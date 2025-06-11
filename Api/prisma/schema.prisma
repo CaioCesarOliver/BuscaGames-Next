@@ -36,3 +36,15 @@ model Game {
   publisher     String
   tags          String[]
 }
+
+model Quest {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  points      Int
+  progress    Int?    
+  totalSteps  Int?     
+  iconName    String?   
+  createdAt   DateTime @default(now())
+}
+
