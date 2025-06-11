@@ -4,6 +4,7 @@ import QuestHeader from "../components/QuestHeader";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import CommunityLeaderboard from "../components/CommunityLeaderboard";
+import LevelAchievement from "../components/levelAchievement";
 
 export default function QuestsPage() {
     const [quests, setQuests] = useState([]);
@@ -70,6 +71,7 @@ export default function QuestsPage() {
                     </div>
                 </div>
             </div>
+            <div className="p-10 bg-white dark:bg-gray-900"><LevelAchievement /></div>
             <div className="p-10 bg-white dark:bg-gray-900"><CommunityLeaderboard /></div>
             <Footer />
         </>

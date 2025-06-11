@@ -95,8 +95,8 @@ export default function CommunityRanking() {
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`py-2 px-5 rounded-md font-semibold transition ${activeTab === tab
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                             }`}
                     >
                         {tab === 'week' ? 'Semanal' : tab === 'month' ? 'Mensal' : 'Todos os Tempos'}
@@ -118,11 +118,14 @@ export default function CommunityRanking() {
                     <tbody>
                         {players.map((player, index) => {
                             const isTop3 = index < 3;
-                            const rankClass = isTop3
-                                ? `rank-badge rank-${index + 1} bg-yellow-400 dark:bg-yellow-500 text-black dark:text-gray-900 font-bold rounded-full w-8 h-8 flex items-center justify-center`
-                                : '';
+                            let rankClass = 'font-semibold rounded-full w-8 h-8 flex items-center justify-center';
+                            if (index === 0) rankClass += ' bg-yellow-500 text-black';
+                            else if (index === 1) rankClass += ' bg-slate-300 text-gray-900';
+                            else if (index === 2) rankClass += ' bg-yellow-800 text-white';
+                            else rankClass = 'text-gray-600 dark:text-gray-400 font-semibold';
+
                             const rowClass = isTop3
-                                ? 'bg-yellow-50 dark:bg-yellow-900'
+                                ? 'bg-fuchsia-100 dark:bg-fuchsia-950'
                                 : '';
                             const currentUser = player.name === 'Você';
                             return (
