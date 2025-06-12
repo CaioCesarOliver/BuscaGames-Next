@@ -8,6 +8,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import CommunityLeaderboard from "@/components/CommunityLeaderboard";
 import LevelAchievement from "@/components/levelAchievement";
+import AccessDenied from "@/components/AccessDenied";
 
 export default function QuestsPage() {
     const { data: session, status } = useSession();
@@ -41,15 +42,7 @@ export default function QuestsPage() {
 
     if (status === "unauthenticated") {
         return (
-            <main className="flex flex-col justify-center items-center h-screen px-4 text-center">
-                <p className="text-red-500 mb-4">Você precisa estar logado para acessar as quests.</p>
-                <a
-                    href="/login"
-                    className="px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800 transition"
-                >
-                    Ir para Login
-                </a>
-            </main>
+            <AccessDenied />
         );
     }
 

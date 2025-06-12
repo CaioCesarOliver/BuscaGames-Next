@@ -7,6 +7,7 @@ import AchievementsTab from "@/components/AchievementsTab";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProfileHeader from '@/components/ProfileHeader'
+import AccessDenied from '@/components/AccessDenied'
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
@@ -39,15 +40,7 @@ export default function ProfilePage() {
 
     if (!session) {
         return (
-            <main className="flex flex-col justify-center items-center h-screen">
-                <p className="text-red-500 mb-4">Você precisa estar logado para acessar esta página.</p>
-                <a
-                    href="/login"
-                    className="px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800 transition"
-                >
-                    Ir para Login
-                </a>
-            </main>
+            <AccessDenied />
         );
     }
 
