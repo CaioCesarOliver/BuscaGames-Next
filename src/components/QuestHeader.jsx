@@ -1,8 +1,12 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import { FaUserAstronaut } from "react-icons/fa";
 
 export default function QuestHeader() {
+    const { data: session } = useSession();
+    const userName = session?.user?.name || "Usuário";
+
     return (
         <section className="bg-[linear-gradient(to_right,_#6b21a8,_#831843)] py-20">
             <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 items-center gap-8">
@@ -26,7 +30,7 @@ export default function QuestHeader() {
                     </div>
 
                     <div className="flex-1">
-                        <div className="text-sm font-semibold text-gray-800 dark:text-white mb-1">Explorador Novato</div>
+                        <div className="text-sm font-semibold text-gray-800 dark:text-white mb-1">{userName}</div>
                         <div className="w-full h-2 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden mb-1">
                             <div className="h-full bg-green-500" style={{ width: "25%" }}></div>
                         </div>
