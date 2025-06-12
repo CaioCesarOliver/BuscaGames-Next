@@ -61,7 +61,7 @@ export default function ProfilePage() {
                     <section className="profile-content py-6">
                         <div className="container mx-auto px-4 max-w-5xl">
                             <div className="flex space-x-2 border-b border-gray-300 dark:border-gray-700">
-                                {["overview", "library", "wishlist", "achievements", "settings"].map((tab) => (
+                                {["overview", "library", "wishlist", "achievements"].map((tab) => (
                                     <button
                                         key={tab}
                                         onClick={() => handleTabClick(tab)}
@@ -90,7 +90,6 @@ export default function ProfilePage() {
                                 {activeTab === "library" && <LibraryCards />}
                                 {activeTab === "wishlist" && <Favorites />}
                                 {activeTab === "achievements" && <AchievementsTab quests={quests} />}
-                                {activeTab === "settings" && <SecurityTab />}
                             </div>
                         </div>
                     </section>

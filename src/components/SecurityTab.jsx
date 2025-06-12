@@ -1,250 +1,271 @@
+"use client";
+
 import { useState, useEffect } from "react";
+import { signOut } from "next-auth/react";
+import Swal from "sweetalert2";
 
 export default function SecurityTab() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  // Preferências
-  const [darkMode, setDarkMode] = useState(false);
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [priceAlertNotifications, setPriceAlertNotifications] = useState(true);
   const [newReleaseNotifications, setNewReleaseNotifications] = useState(false);
   const [marketingNotifications, setMarketingNotifications] = useState(false);
+  const [darkModeToggle, setDarkModeToggle] = useState(false);
   const [publicProfile, setPublicProfile] = useState(true);
   const [showActivity, setShowActivity] = useState(true);
+  const [loadingPrefs, setLoadingPrefs] = useState(false);
+  const [loadingPassword, setLoadingPassword] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
-  // Ao montar o componente, lê preferências do localStorage e aplica o tema
   useEffect(() => {
-    const savedDarkMode = localStorage.getItem("darkMode");
-    if (savedDarkMode === "true") {
-      setDarkMode(true);
-      document.documentElement.classList.add("dark");
-    } else {
-      setDarkMode(false);
-      document.documentElement.classList.remove("dark");
-    }
-
-    // Outras preferências podem ser carregadas aqui do localStorage se quiser
+    setEmailNotifications(JSON.parse(localStorage.getItem("emailNotifications")) ?? true);
+    setPriceAlertNotifications(JSON.parse(localStorage.getItem("priceAlertNotifications")) ?? true);
+    setNewReleaseNotifications(JSON.parse(localStorage.getItem("newReleaseNotifications")) ?? false);
+    setMarketingNotifications(JSON.parse(localStorage.getItem("marketingNotifications")) ?? false);
+    setDarkModeToggle(JSON.parse(localStorage.getItem("darkModeToggle")) ?? false);
+    setPublicProfile(JSON.parse(localStorage.getItem("publicProfile")) ?? true);
+    setShowActivity(JSON.parse(localStorage.getItem("showActivity")) ?? true);
   }, []);
 
-  // Atualiza tema imediatamente quando checkbox mudar
-  const handleDarkModeChange = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
+  useEffect(() => {
+    localStorage.setItem("darkModeToggle", JSON.stringify(darkModeToggle));
+  }, [darkModeToggle]);
 
-    if (newDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+  const handleSavePreferences = () => {
+    setLoadingPrefs(true);
+    try {
+      localStorage.setItem("emailNotifications", JSON.stringify(emailNotifications));
+      localStorage.setItem("priceAlertNotifications", JSON.stringify(priceAlertNotifications));
+      localStorage.setItem("newReleaseNotifications", JSON.stringify(newReleaseNotifications));
+      localStorage.setItem("marketingNotifications", JSON.stringify(marketingNotifications));
+      localStorage.setItem("darkModeToggle", JSON.stringify(darkModeToggle));
+      localStorage.setItem("publicProfile", JSON.stringify(publicProfile));
+      localStorage.setItem("showActivity", JSON.stringify(showActivity));
+
+      Swal.fire({
+        icon: "success",
+        title: "Preferências salvas!",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao salvar preferências",
+        text: error.message,
+      });
+    } finally {
+      setLoadingPrefs(false);
     }
   };
 
-  // Submissão troca de senha (exemplo)
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordChange = async (e) => {
     e.preventDefault();
 
-    if (newPassword !== confirmPassword) {
-      alert("A nova senha e a confirmação não coincidem.");
-      return;
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return Swal.fire({
+        icon: "warning",
+        title: "Preencha todos os campos",
+      });
     }
 
-    // Coloque a lógica real de troca de senha aqui
-    alert("Senha atualizada com sucesso!");
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmPassword("");
+    if (newPassword !== confirmPassword) {
+      return Swal.fire({
+        icon: "error",
+        title: "Senhas não coincidem!",
+      });
+    }
+
+    setLoadingPassword(true);
+
+    try {
+      const res = await fetch("/api/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Erro ao alterar senha.");
+      }
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+
+      Swal.fire({
+        icon: "success",
+        title: "Senha alterada com sucesso!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro",
+        text: error.message,
+      });
+    } finally {
+      setLoadingPassword(false);
+    }
   };
 
-  // Salvar preferências (inclui tema)
-  const handleSavePreferences = () => {
-    // Grava preferências no localStorage
-    localStorage.setItem("darkMode", darkMode.toString());
+  const handleDeleteProfile = async () => {
+    const result = await Swal.fire({
+      title: "Excluir perfil?",
+      text: "Esta ação é irreversível!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sim, excluir",
+      cancelButtonText: "Cancelar",
+    });
 
-    localStorage.setItem("emailNotifications", emailNotifications.toString());
-    localStorage.setItem("priceAlertNotifications", priceAlertNotifications.toString());
-    localStorage.setItem("newReleaseNotifications", newReleaseNotifications.toString());
-    localStorage.setItem("marketingNotifications", marketingNotifications.toString());
-    localStorage.setItem("publicProfile", publicProfile.toString());
-    localStorage.setItem("showActivity", showActivity.toString());
+    if (!result.isConfirmed) return;
 
-    alert("Preferências salvas!");
+    setLoadingDelete(true);
+
+    try {
+      const res = await fetch("/api/user", {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("Erro ao excluir o perfil.");
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Perfil excluído!",
+        showConfirmButton: false,
+        timer: 2000,
+      });
+
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao excluir",
+        text: error.message,
+      });
+    } finally {
+      setLoadingDelete(false);
+    }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
       {/* Segurança */}
-      <div className="profile-card p-6 bg-white dark:bg-gray-800 rounded-lg shadow flex-1">
-        <div className="card-header mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Segurança</h3>
-        </div>
-        <form onSubmit={handlePasswordSubmit} className="card-body space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
-            <label
-              htmlFor="currentPassword"
-              className="md:w-1/3 text-gray-700 dark:text-gray-300 font-semibold"
-            >
-              Senha Atual
-            </label>
+      <div className="profile-card bg-white dark:bg-gray-800 p-6 rounded shadow">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Segurança</h3>
+        <form onSubmit={handlePasswordChange}>
+          <div className="mb-4">
+            <label htmlFor="currentPassword" className="block text-gray-700 dark:text-gray-300 mb-1">Senha Atual</label>
             <input
               type="password"
               id="currentPassword"
-              placeholder="Sua senha atual"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="md:w-2/3 px-4 py-2 border rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:text-white"
             />
           </div>
-
-          <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
-            <label
-              htmlFor="newPassword"
-              className="md:w-1/3 text-gray-700 dark:text-gray-300 font-semibold"
-            >
-              Nova Senha
-            </label>
+          <div className="mb-4">
+            <label htmlFor="newPassword" className="block text-gray-700 dark:text-gray-300 mb-1">Nova Senha</label>
             <input
               type="password"
               id="newPassword"
-              placeholder="Nova senha"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="md:w-2/3 px-4 py-2 border rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:text-white"
             />
           </div>
-
-          <div className="flex flex-col md:flex-row md:items-center md:space-x-4">
-            <label
-              htmlFor="confirmPassword"
-              className="md:w-1/3 text-gray-700 dark:text-gray-300 font-semibold"
-            >
-              Confirmar Senha
-            </label>
+          <div className="mb-4">
+            <label htmlFor="confirmPassword" className="block text-gray-700 dark:text-gray-300 mb-1">Confirmar Senha</label>
             <input
               type="password"
               id="confirmPassword"
-              placeholder="Confirme a nova senha"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="md:w-2/3 px-4 py-2 border rounded-md border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-3 py-2 rounded border dark:bg-gray-700 dark:text-white"
             />
           </div>
-
-          <div>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-semibold transition"
-            >
-              Atualizar Senha
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={loadingPassword}
+            className="bg-purple-600 text-white font-semibold px-4 py-2 rounded hover:bg-purple-700 disabled:opacity-50"
+          >
+            {loadingPassword ? "Atualizando..." : "Atualizar Senha"}
+          </button>
         </form>
       </div>
 
       {/* Preferências */}
-      <div className="profile-card p-6 bg-white dark:bg-gray-800 rounded-lg shadow flex-1">
-        <div className="card-header mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Preferências</h3>
-        </div>
-        <div className="card-body space-y-8">
-          {/* Notificações */}
-          <div>
-            <h4 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">Notificações</h4>
-            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={emailNotifications}
-                onChange={() => setEmailNotifications(!emailNotifications)}
-                className="h-6 w-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-              />
-              <span className="text-gray-900 dark:text-gray-100">Notificações por Email</span>
-            </label>
+      <div className="profile-card bg-white dark:bg-gray-800 p-6 rounded shadow">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Preferências</h3>
 
-            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={priceAlertNotifications}
-                onChange={() => setPriceAlertNotifications(!priceAlertNotifications)}
-                className="h-6 w-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-              />
-              <span className="text-gray-900 dark:text-gray-100">Alertas de Preço</span>
-            </label>
-
-            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={newReleaseNotifications}
-                onChange={() => setNewReleaseNotifications(!newReleaseNotifications)}
-                className="h-6 w-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-              />
-              <span className="text-gray-900 dark:text-gray-100">Novos Lançamentos</span>
-            </label>
-
-            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={marketingNotifications}
-                onChange={() => setMarketingNotifications(!marketingNotifications)}
-                className="h-6 w-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-              />
-              <span className="text-gray-900 dark:text-gray-100">Ofertas e Promoções</span>
-            </label>
-          </div>
-
-          {/* Aparência */}
-          <div>
-            <h4 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">Aparência</h4>
-            <label
-              htmlFor="darkModeToggle"
-              className="flex items-center space-x-3 text-lg cursor-pointer"
-            >
-              <input
-                type="checkbox"
-                id="darkModeToggle"
-                checked={darkMode}
-                onChange={handleDarkModeChange}
-                className="h-6 w-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-              />
-              <span className="text-gray-900 dark:text-gray-100">Modo Escuro</span>
-            </label>
-          </div>
-
-          {/* Privacidade */}
-          <div>
-            <h4 className="mb-4 text-xl font-semibold text-gray-800 dark:text-gray-200">Privacidade</h4>
-
-            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={publicProfile}
-                onChange={() => setPublicProfile(!publicProfile)}
-                className="h-6 w-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-              />
-              <span className="text-gray-900 dark:text-gray-100">Perfil Público</span>
-            </label>
-
-            <label className="flex items-center space-x-3 mb-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={showActivity}
-                onChange={() => setShowActivity(!showActivity)}
-                className="h-6 w-6 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-              />
-              <span className="text-gray-900 dark:text-gray-100">Mostrar Atividade Recente</span>
-            </label>
-          </div>
-
-          <div>
-            <button
-              type="button"
-              onClick={handleSavePreferences}
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md font-semibold transition"
-            >
-              Salvar Preferências
-            </button>
+        {/* Notificações */}
+        <div className="mb-6">
+          <h4 className="text-xl mb-3 text-gray-800 dark:text-gray-200">Notificações</h4>
+          <div className="space-y-2">
+            <PreferenceToggle label="Email" checked={emailNotifications} onChange={() => setEmailNotifications(!emailNotifications)} />
+            <PreferenceToggle label="Alertas de Preço" checked={priceAlertNotifications} onChange={() => setPriceAlertNotifications(!priceAlertNotifications)} />
+            <PreferenceToggle label="Novos Lançamentos" checked={newReleaseNotifications} onChange={() => setNewReleaseNotifications(!newReleaseNotifications)} />
+            <PreferenceToggle label="Ofertas" checked={marketingNotifications} onChange={() => setMarketingNotifications(!marketingNotifications)} />
           </div>
         </div>
+
+        {/* Aparência */}
+        <div className="mb-6">
+          <h4 className="text-xl mb-3 text-gray-800 dark:text-gray-200">Aparência</h4>
+          <PreferenceToggle label="Tema Escuro" checked={darkModeToggle} onChange={() => setDarkModeToggle(!darkModeToggle)} />
+        </div>
+
+        {/* Privacidade */}
+        <div>
+          <h4 className="text-xl mb-3 text-gray-800 dark:text-gray-200">Privacidade</h4>
+          <div className="space-y-2">
+            <PreferenceToggle label="Perfil Público" checked={publicProfile} onChange={() => setPublicProfile(!publicProfile)} />
+            <PreferenceToggle label="Mostrar Atividade" checked={showActivity} onChange={() => setShowActivity(!showActivity)} />
+          </div>
+        </div>
+
+        <button
+          onClick={handleSavePreferences}
+          disabled={loadingPrefs}
+          className="mt-6 bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded disabled:opacity-50"
+        >
+          {loadingPrefs ? "Salvando..." : "Salvar Preferências"}
+        </button>
+      </div>
+
+      {/* Exclusão */}
+      <div className="profile-card bg-white dark:bg-gray-800 p-6 rounded shadow lg:col-span-2">
+        <h3 className="text-2xl font-semibold mb-4 text-red-600">Excluir Perfil</h3>
+        <p className="text-sm text-red-500 mb-4">Esta ação é irreversível. Todos os seus dados serão apagados permanentemente.</p>
+        <button
+          onClick={handleDeleteProfile}
+          disabled={loadingDelete}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded disabled:opacity-50"
+        >
+          {loadingDelete ? "Excluindo..." : "Excluir Perfil"}
+        </button>
       </div>
     </div>
+  );
+}
+
+function PreferenceToggle({ label, checked, onChange }) {
+  return (
+    <label className="flex items-center space-x-3">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="w-5 h-5 rounded"
+      />
+      <span className="text-gray-700 dark:text-gray-300">{label}</span>
+    </label>
   );
 }
