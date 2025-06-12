@@ -7,6 +7,7 @@ import {
   faGamepad,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
+import { useCart } from "@/context/CartContext";
 
 const StarFull = () => (
   <svg className="w-5 h-5 text-yellow-400 inline-block" fill="currentColor" viewBox="0 0 20 20">
@@ -103,6 +104,7 @@ export default function GamesSection({
   platforms,
   showDiscounts,
 }) {
+  const { addToCart } = useCart();
   const [games, setGames] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [previewGame, setPreviewGame] = useState(null);
@@ -263,8 +265,9 @@ export default function GamesSection({
                         <button
                           type="button"
                           className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
+                          onClick={() => addToCart(game)}
                         >
-                          + Carrinho
+                          Adicionar ao Carrinho
                         </button>
                         <button
                           onClick={(e) => {
