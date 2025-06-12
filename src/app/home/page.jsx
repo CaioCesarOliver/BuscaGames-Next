@@ -3,9 +3,9 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-import LaunchCountdownCube from '../../components/LaunchCountdown';
-import GamesSection from '../../components/GamesSectionHome';
-import { DailyQuests, Newsletter } from '../../components/DailyQuests';
+import LaunchCountdownCube from '@/components/LaunchCountdown';
+import GamesSection from '@/components/GamesSectionHome';
+import { DailyQuests, Newsletter } from '@/components/DailyQuests';
 
 const Homepage = () => {
   const { data: session, status } = useSession();

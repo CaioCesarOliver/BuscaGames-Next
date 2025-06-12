@@ -1,10 +1,12 @@
+"use client"
+
 import { useEffect, useState } from "react";
-import QuestCard from "../components/QuestCards";
-import QuestHeader from "../components/QuestHeader";
-import Nav from "../components/Nav";
-import Footer from "../components/Footer";
-import CommunityLeaderboard from "../components/CommunityLeaderboard";
-import LevelAchievement from "../components/levelAchievement";
+import QuestCard from "@/components/QuestCards";
+import QuestHeader from "@/components/QuestHeader";
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
+import CommunityLeaderboard from "@/components/CommunityLeaderboard";
+import LevelAchievement from "@/components/levelAchievement";
 
 export default function QuestsPage() {
     const [quests, setQuests] = useState([]);

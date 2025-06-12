@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import QuestCard from "../components/QuestCard";
+import QuestCard from "@/components/QuestCard";
 
 export default function QuestsPage() {
   const [dailyQuests, setDailyQuests] = useState([]);

@@ -1,9 +1,11 @@
+"use client"
+
 import { useState } from 'react';
-import Footer from '../components/Footer';
-import Nav from '../components/Nav';
-import SidebarFilters from '../components/SidebarFilters';
-import GamesSection from '../components/GamesSection';
-import Search from '../components/Search';
+import Footer from '@/components/Footer';
+import Nav from '@/components/Nav';
+import SidebarFilters from '@/components/SidebarFilters';
+import GamesSection from '@/components/GamesSection';
+import Search from '@/components/Search';
 
 const Games = () => {
   const [searchTerm, setSearchTerm] = useState('');

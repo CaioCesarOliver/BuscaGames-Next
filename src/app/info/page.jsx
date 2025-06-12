@@ -1,9 +1,9 @@
-import SectionTitle from '../components/SectionTitle'
-import AboutCard from '../components/AboutCard'
-import TeamCard from '../components/TeamCard'
-import ContatoForm from '../components/ContatoForm'
-import Nav from '../components/Nav'
-import Footer from '../components/Footer'
+import SectionTitle from '@/components/SectionTitle'
+import AboutCard from '@/components/AboutCard'
+import TeamCard from '@/components/TeamCard'
+import ContatoForm from '@/components/ContatoForm'
+import Nav from '@/components/Nav'
+import Footer from '@/components/Footer'
 
 export default function Info() {
   const teamMembers = [
