@@ -20,7 +20,7 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { UserDropdown } from "./Layout/Header/UserDropdown";
+import UserDropdown from "@/components/UserDropdown";
 
 import useTheme from "../hooks/useTheme";
 

@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import QuestCard from "@/components/QuestCards";
 import QuestHeader from "@/components/QuestHeader";
 import Nav from "@/components/Nav";
@@ -9,26 +10,48 @@ import CommunityLeaderboard from "@/components/CommunityLeaderboard";
 import LevelAchievement from "@/components/levelAchievement";
 
 export default function QuestsPage() {
+    const { data: session, status } = useSession();
+
     const [quests, setQuests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const fetchQuests = async () => {
-            try {
-                const res = await fetch("http://localhost:4000/quests");
-                if (!res.ok) throw new Error("Erro ao buscar quests");
-                const data = await res.json();
-                setQuests(data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+        if (status === "authenticated") {
+            const fetchQuests = async () => {
+                try {
+                    const res = await fetch("http://localhost:4000/quests");
+                    if (!res.ok) throw new Error("Erro ao buscar quests");
+                    const data = await res.json();
+                    setQuests(data);
+                } catch (err) {
+                    setError(err.message);
+                } finally {
+                    setLoading(false);
+                }
+            };
 
-        fetchQuests();
-    }, []);
+            fetchQuests();
+        }
+    }, [status]);
+
+    if (status === "loading") {
+        return <p className="text-center mt-10">Verificando autenticação...</p>;
+    }
+
+    if (status === "unauthenticated") {
+        return (
+            <main className="flex flex-col justify-center items-center h-screen px-4 text-center">
+                <p className="text-red-500 mb-4">Você precisa estar logado para acessar as quests.</p>
+                <a
+                    href="/login"
+                    className="px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800 transition"
+                >
+                    Ir para Login
+                </a>
+            </main>
+        );
+    }
 
     const dailyQuests = quests.filter((quest) => quest.type === "DAILY");
     const weeklyQuests = quests.filter((quest) => quest.type === "WEEKLY");
