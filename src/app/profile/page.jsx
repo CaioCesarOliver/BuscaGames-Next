@@ -6,9 +6,12 @@ import OverviewTab from "@/components/OverviewTab";
 import AchievementsTab from "@/components/AchievementsTab";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import ProfileHeader from '@/components/ProfileHeader'
-import AccessDenied from '@/components/AccessDenied'
-import LoadingScreen from '@/components/LoadingScreen'
+import ProfileHeader from '@/components/ProfileHeader';
+import AccessDenied from '@/components/AccessDenied';
+import LoadingScreen from '@/components/LoadingScreen';
+import LibraryCards from '@/components/LibraryCard'
+import Favorites from '@/components/Favorites'
+import SecurityTab from '@/components/SecurityTab';
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
@@ -32,14 +35,14 @@ export default function ProfilePage() {
     }, [activeTab]);
 
     if (status === "loading") {
-        return (
-            <LoadingScreen />
-        );
+        return <LoadingScreen />;
     }
 
     if (!session) {
         return (
-           <div className="bg-white dark:bg-slate-950"><AccessDenied /></div>
+            <div className="bg-white dark:bg-slate-950">
+                <AccessDenied />
+            </div>
         );
     }
 
@@ -84,12 +87,10 @@ export default function ProfilePage() {
 
                             <div className="mt-6">
                                 {activeTab === "overview" && <OverviewTab />}
+                                {activeTab === "library" && <LibraryCards />}
+                                {activeTab === "wishlist" && <Favorites />}
                                 {activeTab === "achievements" && <AchievementsTab quests={quests} />}
-                                {!["overview", "achievements"].includes(activeTab) && (
-                                    <p className="text-gray-500 dark:text-gray-400">
-                                        Conteúdo da aba <strong>{activeTab}</strong> ainda não implementado.
-                                    </p>
-                                )}
+                                {activeTab === "settings" && <SecurityTab />}
                             </div>
                         </div>
                     </section>
