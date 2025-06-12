@@ -39,7 +39,7 @@ export default function ProfilePage() {
 
     if (!session) {
         return (
-            <AccessDenied />
+           <div className="bg-white dark:bg-slate-950"><AccessDenied /></div>
         );
     }
 

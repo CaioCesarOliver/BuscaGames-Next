@@ -1,5 +1,10 @@
+import Footer from "@/components/Footer";
+import Nav from "@/components/Nav";
+
 export default function LoadingScreen() {
   return (
+    <>
+    <Nav />
     <main className="flex justify-center items-center h-screen bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center">
         <svg
@@ -25,5 +30,7 @@ export default function LoadingScreen() {
         <p className="text-gray-600 dark:text-gray-300 text-lg">Carregando...</p>
       </div>
     </main>
+    <Footer />
+    </>
   );
 }
