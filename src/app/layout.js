@@ -1,5 +1,5 @@
 import '../styles/globals.css';
-import AuthProvider from './AuthProvider';
+import AuthProvider from '@/provider/AuthProvider';
 
 export const metadata = {
   title: 'BuscaGames',
