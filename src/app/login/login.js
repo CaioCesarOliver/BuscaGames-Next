@@ -1,8 +1,8 @@
 "use client";
 
-import Nav from "../components/Nav";
-import AuthForm from "../components/AuthForm";
-import Footer from "../components/Footer";
+import Nav from "../../components/Nav";
+import AuthForm from "../../components/AuthForm";
+import Footer from "../../components/Footer";
 
 export default function LoginPage() {
   return (

@@ -1,19 +1,29 @@
-import LaunchCountdownCube from '../../components/LaunchCountdown'
-import GamesSection from '../../components/GamesSectionHome'
-import { DailyQuests, Newsletter } from '../../components/DailyQuests'
+"use client";
+
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+
+import LaunchCountdownCube from '../../components/LaunchCountdown';
+import GamesSection from '../../components/GamesSectionHome';
+import { DailyQuests, Newsletter } from '../../components/DailyQuests';
 
 const Homepage = () => {
-    return (
-        <div>
-            <div className="overflow-x-hidden pt-16">
-                <LaunchCountdownCube />
-                <GamesSection />
-                <DailyQuests />
-                <Newsletter />
-            </div>
+  const { data: session, status } = useSession();
 
-        </div>
-    )
-}
+  useEffect(() => {
+    console.log("Sessão carregada:", session);
+  }, [session]);
 
-export default Homepage
+  return (
+    <div>
+      <div className="overflow-x-hidden pt-16">
+        <LaunchCountdownCube />
+        <GamesSection />
+        <DailyQuests />
+        <Newsletter />
+      </div>
+    </div>
+  );
+};
+
+export default Homepage;

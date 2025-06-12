@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { signIn } from "next-auth/react";
+
+import { useRouter } from "next/navigation";
+
 import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -17,14 +21,12 @@ import {
 export default function AuthForm() {
   const [mode, setMode] = useState("login");
 
+  const router = useRouter();
   const [showLoginPwd, setShowLoginPwd] = useState(false);
   const [showSignupPwd, setShowSignupPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
   const [userName, setUserName] = useState("");
-
-  const [usernameAvailable, setUsernameAvailable] = useState(null);
-  const [usernameError, setUsernameError] = useState("");
 
   const [loginUser, setLoginUser] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -87,6 +89,7 @@ export default function AuthForm() {
     }
 
     setLoading(true);
+
     try {
       const res = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
@@ -98,18 +101,31 @@ export default function AuthForm() {
           password: loginPassword,
         }),
       });
+
       const data = await res.json();
 
-      if (!res.ok) {
+      if (!res.ok || !data.success) {
         return Swal.fire({
           icon: "error",
           title: data.error || "Erro no login",
         });
       }
-      Swal.fire({
-        icon: "success",
-        title: "Login realizado com sucesso!",
+
+      // Envia para o NextAuth armazenar na sessão
+      const result = await signIn("credentials", {
+        tokenizedUID: data.tokenizedUID,
+        userDetails: JSON.stringify(data.user),
+        redirect: false
       });
+
+      if (result?.ok) {
+        router.push("/");
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Falha ao iniciar sessão",
+        });
+      }
     } catch (error) {
       Swal.fire({
         icon: "error",

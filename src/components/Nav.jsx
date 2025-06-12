@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+import { useSession } from "next-auth/react";
+
 import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,23 +20,16 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { UserDropdown } from "./Layout/Header/UserDropdown";
+
 import useTheme from "../hooks/useTheme";
 
 export default function Nav() {
+  const { data: session } = useSession();
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
 
   const { theme, toggleTheme } = useTheme();
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-      setIsAuthenticated(true);
-      setUsername(user.name);
-    }
-  }, []);
 
   return (
     <nav className="fixed top-0 w-full bg-white dark:bg-gray-900 bg-opacity-90 backdrop-blur border-b border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white z-50">
@@ -108,11 +104,8 @@ export default function Nav() {
 
             {/* Login/Profile */}
             <div id="loginNavItem" className="text-purple-900 dark:text-white">
-              {isAuthenticated ? (
-                <div className="flex items-center">
-                  <FontAwesomeIcon icon={faUser} className="mr-1" />
-                  <span>{username.split(" ")[0]}</span>
-                </div>
+              {session?.user ? (
+                <UserDropdown />
               ) : (
                 <Link
                   href="/login"
