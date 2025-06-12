@@ -8,6 +8,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProfileHeader from '@/components/ProfileHeader'
 import AccessDenied from '@/components/AccessDenied'
+import LoadingScreen from '@/components/LoadingScreen'
 
 export default function ProfilePage() {
     const { data: session, status } = useSession();
@@ -32,9 +33,7 @@ export default function ProfilePage() {
 
     if (status === "loading") {
         return (
-            <main className="flex justify-center items-center h-screen">
-                <p className="text-gray-500">Carregando...</p>
-            </main>
+            <LoadingScreen />
         );
     }
 
