@@ -7,12 +7,12 @@ import {
   faGamepad,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
-import { FiHeart } from 'react-icons/fi'; // ícone de coração (vazio)
-import { FaHeart } from 'react-icons/fa'; // ícone de coração preenchido
+import { FiHeart } from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
+import Alert from '@/components/Alert'
 
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from '@/context/FavoritesContext';
-
 
 const StarFull = () => (
   <svg className="w-5 h-5 text-yellow-400 inline-block" fill="currentColor" viewBox="0 0 20 20">
@@ -83,9 +83,10 @@ export default function GamesSection({
   const { addToCart } = useCart();
   const [games, setGames] = useState([]);
   const { favorites, addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
-  console.log("Favoritos no render:", favorites);
   const [previewGame, setPreviewGame] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [alertMessage, setAlertMessage] = useState(""); // Estado do alert
+  const closeAlert = () => setAlertMessage("");
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -105,9 +106,16 @@ export default function GamesSection({
     const id = game.id;
     if (isFavorite(id)) {
       removeFromFavorites(id);
+      setAlertMessage(`"${game.title}" removido dos favoritos.`);
     } else {
       addToFavorites(game);
+      setAlertMessage(`"${game.title}" adicionado aos favoritos!`);
     }
+  };
+
+  const handleAddToCart = (game) => {
+    addToCart(game);
+    setAlertMessage(`"${game.title}" adicionado ao carrinho!`);
   };
 
   const formatReleaseDate = (isoString) => {
@@ -118,6 +126,8 @@ export default function GamesSection({
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  // restante do código applyFilters e renderStars...
 
   const applyFilters = () => {
     return games
@@ -176,7 +186,10 @@ export default function GamesSection({
   };
 
   return (
-    <section className="py-16 px-4 transition-colors duration-500">
+    <section className="py-16 px-4 transition-colors duration-500 relative">
+      {/* Alert */}
+      <Alert message={alertMessage} onClose={() => setAlertMessage("")} />
+
       {filteredGames.length === 0 ? (
         <p className="text-white text-center text-xl mt-10">Nenhum jogo encontrado.</p>
       ) : (
@@ -246,8 +259,8 @@ export default function GamesSection({
                           type="button"
                           className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
                           onClick={(e) => {
-                            e.stopPropagation();   // para não interferir em cliques nos cards
-                            addToCart(game);       // passa o objeto game completo
+                            e.stopPropagation();
+                            handleAddToCart(game);
                           }}
                         >
                           Adicionar ao Carrinho
@@ -256,7 +269,7 @@ export default function GamesSection({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            toggleFavorite(game);  // Passar o objeto completo
+                            toggleFavorite(game);
                           }}
                           aria-label={isFavorite(game.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                           className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
@@ -286,11 +299,12 @@ export default function GamesSection({
             })}
           </div>
 
+          {/* Modal preview */}
           {previewGame && (
             <>
               <div
                 className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-md z-40"
-                onClick={() => setIsModalOpen(false)} // clicar no fundo fecha a modal
+                onClick={() => setIsModalOpen(false)}
               ></div>
               <div
                 className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-6"
@@ -300,7 +314,6 @@ export default function GamesSection({
                   className="bg-gray-100 dark:bg-gray-900 rounded-lg overflow-hidden max-w-5xl w-full max-h-[90vh] flex flex-col"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {/* Conteúdo da imagem com título e badges */}
                   <div className="relative h-1/2 w-full flex">
                     <img
                       src={previewGame.image ? `http://localhost:4000/${encodeURI(previewGame.image)}` : "/fallback-image.png"}
@@ -326,13 +339,11 @@ export default function GamesSection({
                     </div>
                   </div>
 
-                  {/* Descrição */}
                   <div className="p-6 overflow-auto flex-grow text-purple-950 dark:text-gray-300">
                     <h3 className="text-2xl font-semibold mb-2">Descrição</h3>
                     <p className="text-lg">{previewGame.description || "Descrição não disponível."}</p>
                   </div>
 
-                  {/* Footer */}
                   <div className="flex justify-between items-center p-6 border-t border-gray-700">
                     <div className="flex flex-row gap-4">
                       {previewGame.discount > 0 && (
@@ -345,7 +356,9 @@ export default function GamesSection({
                       <button
                         type="button"
                         className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
-                        onClick={() => addToCart(previewGame)}
+                        onClick={() => {
+                          handleAddToCart(previewGame);
+                        }}
                       >
                         + Carrinho
                       </button>
@@ -355,7 +368,11 @@ export default function GamesSection({
                         aria-label={isFavorite(previewGame.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                         className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
                       >
-                        <HeartIcon filled={isFavorite(previewGame.id)} />
+                        {isFavorite(previewGame.id) ? (
+                          <FaHeart className="text-red-500 w-5 h-5" />
+                        ) : (
+                          <FiHeart className="text-white w-5 h-5" />
+                        )}
                       </button>
                     </div>
                   </div>
