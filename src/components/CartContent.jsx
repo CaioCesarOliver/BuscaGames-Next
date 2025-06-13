@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '@/context/CartContext';
 import {
   faShoppingCart,
@@ -18,12 +18,23 @@ import {
   faCcPaypal,
 } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Alert from '@/components/Alert';
+
+// Wrapper para renderizar só no cliente e evitar mismatches de SSR
+function ClientOnly({ children }) {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => setHasMounted(true), []);
+  if (!hasMounted) return null;
+  return <>{children}</>;
+}
 
 const RewardCards = () => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mt-8">
       <div className="flex items-center mb-4 text-purple-700 dark:text-purple-400">
-        <FontAwesomeIcon icon={faGift} className="text-2xl mr-2" />
+        <ClientOnly>
+          <FontAwesomeIcon icon={faGift} className="text-2xl mr-2" />
+        </ClientOnly>
         <h3 className="text-xl font-semibold">Recompensas</h3>
       </div>
 
@@ -50,7 +61,9 @@ const RewardCards = () => {
         className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition"
       >
         Ver Missões
-        <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+        <ClientOnly>
+          <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+        </ClientOnly>
       </a>
     </div>
   );
@@ -58,17 +71,25 @@ const RewardCards = () => {
 
 const CartContent = () => {
   const { cartItems, removeFromCart, setCartItems } = useCart();
+  const [alertMessage, setAlertMessage] = useState('');
+  const closeAlert = () => setAlertMessage('');
 
-  // Calcular subtotal somando preços dos jogos no carrinho
   const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
 
-  // Função para limpar carrinho
-  const clearCart = () => {
-    setCartItems([]);
+  const handleClearCart = () => {
+    // Certifique-se que clearCart está definido no contexto, se não, use setCartItems([])
+    if (typeof setCartItems === 'function') {
+      setCartItems([]);
+    }
+    setAlertMessage("Carrinho limpo com sucesso.");
   };
 
   return (
     <div className="container mx-auto px-4 py-12">
+      {alertMessage && (
+        <Alert message={alertMessage} onClose={closeAlert} />
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Itens do carrinho */}
         <div className="lg:col-span-8">
@@ -81,11 +102,13 @@ const CartContent = () => {
               <div>Total</div>
             </div>
 
-            {/* Itens do carrinho (dinâmicos) */}
+            {/* Itens do carrinho */}
             <div id="cartItems" className="mt-4">
               {cartItems.length === 0 ? (
                 <div className="text-center text-gray-600 dark:text-gray-400 py-12">
-                  <FontAwesomeIcon icon={faShoppingCart} className="text-4xl mb-4" />
+                  <ClientOnly>
+                    <FontAwesomeIcon icon={faShoppingCart} className="text-4xl mb-4" />
+                  </ClientOnly>
                   <h3 className="text-lg font-semibold">Seu carrinho está vazio</h3>
                   <p className="text-sm mb-4">Adicione jogos ao seu carrinho para continuar</p>
                   <a
@@ -110,15 +133,20 @@ const CartContent = () => {
                       <span className="font-semibold text-gray-900 dark:text-gray-100">{game.title}</span>
                     </div>
                     <div>R$ {game.price.toFixed(2)}</div>
-                    <div>1</div> {/* Quantidade fixa */}
+                    <div>1</div>
                     <div>R$ {game.price.toFixed(2)}</div>
                     <div className="flex justify-center items-center h-full">
                       <button
-                        onClick={() => removeFromCart(game.id)}
+                        onClick={() => {
+                          removeFromCart(game.id);
+                          setAlertMessage(`"${game.title}" removido do carrinho.`);
+                        }}
                         className="text-red-600 hover:text-red-800"
                         title="Remover do carrinho"
                       >
-                        <FontAwesomeIcon icon={faTrashAlt} />
+                        <ClientOnly>
+                          <FontAwesomeIcon icon={faTrashAlt} />
+                        </ClientOnly>
                       </button>
                     </div>
                   </div>
@@ -133,14 +161,18 @@ const CartContent = () => {
               href="/games"
               className="flex items-center text-purple-700 dark:text-purple-400 hover:underline"
             >
-              <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+              <ClientOnly>
+                <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+              </ClientOnly>
               Continuar comprando
             </a>
             <button
-              onClick={clearCart}
+              onClick={handleClearCart}
               className="flex items-center text-red-600 dark:text-red-400 hover:underline"
             >
-              <FontAwesomeIcon icon={faTrashAlt} className="mr-2" />
+              <ClientOnly>
+                <FontAwesomeIcon icon={faTrashAlt} className="mr-2" />
+              </ClientOnly>
               Limpar carrinho
             </button>
           </div>
@@ -199,19 +231,21 @@ const CartContent = () => {
               disabled={cartItems.length === 0}
             >
               Finalizar Compra
-              <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+              <ClientOnly>
+                <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+              </ClientOnly>
             </button>
 
             {/* Métodos de pagamento */}
             <div className="mt-6 text-sm text-gray-700 dark:text-gray-300">
               <p className="mb-2">Aceitamos:</p>
               <div className="flex flex-wrap gap-4 text-2xl text-gray-600 dark:text-gray-400">
-                <FontAwesomeIcon icon={faCcVisa} title="Visa" />
-                <FontAwesomeIcon icon={faCcMastercard} title="Mastercard" />
-                <FontAwesomeIcon icon={faCcAmex} title="Amex" />
-                <FontAwesomeIcon icon={faCcPaypal} title="Paypal" />
-                <FontAwesomeIcon icon={faBarcode} title="Pix" />
-                <FontAwesomeIcon icon={faMoneyBillWave} title="Boleto" />
+                <ClientOnly><FontAwesomeIcon icon={faCcVisa} title="Visa" /></ClientOnly>
+                <ClientOnly><FontAwesomeIcon icon={faCcMastercard} title="Mastercard" /></ClientOnly>
+                <ClientOnly><FontAwesomeIcon icon={faCcAmex} title="Amex" /></ClientOnly>
+                <ClientOnly><FontAwesomeIcon icon={faCcPaypal} title="Paypal" /></ClientOnly>
+                <ClientOnly><FontAwesomeIcon icon={faBarcode} title="Pix" /></ClientOnly>
+                <ClientOnly><FontAwesomeIcon icon={faMoneyBillWave} title="Boleto" /></ClientOnly>
               </div>
             </div>
           </div>
