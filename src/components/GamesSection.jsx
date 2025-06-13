@@ -7,8 +7,12 @@ import {
   faGamepad,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
+import { FiHeart } from 'react-icons/fi'; // ícone de coração (vazio)
+import { FaHeart } from 'react-icons/fa'; // ícone de coração preenchido
 
 import { useCart } from "@/context/CartContext";
+import { useFavorites } from '@/context/FavoritesContext';
+
 
 const StarFull = () => (
   <svg className="w-5 h-5 text-yellow-400 inline-block" fill="currentColor" viewBox="0 0 20 20">
@@ -44,35 +48,6 @@ const StarEmpty = () => (
   </svg>
 );
 
-function HeartIcon({ filled }) {
-  return filled ? (
-    <svg
-      className="w-6 h-6 text-red-500"
-      fill="currentColor"
-      viewBox="0 0 24 24"
-      stroke="none"
-      aria-hidden="true"
-    >
-      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-    </svg>
-  ) : (
-    <svg
-      className="w-6 h-6 text-white"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-      aria-hidden="true"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3z"
-      />
-    </svg>
-  );
-}
-
 function EyeIcon() {
   return (
     <svg
@@ -107,7 +82,8 @@ export default function GamesSection({
 }) {
   const { addToCart } = useCart();
   const [games, setGames] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  const { favorites, addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
+  console.log("Favoritos no render:", favorites);
   const [previewGame, setPreviewGame] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -125,6 +101,15 @@ export default function GamesSection({
     fetchGames();
   }, []);
 
+  const toggleFavorite = (game) => {
+    const id = game.id;
+    if (isFavorite(id)) {
+      removeFromFavorites(id);
+    } else {
+      addToFavorites(game);
+    }
+  };
+
   const formatReleaseDate = (isoString) => {
     if (!isoString) return 'N/A';
     const date = new Date(isoString);
@@ -132,12 +117,6 @@ export default function GamesSection({
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-  };
-
-  const toggleFavorite = (id) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((favId) => favId !== id) : [...prev, id]
-    );
   };
 
   const applyFilters = () => {
@@ -273,16 +252,22 @@ export default function GamesSection({
                         >
                           Adicionar ao Carrinho
                         </button>
+
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            toggleFavorite(game.id);
+                            toggleFavorite(game);  // Passar o objeto completo
                           }}
-                          aria-label={isFavorited ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                          aria-label={isFavorite(game.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                           className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
                         >
-                          <HeartIcon filled={isFavorited} />
+                          {isFavorite(game.id) ? (
+                            <FaHeart className="text-red-500 w-5 h-5" />
+                          ) : (
+                            <FiHeart className="text-white w-5 h-5" />
+                          )}
                         </button>
+
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -360,17 +345,17 @@ export default function GamesSection({
                       <button
                         type="button"
                         className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
+                        onClick={() => addToCart(previewGame)}
                       >
                         + Carrinho
                       </button>
-
                       <button
                         type="button"
-                        onClick={() => toggleFavorite(previewGame.id)}
-                        aria-label={favorites.includes(previewGame.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                        onClick={() => toggleFavorite(previewGame)}
+                        aria-label={isFavorite(previewGame.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                         className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
                       >
-                        <HeartIcon filled={favorites.includes(previewGame.id)} />
+                        <HeartIcon filled={isFavorite(previewGame.id)} />
                       </button>
                     </div>
                   </div>

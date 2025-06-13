@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import AuthProvider from '@/provider/AuthProvider';
 import { CartProvider } from '@/context/CartContext';
+import { FavoritesProvider } from '@/context/FavoritesContext'; // 👈 importar aqui
 
 export const metadata = {
   title: 'BuscaGames',
@@ -13,7 +14,9 @@ export default function RootLayout({ children }) {
       <body>
         <AuthProvider>
           <CartProvider>
-            {children}
+            <FavoritesProvider>
+              {children}
+            </FavoritesProvider>
           </CartProvider>
         </AuthProvider>
       </body>
