@@ -7,6 +7,7 @@ import {
   faGamepad,
   faStar
 } from "@fortawesome/free-solid-svg-icons";
+
 import { useCart } from "@/context/CartContext";
 
 const StarFull = () => (
@@ -265,7 +266,10 @@ export default function GamesSection({
                         <button
                           type="button"
                           className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
-                          onClick={() => addToCart(game)}
+                          onClick={(e) => {
+                            e.stopPropagation();   // para não interferir em cliques nos cards
+                            addToCart(game);       // passa o objeto game completo
+                          }}
                         >
                           Adicionar ao Carrinho
                         </button>

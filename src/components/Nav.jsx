@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
+import { useState } from "react";
 import { useSession } from "next-auth/react";
-
 import Image from "next/image";
 import Link from "next/link";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoon,
@@ -17,19 +16,21 @@ import {
   faTasks,
   faInfoCircle,
   faBars,
-  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
 import UserDropdown from "@/components/UserDropdown";
-
 import useTheme from "../hooks/useTheme";
+
+// Importa o hook do contexto do carrinho (ajuste o caminho conforme sua estrutura)
+import { useCart } from "@/context/CartContext";
 
 export default function Nav() {
   const { data: session } = useSession();
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [username, setUsername] = useState("");
-
   const { theme, toggleTheme } = useTheme();
+
+  // Pega os itens do carrinho do contexto
+  const { cartItems } = useCart();
 
   return (
     <nav className="fixed top-0 w-full bg-white dark:bg-gray-900 bg-opacity-90 backdrop-blur border-b border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white z-50">
@@ -97,8 +98,11 @@ export default function Nav() {
               className="relative flex items-center transition text-purple-900 dark:text-white"
             >
               <FontAwesomeIcon icon={faShoppingCart} className="text-xl" />
-              <span className="absolute -top-1 -right-2 bg-red-600 rounded-full text-xs w-5 h-5 flex items-center justify-center text-white">
-                0
+              <span
+                className="absolute -top-1 -right-2 bg-red-600 rounded-full text-xs w-5 h-5 flex items-center justify-center text-white"
+                aria-label={`${cartItems.length} itens no carrinho`}
+              >
+                {cartItems.length}
               </span>
             </Link>
 

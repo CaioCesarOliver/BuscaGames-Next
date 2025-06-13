@@ -6,11 +6,10 @@ const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-
   const addToCart = (game) => {
-    setCartItems((prev) => {
-      // Se já existe, não adiciona duplicado
-      const exists = prev.find((item) => item.id === game.id);
+    console.log("Adicionando ao carrinho:", game);
+    setCartItems(prev => {
+      const exists = prev.find(item => item.id === game.id);
       if (exists) return prev;
       return [...prev, game];
     });

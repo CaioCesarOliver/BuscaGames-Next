@@ -1,4 +1,7 @@
+'use client'
+
 import React from 'react';
+import { useCart } from '@/context/CartContext';
 import {
   faShoppingCart,
   faArrowLeft,
@@ -54,6 +57,16 @@ const RewardCards = () => {
 };
 
 const CartContent = () => {
+  const { cartItems, removeFromCart, setCartItems } = useCart();
+
+  // Calcular subtotal somando preços dos jogos no carrinho
+  const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
+
+  // Função para limpar carrinho
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -68,19 +81,49 @@ const CartContent = () => {
               <div>Total</div>
             </div>
 
-            {/* Itens do carrinho (dinâmicos futuramente) */}
+            {/* Itens do carrinho (dinâmicos) */}
             <div id="cartItems" className="mt-4">
-              <div className="text-center text-gray-600 dark:text-gray-400 py-12">
-                <FontAwesomeIcon icon={faShoppingCart} className="text-4xl mb-4" />
-                <h3 className="text-lg font-semibold">Seu carrinho está vazio</h3>
-                <p className="text-sm mb-4">Adicione jogos ao seu carrinho para continuar</p>
-                <a
-                  href="/games"
-                  className="inline-block bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded"
-                >
-                  Explorar jogos
-                </a>
-              </div>
+              {cartItems.length === 0 ? (
+                <div className="text-center text-gray-600 dark:text-gray-400 py-12">
+                  <FontAwesomeIcon icon={faShoppingCart} className="text-4xl mb-4" />
+                  <h3 className="text-lg font-semibold">Seu carrinho está vazio</h3>
+                  <p className="text-sm mb-4">Adicione jogos ao seu carrinho para continuar</p>
+                  <a
+                    href="/games"
+                    className="inline-block bg-purple-700 hover:bg-purple-800 text-white px-4 py-2 rounded"
+                  >
+                    Explorar jogos
+                  </a>
+                </div>
+              ) : (
+                cartItems.map((game) => (
+                  <div
+                    key={game.id}
+                    className="grid grid-cols-5 items-center border-b border-gray-200 dark:border-gray-700 py-4"
+                  >
+                    <div className="col-span-2 flex items-center gap-4">
+                      <img
+                        src={`http://localhost:4000/${game.image}`}
+                        alt={game.title}
+                        className="w-32 h-16 object-cover rounded"
+                      />
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">{game.title}</span>
+                    </div>
+                    <div>R$ {game.price.toFixed(2)}</div>
+                    <div>1</div> {/* Quantidade fixa */}
+                    <div>R$ {game.price.toFixed(2)}</div>
+                    <div className="flex justify-center items-center h-full">
+                      <button
+                        onClick={() => removeFromCart(game.id)}
+                        className="text-red-600 hover:text-red-800"
+                        title="Remover do carrinho"
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 
@@ -94,7 +137,7 @@ const CartContent = () => {
               Continuar comprando
             </a>
             <button
-              id="clearCart"
+              onClick={clearCart}
               className="flex items-center text-red-600 dark:text-red-400 hover:underline"
             >
               <FontAwesomeIcon icon={faTrashAlt} className="mr-2" />
@@ -110,7 +153,7 @@ const CartContent = () => {
 
             <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300 mb-2">
               <span>Subtotal:</span>
-              <span id="cartSubtotal">R$ 0,00</span>
+              <span id="cartSubtotal">R$ {subtotal.toFixed(2)}</span>
             </div>
 
             <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300 mb-2">
@@ -122,7 +165,7 @@ const CartContent = () => {
 
             <div className="flex justify-between text-md font-semibold text-gray-800 dark:text-gray-100">
               <span>Total:</span>
-              <span id="cartTotal">R$ 0,00</span>
+              <span id="cartTotal">R$ {subtotal.toFixed(2)}</span>
             </div>
 
             {/* Cupom de Desconto */}
@@ -153,7 +196,7 @@ const CartContent = () => {
             <button
               id="checkoutButton"
               className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg flex items-center justify-center gap-2 disabled:opacity-50"
-              disabled
+              disabled={cartItems.length === 0}
             >
               Finalizar Compra
               <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
@@ -167,8 +210,8 @@ const CartContent = () => {
                 <FontAwesomeIcon icon={faCcMastercard} title="Mastercard" />
                 <FontAwesomeIcon icon={faCcAmex} title="Amex" />
                 <FontAwesomeIcon icon={faCcPaypal} title="Paypal" />
-                <FontAwesomeIcon icon={faBarcode} title="Boleto" />
-                <FontAwesomeIcon icon={faMoneyBillWave} title="Dinheiro" />
+                <FontAwesomeIcon icon={faBarcode} title="Pix" />
+                <FontAwesomeIcon icon={faMoneyBillWave} title="Boleto" />
               </div>
             </div>
           </div>
