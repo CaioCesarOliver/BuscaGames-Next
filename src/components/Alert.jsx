@@ -16,17 +16,15 @@ export default function Alert({ message, type = "info", onClose }) {
     error: "border-red-500",
   };
 
-  const bgColors = {
-    info: "bg-gray-100 dark:bg-slate-950",
-    success: "bg-green-100 dark:bg-green-900",
-    error: "bg-red-100 dark:bg-red-900",
-  };
+  // Fundo igual para todos
+  const bgColor = "bg-gray-100 dark:bg-slate-950";
 
   useEffect(() => {
     if (!message) return;
     const timer = setTimeout(() => {
       onClose?.();
     }, 3000);
+
     return () => clearTimeout(timer);
   }, [message, onClose]);
 
@@ -37,7 +35,7 @@ export default function Alert({ message, type = "info", onClose }) {
       role="alert"
       className={`fixed top-36 right-5 flex items-center gap-3 px-4 py-3 rounded shadow-md max-w-md mx-auto
                   border-l-4 ${borderColors[type] || borderColors.info}
-                  ${bgColors[type] || bgColors.info}
+                  ${bgColor}
                   text-gray-900 dark:text-gray-100 z-[9999]`}
     >
       <div>{icons[type] || icons.info}</div>

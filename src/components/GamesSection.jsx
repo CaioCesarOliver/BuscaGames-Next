@@ -85,8 +85,8 @@ export default function GamesSection({
   const { favorites, addToFavorites, removeFromFavorites, isFavorite } = useFavorites();
   const [previewGame, setPreviewGame] = useState(null);
 
-  const [alertMessage, setAlertMessage] = useState(""); // Estado do alert
-  const closeAlert = () => setAlertMessage("");
+  const [alert, setAlert] = useState({ message: "", type: "info" });
+  const closeAlert = () => setAlert({ ...alert, message: "" });
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -106,16 +106,16 @@ export default function GamesSection({
     const id = game.id;
     if (isFavorite(id)) {
       removeFromFavorites(id);
-      setAlertMessage(`"${game.title}" removido dos favoritos.`);
+      setAlert({ message: `"${game.title}" removido dos favoritos.`, type: "info" });
     } else {
       addToFavorites(game);
-      setAlertMessage(`"${game.title}" adicionado aos favoritos!`);
+      setAlert({ message: `"${game.title}" adicionado aos favoritos.`, type: "success" });
     }
   };
 
   const handleAddToCart = (game) => {
     addToCart(game);
-    setAlertMessage(`"${game.title}" adicionado ao carrinho!`);
+    setAlert({ message: `"${game.title}" adicionado ao carrinho!`, type: "success" });
   };
 
   const formatReleaseDate = (isoString) => {
@@ -188,7 +188,7 @@ export default function GamesSection({
   return (
     <section className="py-16 px-4 transition-colors duration-500 relative">
       {/* Alert */}
-      <Alert message={alertMessage} onClose={() => setAlertMessage("")} />
+      <Alert message={alert.message} type={alert.type} onClose={closeAlert} />
 
       {filteredGames.length === 0 ? (
         <p className="text-white text-center text-xl mt-10">Nenhum jogo encontrado.</p>
