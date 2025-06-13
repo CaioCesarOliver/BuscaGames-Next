@@ -10,18 +10,24 @@ import { useCart } from "@/context/CartContext";
 
 import Alert from '@/components/Alert';
 
+import { FaHeart } from "react-icons/fa";
+import { FiHeart } from "react-icons/fi";
+
 export default function GamesSection() {
   const [games, setGames] = useState([]);
 
-  const { addToCart } = useCart();  // pega a função addToCart do contexto
+  const { addToCart } = useCart();  // função do contexto
 
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertType, setAlertType] = useState("success");
-
-  const showAlert = (message, type = "success") => {
-    setAlertMessage(message);
-    setAlertType(type);
-  };
+  // Favoritos com sessionStorage
+  const [favorites, setFavorites] = useState(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const favs = sessionStorage.getItem("favorites");
+      return favs ? JSON.parse(favs) : [];
+    } catch {
+      return [];
+    }
+  });
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -31,12 +37,28 @@ export default function GamesSection() {
         setGames(data);
       } catch (error) {
         console.error("Erro ao buscar os jogos:", error);
-        showAlert("Erro ao carregar jogos.", "error");
       }
     };
 
     fetchGames();
   }, []);
+
+  // Salva favoritos no sessionStorage sempre que atualizar
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("favorites", JSON.stringify(favorites));
+    }
+  }, [favorites]);
+
+  const toggleFavorite = (gameId) => {
+    setFavorites((prev) =>
+      prev.includes(gameId)
+        ? prev.filter((id) => id !== gameId)
+        : [...prev, gameId]
+    );
+  };
+
+  const isFavorite = (id) => favorites.includes(id);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -119,8 +141,18 @@ export default function GamesSection() {
 
   const featuredGames = getFeaturedGames();
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+
+  const handleAddToCart = (game) => {
+    addToCart(game);
+    setAlertMessage(`"${game.title}" adicionado ao carrinho!`);
+    setAlertType("success");
+  };
+
   return (
     <section className="bg-white dark:bg-gray-900 py-16 px-4 transition-colors duration-500">
+
       <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage("")} />
 
       <div className="container mx-auto max-w-7xl">
@@ -173,7 +205,7 @@ export default function GamesSection() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-2">
-                    {game.genres?.map((genre, idx) => (
+                    {game.genres?.slice(0, 3).map((genre, idx) => (
                       <span
                         key={idx}
                         className="bg-blue-600 text-sm px-2 py-1 rounded-full"
@@ -187,16 +219,40 @@ export default function GamesSection() {
                     <div className="flex items-center">
                       {renderStars(game.rating ?? 0)}
                     </div>
-                    <button
-                      type="button"
-                      className="bg-green-600 hover:bg-green-700 active:bg-green-800 transition-colors text-white font-semibold px-4 py-2 rounded"
-                      onClick={() => {
-                        addToCart(game);
-                        showAlert(`"${game.title}" adicionado ao carrinho!`, "success");
-                      }}
-                    >
-                      + Carrinho
-                    </button>
+
+                    <div className="flex items-center gap-2">
+
+                      <button
+                        type="button"
+                        className="bg-green-600 hover:bg-green-700 active:bg-green-800 transition-colors text-white font-semibold px-4 py-2 rounded"
+                        onClick={() => handleAddToCart(game)}
+                      >
+                        + Carrinho
+                      </button>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleFavorite(game.id);
+
+                          if (isFavorite(game.id)) {
+                            setAlertMessage(`"${game.title}" removido dos favoritos.`);
+                            setAlertType("info");
+                          } else {
+                            setAlertMessage(`"${game.title}" adicionado aos favoritos.`);
+                            setAlertType("success");
+                          }
+                        }}
+                        aria-label={isFavorite(game.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                        className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
+                      >
+                        {isFavorite(game.id) ? (
+                          <FaHeart className="text-red-500 w-5 h-5" />
+                        ) : (
+                          <FiHeart className="text-white w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
