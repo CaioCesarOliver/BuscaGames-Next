@@ -6,8 +6,22 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGamepad } from "@fortawesome/free-solid-svg-icons";
 
+import { useCart } from "@/context/CartContext";
+
+import Alert from '@/components/Alert';
+
 export default function GamesSection() {
   const [games, setGames] = useState([]);
+
+  const { addToCart } = useCart();  // pega a função addToCart do contexto
+
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("success");
+
+  const showAlert = (message, type = "success") => {
+    setAlertMessage(message);
+    setAlertType(type);
+  };
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -17,6 +31,7 @@ export default function GamesSection() {
         setGames(data);
       } catch (error) {
         console.error("Erro ao buscar os jogos:", error);
+        showAlert("Erro ao carregar jogos.", "error");
       }
     };
 
@@ -106,6 +121,8 @@ export default function GamesSection() {
 
   return (
     <section className="bg-white dark:bg-gray-900 py-16 px-4 transition-colors duration-500">
+      <Alert message={alertMessage} type={alertType} onClose={() => setAlertMessage("")} />
+
       <div className="container mx-auto max-w-7xl">
         <h2 className="text-4xl font-bold mb-12 text-center text-purple-900 dark:text-white transition-colors duration-500">
           Jogos em Destaque
@@ -173,6 +190,10 @@ export default function GamesSection() {
                     <button
                       type="button"
                       className="bg-green-600 hover:bg-green-700 active:bg-green-800 transition-colors text-white font-semibold px-4 py-2 rounded"
+                      onClick={() => {
+                        addToCart(game);
+                        showAlert(`"${game.title}" adicionado ao carrinho!`, "success");
+                      }}
                     >
                       + Carrinho
                     </button>
@@ -186,8 +207,8 @@ export default function GamesSection() {
         {/* Botão Ver todos os jogos */}
         <div className="mt-12 text-center">
           <Link href="/games" passHref>
-           <button className="bg-blue-600 hover:bg-green-500 hover:text-black text-white font-semibold px-8 py-4 rounded-lg text-xl transition-colors duration-300">
-             <FontAwesomeIcon icon={faGamepad} className="mr-1"/> Ver todos os jogos
+            <button className="bg-blue-600 hover:bg-green-500 hover:text-black text-white font-semibold px-8 py-4 rounded-lg text-xl transition-colors duration-300">
+              <FontAwesomeIcon icon={faGamepad} className="mr-1" /> Ver todos os jogos
             </button>
           </Link>
         </div>
