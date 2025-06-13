@@ -70,17 +70,14 @@ const RewardCards = () => {
 };
 
 const CartContent = () => {
-  const { cartItems, removeFromCart, setCartItems } = useCart();
+  const { cartItems, removeFromCart, clearCart } = useCart();
   const [alertMessage, setAlertMessage] = useState('');
   const closeAlert = () => setAlertMessage('');
 
   const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
 
   const handleClearCart = () => {
-    // Certifique-se que clearCart está definido no contexto, se não, use setCartItems([])
-    if (typeof setCartItems === 'function') {
-      setCartItems([]);
-    }
+    clearCart();
     setAlertMessage("Carrinho limpo com sucesso.");
   };
 
