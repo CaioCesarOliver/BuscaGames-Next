@@ -6,6 +6,7 @@ import SecurityTab from "@/components/SecurityTab";
 import { useSession } from "next-auth/react";
 import LoadingScreen from "@/components/LoadingScreen";
 import AccessDenied from "@/components/AccessDenied";
+import SettingsTab from "@/components/SettingsTab"
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
@@ -28,6 +29,7 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 text-center">
             Configurações
           </h1>
+         <div className="my-5"><SettingsTab /></div>
           <SecurityTab />
         </div>
       </main>
