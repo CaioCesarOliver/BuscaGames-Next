@@ -50,9 +50,9 @@ export default function Info() {
       position: 'Responsável por parte do código do projeto',
       rm: 'RM 562798',
       socialLinks: [
-        { icon: 'linkedin', url: 'https://www.linkedin.com/in/rubensescobar/' },
-        { icon: 'github', url: 'https://github.com/rubensescobar' },
-        { icon: 'instagram', url: 'https://www.instagram.com/r.escobar_/' },
+        { icon: 'linkedin', url: 'https://www.linkedin.com/in/gabriel-politano/' },
+        { icon: 'github', url: 'https://github.com/gabrielcpolitano' },
+        { icon: 'instagram', url: '#' },
       ],
     },
     {
