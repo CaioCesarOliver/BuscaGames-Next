@@ -92,11 +92,11 @@ const CartContent = () => {
         <div className="lg:col-span-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             {/* Cabeçalho */}
-            <div className="grid grid-cols-5 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-3">
+            <div className="grid grid-cols-6 text-sm font-semibold text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-3">
               <div className="col-span-2">Produto</div>
               <div>Preço</div>
               <div>Quantidade</div>
-              <div>Total</div>
+              <div className='col-span-2'>Total</div>
             </div>
 
             {/* Itens do carrinho */}
@@ -119,7 +119,7 @@ const CartContent = () => {
                 cartItems.map((game) => (
                   <div
                     key={game.id}
-                    className="grid grid-cols-5 items-center border-b border-gray-200 dark:border-gray-700 py-4"
+                    className="grid grid-cols-6 items-center border-b border-gray-200 dark:border-gray-700 py-4"
                   >
                     <div className="col-span-2 flex items-center gap-4">
                       <img
