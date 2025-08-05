@@ -355,8 +355,20 @@ export default function AuthForm() {
                     <FontAwesomeIcon icon={showLoginPwd ? faEyeSlash : faEye} />
                   </button>
                 </div>
-                {/* Link Esqueci minha senha */}
-                <div className="text-right mt-2">
+
+                <div className="flex items-center justify-between mt-4">
+                  <label htmlFor="keepLoggedIn" className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      id="keepLoggedIn"
+                      name="keepLoggedIn"
+                      className="w-4 h-4 text-purple-700 bg-gray-100 rounded border border-gray-300 focus:ring-purple-500 m-0"
+                    />
+                    <span className="text-sm text-purple-900 dark:text-white leading-none">
+                      Manter-me conectado
+                    </span>
+                  </label>
+
                   <button
                     type="button"
                     onClick={() => router.push("/forgot-password")}

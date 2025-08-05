@@ -56,8 +56,7 @@ export default function ForgotPasswordPage() {
             <Nav />
             <div
                 className={`flex items-center justify-center min-h-[80vh]
-        bg-gradient-to-br from-purple-200 via-purple-100 to-blue-200
-        dark:bg-[linear-gradient(to_right,_#6b21a8,_#831843)] 
+        bg-[linear-gradient(to_right,_#6b21a8,_#831843)] 
         transition-colors duration-300`}
             >
                 <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
