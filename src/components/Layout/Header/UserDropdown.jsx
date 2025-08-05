@@ -15,7 +15,10 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { User, ChevronsUpDown, LogOut, LayoutDashboard } from "lucide-react";
 
-export default function UserDropdown({ user }) {
+import { useAuth } from "@/context/AuthContext";
+
+export default function UserDropdown() {
+  const { user, logout } = useAuth();
   const router = useRouter();
 
   const handleGoToProfile = () => {
@@ -24,7 +27,7 @@ export default function UserDropdown({ user }) {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+      await logout();
       router.push("/");
     } catch (error) {
       console.error("Erro ao deslogar:", error);
