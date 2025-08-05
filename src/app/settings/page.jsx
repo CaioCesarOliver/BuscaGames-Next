@@ -1,25 +1,43 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import SecurityTab from "@/components/SecurityTab";
-import { useSession } from "next-auth/react";
+import SettingsTab from "@/components/SettingsTab";
 import LoadingScreen from "@/components/LoadingScreen";
 import AccessDenied from "@/components/AccessDenied";
-import SettingsTab from "@/components/SettingsTab"
 
 export default function SettingsPage() {
-  const { data: session, status } = useSession();
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
 
-  if (status === "loading") {
-    return <LoadingScreen />;
-  }
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:4000/api/users/me", {
+          credentials: "include",
+        });
+        if (!res.ok) {
+          setUser(null);
+          setLoadingUser(false);
+          return;
+        }
+        const data = await res.json();
+        setUser(data);
+      } catch (err) {
+        console.error("Erro ao buscar usuário:", err);
+        setUser(null);
+      } finally {
+        setLoadingUser(false);
+      }
+    }
+    fetchUser();
+  }, []);
 
-  if (!session) {
-    return (
-        <AccessDenied />
-    );
-  }
+  if (loadingUser) return <LoadingScreen />;
+
+  if (!user) return <AccessDenied />;
 
   return (
     <>
@@ -29,7 +47,9 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-semibold text-gray-900 dark:text-gray-100 mb-6 text-center">
             Configurações
           </h1>
-         <div className="my-5"><SettingsTab /></div>
+          <div className="my-5">
+            <SettingsTab />
+          </div>
           <SecurityTab />
         </div>
       </main>

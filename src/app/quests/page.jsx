@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import QuestCard from "@/components/QuestCards";
 import QuestHeader from "@/components/QuestHeader";
 import Nav from "@/components/Nav";
@@ -11,46 +10,66 @@ import LevelAchievement from "@/components/levelAchievement";
 import AccessDenied from "@/components/AccessDenied";
 
 export default function QuestsPage() {
-    const { data: session, status } = useSession();
-
+    const [user, setUser] = useState(null);
     const [quests, setQuests] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingUser, setLoadingUser] = useState(true);
+    const [loadingQuests, setLoadingQuests] = useState(false);
     const [error, setError] = useState(null);
 
+    // Pega o usuário autenticado via cookie + JWT
     useEffect(() => {
-        if (status === "authenticated") {
-            const fetchQuests = async () => {
-                try {
-                    const res = await fetch("http://localhost:4000/quests");
-                    if (!res.ok) throw new Error("Erro ao buscar quests");
-                    const data = await res.json();
-                    setQuests(data);
-                } catch (err) {
-                    setError(err.message);
-                } finally {
-                    setLoading(false);
+        async function fetchUser() {
+            try {
+                const res = await fetch("http://localhost:4000/api/users/me", {
+                    credentials: "include", // manda cookie junto
+                });
+                if (!res.ok) {
+                    setUser(null);
+                    setLoadingUser(false);
+                    return;
                 }
-            };
-
-            fetchQuests();
+                const data = await res.json();
+                setUser(data);
+            } catch (err) {
+                console.error("Erro ao buscar usuário:", err);
+                setUser(null);
+            } finally {
+                setLoadingUser(false);
+            }
         }
-    }, [status]);
+        fetchUser();
+    }, []);
 
-    if (status === "loading") {
-        return <p className="text-center mt-10">Verificando autenticação...</p>;
-    }
+    // Se tem user, busca quests
+    useEffect(() => {
+        if (!user) return;
 
-    if (status === "unauthenticated") {
-        return (
-            <AccessDenied />
-        );
-    }
+        async function fetchQuests() {
+            setLoadingQuests(true);
+            try {
+                const res = await fetch("http://localhost:4000/quests");
+                if (!res.ok) throw new Error("Erro ao buscar quests");
+                const data = await res.json();
+                setQuests(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoadingQuests(false);
+            }
+        }
+        fetchQuests();
+    }, [user]);
 
-    const dailyQuests = quests.filter((quest) => quest.type === "DAILY");
-    const weeklyQuests = quests.filter((quest) => quest.type === "WEEKLY");
+    if (loadingUser) return <p className="text-center mt-10">Verificando autenticação...</p>;
 
-    if (loading) return <p className="text-center mt-10">Carregando quests...</p>;
+    if (!user) return <AccessDenied />;
+
+    if (loadingQuests) return <p className="text-center mt-10">Carregando quests...</p>;
+
     if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
+
+    const dailyQuests = quests.filter((q) => q.type === "DAILY");
+    const weeklyQuests = quests.filter((q) => q.type === "WEEKLY");
 
     return (
         <>
