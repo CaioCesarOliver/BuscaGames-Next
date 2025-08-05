@@ -329,7 +329,6 @@ export default function AuthForm() {
                   onChange={(e) => setLoginUser(e.target.value)}
                 />
               </div>
-
               <div>
                 <label
                   htmlFor="loginPassword"
@@ -346,6 +345,7 @@ export default function AuthForm() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                   />
+
                   <button
                     type="button"
                     onClick={() => togglePwd("login")}
@@ -353,6 +353,16 @@ export default function AuthForm() {
                     aria-label={showLoginPwd ? "Ocultar senha" : "Mostrar senha"}
                   >
                     <FontAwesomeIcon icon={showLoginPwd ? faEyeSlash : faEye} />
+                  </button>
+                </div>
+                {/* Link Esqueci minha senha */}
+                <div className="text-right mt-2">
+                  <button
+                    type="button"
+                    onClick={() => router.push("/forgot-password")}
+                    className="text-sm text-blue-600 hover:underline"
+                  >
+                    Esqueci minha senha
                   </button>
                 </div>
               </div>
