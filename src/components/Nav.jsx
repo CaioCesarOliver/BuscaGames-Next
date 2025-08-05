@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -26,12 +27,13 @@ export default function Nav() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { cartItems } = useCart();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchUser() {
       try {
         const res = await fetch("http://localhost:4000/api/users/me", {
-          credentials: "include", // importante para enviar o cookie
+          credentials: "include",
         });
         if (res.ok) {
           const data = await res.json();
@@ -46,6 +48,24 @@ export default function Nav() {
     }
     fetchUser();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (res.ok) {
+        setUser(null);
+        router.push("/login");
+      } else {
+        alert("Erro ao deslogar. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro ao deslogar:", error);
+      alert("Erro ao deslogar. Tente novamente.");
+    }
+  };
 
   return (
     <nav className="fixed top-0 w-full bg-white dark:bg-gray-900 bg-opacity-90 backdrop-blur border-b border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white z-50">
@@ -124,7 +144,7 @@ export default function Nav() {
             {/* Login/Profile */}
             <div id="loginNavItem" className="text-purple-900 dark:text-white">
               {user ? (
-                <UserDropdown user={user} />
+                <UserDropdown user={user} onLogout={handleLogout} />
               ) : (
                 <Link
                   href="/login"

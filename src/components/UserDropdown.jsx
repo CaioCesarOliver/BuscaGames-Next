@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
 import {
     DropdownMenu,
     DropdownMenuTrigger,
@@ -8,17 +7,18 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+
 import {
     UserCircle,
     LogOut,
     Settings,
     ScrollText,
 } from "lucide-react";
+
 import Link from "next/link";
 
-const UserDropdown = () => {
-    const { data: session } = useSession();
-    const username = session?.user?.userName || "Minha Conta";
+export default function UserDropdown({ user, onLogout }) {
+    const username = user?.userName || "Minha Conta";
 
     return (
         <DropdownMenu>
@@ -28,22 +28,22 @@ const UserDropdown = () => {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent className="w-48 mt-2">
-                <Link href="/profile">
-                    <DropdownMenuItem className="cursor-pointer">
+                <Link href="/profile" passHref>
+                    <DropdownMenuItem as="a" className="cursor-pointer">
                         <UserCircle className="w-4 h-4 mr-2" />
                         Perfil
                     </DropdownMenuItem>
                 </Link>
 
-                <Link href="/quests">
-                    <DropdownMenuItem className="cursor-pointer">
+                <Link href="/quests" passHref>
+                    <DropdownMenuItem as="a" className="cursor-pointer">
                         <ScrollText className="w-4 h-4 mr-2" />
                         Minhas Quests
                     </DropdownMenuItem>
                 </Link>
 
-                <Link href="/settings">
-                    <DropdownMenuItem className="cursor-pointer">
+                <Link href="/settings" passHref>
+                    <DropdownMenuItem as="a" className="cursor-pointer">
                         <Settings className="w-4 h-4 mr-2" />
                         Configurações
                     </DropdownMenuItem>
@@ -53,7 +53,7 @@ const UserDropdown = () => {
 
                 <DropdownMenuItem
                     className="text-red-600 cursor-pointer"
-                    onClick={() => signOut()}
+                    onClick={onLogout}
                 >
                     <LogOut className="w-4 h-4 mr-2" />
                     Sair
@@ -61,6 +61,4 @@ const UserDropdown = () => {
             </DropdownMenuContent>
         </DropdownMenu>
     );
-};
-
-export default UserDropdown;
+}

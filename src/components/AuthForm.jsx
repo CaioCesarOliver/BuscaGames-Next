@@ -190,6 +190,18 @@ export default function AuthForm() {
           password: signupPassword,
         }),
       });
+
+      if (res.status === 429) {
+        // Aqui é o limite de tentativas estourado, backend bloqueou
+        const data = await res.json();
+        Swal.fire({
+          icon: "warning",
+          title: "Muitas tentativas",
+          text: data.error || "Você excedeu o limite de tentativas. Tente mais tarde.",
+        });
+        return;
+      }
+
       const data = await res.json();
 
       if (!res.ok) {
