@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -20,17 +19,33 @@ import {
 
 import UserDropdown from "@/components/UserDropdown";
 import useTheme from "../hooks/useTheme";
-
-// Importa o hook do contexto do carrinho (ajuste o caminho conforme sua estrutura)
 import { useCart } from "@/context/CartContext";
 
 export default function Nav() {
-  const { data: session } = useSession();
+  const [user, setUser] = useState(null);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-
-  // Pega os itens do carrinho do contexto
   const { cartItems } = useCart();
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:4000/api/users/me", {
+          credentials: "include", // importante para enviar o cookie
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setUser(data);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar usuário:", err);
+        setUser(null);
+      }
+    }
+    fetchUser();
+  }, []);
 
   return (
     <nav className="fixed top-0 w-full bg-white dark:bg-gray-900 bg-opacity-90 backdrop-blur border-b border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white z-50">
@@ -108,8 +123,8 @@ export default function Nav() {
 
             {/* Login/Profile */}
             <div id="loginNavItem" className="text-purple-900 dark:text-white">
-              {session?.user ? (
-                <UserDropdown />
+              {user ? (
+                <UserDropdown user={user} />
               ) : (
                 <Link
                   href="/login"

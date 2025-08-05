@@ -12,19 +12,26 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { User, ChevronsUpDown, LogOut, LayoutDashboard } from "lucide-react";
 
-export function UserDropdown() {
-  const { data: session } = useSession();
+export default function UserDropdown({ user }) {
   const router = useRouter();
 
   const handleGoToProfile = () => {
-    router.push("/login");
+    router.push("/profile");
   };
 
-  if (!session?.user) return null;
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+      router.push("/");
+    } catch (error) {
+      console.error("Erro ao deslogar:", error);
+    }
+  };
+
+  if (!user) return null;
 
   return (
     <DropdownMenu>
@@ -40,10 +47,8 @@ export function UserDropdown() {
             </div>
           </Avatar>
           <div className="hidden sm:flex flex-col items-start text-xs leading-tight">
-            <span className="font-medium">{session.user.name}</span>
-            <span className="text-muted-foreground text-[10px]">
-              {session.user.email}
-            </span>
+            <span className="font-medium">{user.name}</span>
+            <span className="text-muted-foreground text-[10px]">{user.email}</span>
           </div>
           <ChevronsUpDown className="ml-1 h-4 w-4" />
         </Button>
@@ -58,8 +63,8 @@ export function UserDropdown() {
               </div>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">{session.user.name}</span>
-              <span className="truncate text-xs">{session.user.email}</span>
+              <span className="truncate font-semibold">{user.name}</span>
+              <span className="truncate text-xs">{user.email}</span>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -70,7 +75,7 @@ export function UserDropdown() {
           <LayoutDashboard className="mr-2 h-4 w-4" />
           Ir para Profile
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => signOut({ redirect: true, callbackUrl: "/" })}>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           Sair
         </DropdownMenuItem>

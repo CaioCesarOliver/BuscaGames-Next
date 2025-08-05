@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -19,6 +19,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function AuthForm() {
+  const [token, setToken] = useState(null);
   const [mode, setMode] = useState("login");
 
   const router = useRouter();
@@ -242,6 +243,25 @@ export default function AuthForm() {
     }
   }
 
+  // Verifica automaticamente se o usuário já está logado via cookie
+  useEffect(() => {
+    fetch("http://localhost:4000/api/users/me", {
+      credentials: "include", // importante para enviar o cookie
+    })
+      .then(async (res) => {
+        if (!res.ok) return;
+        const user = await res.json();
+        console.log("Usuário logado:", user);
+
+        if (user && user.id) {
+          // Redireciona para o perfil
+          router.push("/profile");
+        }
+      })
+      .catch((err) => console.error("Erro ao checar login:", err));
+  }, []);
+
+
   return (
     <>
       <div className="max-w-5xl mx-auto bg-white dark:bg-black bg-opacity-90 rounded-2xl border border-purple-700 shadow-xl overflow-hidden px-4 sm:px-6 md:px-12">
@@ -362,6 +382,7 @@ export default function AuthForm() {
                 </svg>
                 Entrar com Google
               </button>
+
 
             </form>
           ) : (
