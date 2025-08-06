@@ -59,7 +59,7 @@ export default function ForgotPasswordPage() {
         bg-[linear-gradient(to_right,_#6b21a8,_#831843)] 
         transition-colors duration-300`}
             >
-                <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+                <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl w-full max-w-xl md:max-w-2xl text-center">
                     <FontAwesomeIcon icon={faKey} className="text-purple-800 text-5xl mb-4" />
                     <h1 className="text-2xl font-bold text-purple-900 dark:text-white mb-2">
                         Esqueceu sua senha?
