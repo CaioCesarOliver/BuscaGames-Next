@@ -218,7 +218,7 @@ export default function Backoffice() {
                     className="mb-4 bg-gradient-to-r from-pink-600 to-purple-600 
                                text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition"
                 >
-                    {formOpen ? "Fechar formulário" : "Adicionar novo jogo"}
+                    {formOpen ? "Fechar formulário" : "Abrir formulário"}
                 </button>
 
                 <form
