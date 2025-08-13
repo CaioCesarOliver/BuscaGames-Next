@@ -223,15 +223,9 @@ export default function Backoffice() {
 
                 <form
                     ref={formRef}
-                    style={{
-                        maxHeight:
-                            formOpen && formRef.current
-                                ? `${formRef.current.scrollHeight}px`
-                                : "0px",
-                    }}
                     className={`mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden 
-               transition-all duration-700 ease-in-out 
-               ${formOpen ? "p-6" : "p-0"}`} // <--- padding condicional
+              transition-all duration-700 ease-in-out 
+              ${formOpen ? "max-h-[2000px] p-6" : "max-h-0 p-0"}`}
                     onSubmit={handleSubmit}
                 >
 
