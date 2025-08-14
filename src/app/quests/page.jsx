@@ -1,50 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+
 import QuestCard from "@/components/QuestCards";
 import QuestHeader from "@/components/QuestHeader";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import CommunityLeaderboard from "@/components/CommunityLeaderboard";
 import LevelAchievement from "@/components/levelAchievement";
+import LoadingScreen from "@/components/LoadingScreen";
 import AccessDenied from "@/components/AccessDenied";
 
 export default function QuestsPage() {
-    const [user, setUser] = useState(null);
+    const { data: session, status } = useSession();
     const [quests, setQuests] = useState([]);
-    const [loadingUser, setLoadingUser] = useState(true);
     const [loadingQuests, setLoadingQuests] = useState(false);
     const [error, setError] = useState(null);
 
-    // Pega o usuário autenticado via cookie + JWT
+    // Busca quests se o usuário estiver logado
     useEffect(() => {
-        async function fetchUser() {
-            try {
-                const res = await fetch("http://localhost:4000/api/users/me", {
-                    credentials: "include", // manda cookie junto
-                });
-                if (!res.ok) {
-                    setUser(null);
-                    setLoadingUser(false);
-                    return;
-                }
-                const data = await res.json();
-                setUser(data);
-            } catch (err) {
-                console.error("Erro ao buscar usuário:", err);
-                setUser(null);
-            } finally {
-                setLoadingUser(false);
-            }
-        }
-        fetchUser();
-    }, []);
+        if (!session) return;
 
-    // Se tem user, busca quests
-    useEffect(() => {
-        if (!user) return;
-
-        async function fetchQuests() {
+        const fetchQuests = async () => {
             setLoadingQuests(true);
             try {
                 const res = await fetch("http://localhost:4000/quests");
@@ -56,16 +34,16 @@ export default function QuestsPage() {
             } finally {
                 setLoadingQuests(false);
             }
-        }
+        };
+
         fetchQuests();
-    }, [user]);
+    }, [session]);
 
-    if (loadingUser) return <p className="text-center mt-10">Verificando autenticação...</p>;
+    if (status === "loading") return <LoadingScreen />;
 
-    if (!user) return <AccessDenied />;
+    if (status === "unauthenticated") return <AccessDenied />; // 🔹 Renderiza AccessDenied se não estiver logado
 
     if (loadingQuests) return <p className="text-center mt-10">Carregando quests...</p>;
-
     if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
     const dailyQuests = quests.filter((q) => q.type === "DAILY");
@@ -77,6 +55,7 @@ export default function QuestsPage() {
             <div className="mt-10">
                 <QuestHeader />
             </div>
+
             <div className="w-full bg-gray-100 dark:bg-slate-950 py-6 px-4">
                 <div className="max-w-7xl mx-auto px-4">
                     {/* Quests Diárias */}
@@ -108,6 +87,7 @@ export default function QuestsPage() {
                     </div>
                 </div>
             </div>
+
             <div className="p-10 bg-white dark:bg-gray-900"><LevelAchievement /></div>
             <div className="p-10 bg-white dark:bg-gray-900"><CommunityLeaderboard /></div>
             <Footer />

@@ -1,55 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-import OverviewTab from "@/components/OverviewTab";
-import AchievementsTab from "@/components/AchievementsTab";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import ProfileHeader from "@/components/ProfileHeader";
 import LoadingScreen from "@/components/LoadingScreen";
+import OverviewTab from "@/components/OverviewTab";
 import LibraryCards from "@/components/LibraryCard";
 import Favorites from "@/components/Favorites";
+import AchievementsTab from "@/components/AchievementsTab";
 
 export default function ProfilePage() {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { data: session, status } = useSession();
     const [activeTab, setActiveTab] = useState("overview");
     const [quests, setQuests] = useState([]);
     const router = useRouter();
 
-    // 🔹 Checa usuário logado pelo cookie token
+    // Redireciona se não estiver logado
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch("http://localhost:4000/api/users/me", {
-                    credentials: "include", // Envia cookie automaticamente
-                });
+        if (status === "unauthenticated") {
+            router.push("/login");
+        }
+    }, [status, router]);
 
-                if (!res.ok) {
-                    console.log("Usuário não autenticado, redirecionando...");
-                    router.push("/login");
-                    return;
-                }
-
-                const userData = await res.json();
-                console.log("Usuário logado:", userData);
-                setUser(userData);
-            } catch (err) {
-                console.error("Erro ao checar login:", err);
-                router.push("/login");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUser();
-    }, [router]);
-
-    // 🔹 Busca quests apenas se abrir a aba de conquistas
+    // Busca quests apenas se abrir a aba de conquistas
     useEffect(() => {
-        if (user && activeTab === "achievements") {
+        if (session && activeTab === "achievements") {
             const fetchQuests = async () => {
                 try {
                     const res = await fetch("http://localhost:4000/quests");
@@ -59,20 +38,18 @@ export default function ProfilePage() {
                     console.error("Erro ao buscar quests:", error);
                 }
             };
-
             fetchQuests();
         }
-    }, [user, activeTab]);
+    }, [session, activeTab]);
 
-    if (loading) return <LoadingScreen />;
-
-    if (!user) return null; // Evita piscar conteúdo antes do redirecionamento
+    if (status === "loading") return <LoadingScreen />;
+    if (!session) return null; // evita renderizar antes do redirecionamento
 
     return (
         <>
             <Nav />
             <main className="mt-16">
-                <ProfileHeader user={user} />
+                <ProfileHeader user={session.user} />
                 <div className="max-w-7xl mx-auto p-6">
                     <section className="profile-content py-6">
                         <div className="container mx-auto px-4 max-w-5xl">
