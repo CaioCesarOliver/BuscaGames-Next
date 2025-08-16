@@ -16,7 +16,6 @@ const StarFull = () => (
     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.384 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.538 1.118L10 13.347l-3.384 2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 1 0 00-.364-1.118L3.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z" />
   </svg>
 );
-
 const StarHalf = () => (
   <svg className="w-5 h-5 text-yellow-400 inline-block" viewBox="0 0 20 20">
     <defs>
@@ -38,7 +37,6 @@ const StarHalf = () => (
     />
   </svg>
 );
-
 const StarEmpty = () => (
   <svg className="w-5 h-5 text-gray-400 inline-block" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0..." />
@@ -61,11 +59,28 @@ function EyeIcon() {
   );
 }
 
-// ✅ Modal animation variants
+// Modal animation variants
 const modalVariants = {
   hidden: { opacity: 0, scale: 0.9 },
   visible: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: "easeOut" } },
   exit: { opacity: 0, scale: 0.9, transition: { duration: 0.2, ease: "easeIn" } },
+};
+
+// Card animation variants
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.15, duration: 0.5, type: "spring", stiffness: 100 },
+  }),
+  hover: { scale: 1.03 },
+};
+
+// Badge animation variant
+const badgeVariants = {
+  hidden: { opacity: 0, y: -10 },
+  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120, damping: 12 } },
 };
 
 export default function GamesSection({
@@ -109,15 +124,6 @@ export default function GamesSection({
   const handleAddToCart = (game) => {
     addToCart(game);
     setAlert({ message: `"${game.title}" adicionado ao carrinho!`, type: "success" });
-  };
-
-  const formatReleaseDate = (isoString) => {
-    if (!isoString) return 'N/A';
-    const date = new Date(isoString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
   };
 
   const applyFilters = () => {
@@ -165,14 +171,27 @@ export default function GamesSection({
         <p className="text-white text-center text-xl mt-10">Nenhum jogo encontrado.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGames.map((game) => {
+          {filteredGames.map((game, index) => {
             const imageUrl = game.image ? `http://localhost:4000/${encodeURI(game.image)}` : "/fallback-image.png";
             return (
-              <div key={game.id} className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg hover:shadow-[0_0_15px_5px_rgba(135,206,250,0.5)]">
+              <motion.div
+                key={game.id}
+                custom={index}
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
+                className="relative group cursor-pointer overflow-hidden rounded-lg shadow-lg"
+              >
                 {game.discount > 0 && (
-                  <div className="absolute top-2 right-2 bg-green-700 text-white text-base font-bold px-2 py-1 rounded z-20 shadow">
+                  <motion.div
+                    variants={badgeVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="absolute top-2 right-2 bg-green-700 text-white text-base font-bold px-2 py-1 rounded z-20 shadow"
+                  >
                     -{game.discount}%
-                  </div>
+                  </motion.div>
                 )}
 
                 <img src={imageUrl} alt={game.title} className="w-full h-56 object-cover transition-transform duration-300 group-hover:scale-110 group-hover:blur-sm" loading="lazy" />
@@ -197,26 +216,46 @@ export default function GamesSection({
 
                   <div className="flex flex-wrap gap-2 mb-2">
                     {game.genres.map((genre, idx) => (
-                      <span key={idx} className="bg-blue-600 text-sm px-2 py-1 rounded-full">{genre}</span>
+                      <motion.span
+                        key={idx}
+                        variants={badgeVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="bg-blue-600 text-sm px-2 py-1 rounded-full"
+                      >
+                        {genre}
+                      </motion.span>
                     ))}
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div>{renderStars(game.rating)}</div>
                     <div className="flex items-center gap-2">
-                      <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold" onClick={e => { e.stopPropagation(); handleAddToCart(game); }}>
-                        Adicionar ao Carrinho
-                      </button>
-                      <button onClick={e => { e.stopPropagation(); toggleFavorite(game); }} className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center">
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
+                        onClick={e => { e.stopPropagation(); handleAddToCart(game); }}
+                      >
+                        Adicionar
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={e => { e.stopPropagation(); toggleFavorite(game); }}
+                        className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
+                      >
                         {isFavorite(game.id) ? <FaHeart className="text-red-500 w-5 h-5" /> : <FiHeart className="text-white w-5 h-5" />}
-                      </button>
-                      <button onClick={e => { e.stopPropagation(); setPreviewGame(game); }} className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center">
+                      </motion.button>
+                      <motion.button
+                        whileTap={{ scale: 0.9 }}
+                        onClick={e => { e.stopPropagation(); setPreviewGame(game); }}
+                        className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center"
+                      >
                         <EyeIcon />
-                      </button>
+                      </motion.button>
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -240,7 +279,7 @@ export default function GamesSection({
               exit="exit"
               onClick={e => e.stopPropagation()}
             >
-              {/* Conteúdo da modal (imagem, info, descrição, botões) */}
+              {/* Conteúdo da modal */}
               <div className="relative h-1/2 w-full flex">
                 <img src={previewGame.image ? `http://localhost:4000/${encodeURI(previewGame.image)}` : "/fallback-image.png"} alt={previewGame.title} className="object-cover w-full h-full" loading="lazy" />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/65 pointer-events-none"></div>
@@ -254,7 +293,7 @@ export default function GamesSection({
                       <FontAwesomeIcon icon={faGamepad} className="mr-1" /> {previewGame.platforms ? previewGame.platforms.join(", ") : "N/A"}
                     </span>
                     <span className="flex items-center gap-1 bg-purple-950 bg-opacity-50 px-3 py-1 rounded-full font-semibold">
-                      <FontAwesomeIcon icon={faCalendar} className="mr-1" /> Lançamento: {formatReleaseDate(previewGame.releaseDate)}
+                      <FontAwesomeIcon icon={faCalendar} className="mr-1" /> Lançamento: {previewGame.releaseDate ? new Date(previewGame.releaseDate).toLocaleDateString() : "N/A"}
                     </span>
                   </div>
                 </div>
@@ -271,12 +310,12 @@ export default function GamesSection({
                   <span className="text-green-600 dark:text-green-400 font-bold text-3xl">R$ {previewGame.price.toFixed(2)}</span>
                 </div>
                 <div className="flex gap-4">
-                  <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold" onClick={() => handleAddToCart(previewGame)}>
+                  <motion.button whileTap={{ scale: 0.9 }} className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold" onClick={() => handleAddToCart(previewGame)}>
                     + Carrinho
-                  </button>
-                  <button onClick={() => toggleFavorite(previewGame)} className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center">
+                  </motion.button>
+                  <motion.button whileTap={{ scale: 0.9 }} onClick={() => toggleFavorite(previewGame)} className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 flex items-center justify-center">
                     {isFavorite(previewGame.id) ? <FaHeart className="text-red-500 w-5 h-5" /> : <FiHeart className="text-white w-5 h-5" />}
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             </motion.div>

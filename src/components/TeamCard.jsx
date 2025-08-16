@@ -1,9 +1,8 @@
+"use client";
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-    faLinkedin,
-    faGithub,
-    faInstagram
-} from '@fortawesome/free-brands-svg-icons'
+import { faLinkedin, faGithub, faInstagram } from '@fortawesome/free-brands-svg-icons'
+import { motion } from "framer-motion";
 
 const iconMap = {
     linkedin: faLinkedin,
@@ -13,12 +12,21 @@ const iconMap = {
 
 export default function TeamCard({ imageSrc, name, role, position, rm, socialLinks = [] }) {
     return (
-        <article className="bg-white dark:bg-gray-900 rounded-xl border border-purple-300 dark:border-purple-700 shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+        <motion.article
+            className="bg-white dark:bg-gray-900 rounded-xl border border-purple-300 dark:border-purple-700 shadow-md overflow-hidden flex flex-col"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+        >
             <div className="overflow-hidden">
-                <img
+                <motion.img
                     src={imageSrc}
                     alt={name}
-                    className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
+                    className="w-full h-auto object-cover"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ duration: 0.5 }}
+                    loading="lazy"
                 />
             </div>
             <div className="p-6 text-center flex flex-col flex-grow">
@@ -30,23 +38,27 @@ export default function TeamCard({ imageSrc, name, role, position, rm, socialLin
                 <p className="mt-1 mb-4 text-indigo-600 dark:text-indigo-400 font-semibold">{rm}</p>
                 <div className="mt-auto flex justify-center space-x-4">
                     {socialLinks.map(({ icon, url }, i) => {
-                        const faIcon = iconMap[icon.toLowerCase()]
-                        if (!faIcon) return null
+                        const faIcon = iconMap[icon.toLowerCase()];
+                        if (!faIcon) return null;
+
                         return (
-                            <a
+                            <motion.a
                                 key={i}
                                 href={url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label={`${icon} link`}
-                                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors text-xl"
+                                className="text-indigo-600 dark:text-indigo-400 transition-colors text-xl"
+                                whileHover={{ y: -3, scale: 1.5, rotate: 10 }}
+                                whileTap={{ scale: 0.9 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 15 }}
                             >
                                 <FontAwesomeIcon icon={faIcon} />
-                            </a>
-                        )
+                            </motion.a>
+                        );
                     })}
                 </div>
             </div>
-        </article>
+        </motion.article>
     )
 }

@@ -1,4 +1,7 @@
+"use client";
+
 import { FaHeart, FaSkull, FaCalendar, FaCheckCircle, FaSpinner, FaShoppingCart, FaSearch, FaTrophy, FaCommentAlt, FaShareAlt, FaUsers } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const iconMap = {
   heart: FaHeart,
@@ -12,36 +15,40 @@ const iconMap = {
   users: FaUsers
 };
 
-export default function QuestCard({ quest }) {
+export default function QuestCard({ quest, index = 0 }) {
   const { title, description, progress = 0, totalSteps = 1, status, points, iconName } = quest;
 
   const percentage = Math.min(100, Math.floor((progress / totalSteps) * 100));
   const isComplete = status === "complete";
 
-  // Pega o ícone correto pelo nome (ou padrão para coração)
   const QuestIcon = iconMap[iconName] || FaHeart;
 
-  // Define o texto do botão conforme o progresso da quest
   let buttonText = "Iniciar";
-  if (isComplete) {
-    buttonText = "Resgatado";
-  } else if (progress > 0) {
-    buttonText = "Continuar";
-  }
+  if (isComplete) buttonText = "Resgatado";
+  else if (progress > 0) buttonText = "Continuar";
+
+  // Variants do framer-motion
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { delay: index * 0.1, duration: 0.5, ease: "easeOut" } },
+    hover: { scale: 1.05, boxShadow: "0px 15px 30px rgba(0,0,0,0.3)" }
+  };
 
   return (
-    <div className="w-64 h-64 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 flex flex-col justify-between">
+    <motion.div
+      className="w-64 h-64 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-5 flex flex-col justify-between cursor-pointer"
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      whileHover="hover"
+    >
       {/* Top bar */}
       <div className="flex justify-between items-start mb-4">
-        <div className=" text-pink-800 dark:text-pink-500 text-3xl">
+        <div className="text-pink-800 dark:text-pink-500 text-3xl">
           <QuestIcon />
         </div>
         <div className="text-blue-700 dark:text-blue-400 text-3xl">
-          {isComplete ? (
-            <FaCheckCircle title="Completo" />
-          ) : (
-            <FaSpinner className="animate-spin" title="Em progresso" />
-          )}
+          {isComplete ? <FaCheckCircle title="Completo" /> : <FaSpinner className="animate-spin" title="Em progresso" />}
         </div>
       </div>
 
@@ -54,13 +61,15 @@ export default function QuestCard({ quest }) {
       {/* Progress bar */}
       <div className="mb-6">
         <div className="h-3 w-full bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
-          <div
+          <motion.div
             className={`h-3 rounded-full ${isComplete ? "bg-green-500" : "bg-pink-500"}`}
-            style={{ width: `${percentage}%` }}
+            initial={{ width: 0 }}
+            animate={{ width: `${percentage}%` }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           />
         </div>
         <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-          {progress} de {totalSteps} {progress === 1 ? "etapa completada" : "etapas completadas"}
+          {progress} de {totalSteps} {totalSteps === 1 ? "etapa completada" : "etapas completadas"}
         </p>
       </div>
 
@@ -68,14 +77,13 @@ export default function QuestCard({ quest }) {
       <div className="flex justify-between items-center">
         <span className="text-md font-medium text-green-600 dark:text-green-400">{points} XP</span>
         <button
-          className={`py-2 px-4 rounded-lg font-semibold text-white transition-colors ${
-            isComplete ? "bg-green-600 cursor-default" : "bg-pink-600 hover:bg-green-700"
-          }`}
+          className={`py-2 px-4 rounded-lg font-semibold text-white transition-colors ${isComplete ? "bg-green-600 cursor-default" : "bg-pink-600 hover:bg-green-700"
+            }`}
           disabled={isComplete}
         >
           {buttonText}
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }

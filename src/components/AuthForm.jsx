@@ -2,10 +2,8 @@
 
 import { signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
-
+import { swalWithTheme } from "@/app/utils/swalWithTheme";
 import { useRouter } from "next/navigation";
-
-import Swal from "sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheck,
@@ -83,7 +81,7 @@ export default function AuthForm() {
     e.preventDefault();
 
     if (!loginUser || !loginPassword) {
-      return Swal.fire({
+      return swalWithTheme({
         icon: "warning",
         title: "Por favor, preencha usuário/email e senha.",
       });
@@ -106,7 +104,7 @@ export default function AuthForm() {
       const data = await res.json();
 
       if (!res.ok || !data.success) {
-        return Swal.fire({
+        return swalWithTheme({
           icon: "error",
           title: data.error || "Erro no login",
         });
@@ -120,15 +118,22 @@ export default function AuthForm() {
       });
 
       if (result?.ok) {
+        await swalWithTheme({
+          icon: "success",
+          title: "Login realizado com sucesso!",
+          text: "Bem-vindo ao sistema!",
+          timer: 2000,
+        });
         router.push("/");
+
       } else {
-        Swal.fire({
+        swalWithTheme({
           icon: "error",
           title: "Falha ao iniciar sessão",
         });
       }
     } catch (error) {
-      Swal.fire({
+      swalWithTheme({
         icon: "error",
         title: "Erro na comunicação com o servidor.",
       });
@@ -148,21 +153,21 @@ export default function AuthForm() {
       !signupPassword ||
       !confirmPassword
     ) {
-      return Swal.fire({
+      return swalWithTheme({
         icon: "warning",
         title: "Por favor, preencha os campos necessários",
       });
     }
 
     if (!acceptedLGPD) {
-      return Swal.fire({
+      return swalWithTheme({
         icon: "warning",
         title: "Você precisa aceitar a política de privacidade para continuar.",
       });
     }
 
     if (signupPassword !== confirmPassword) {
-      return Swal.fire({
+      return swalWithTheme({
         icon: "error",
         title: "Senha Inválida! Tente novamente",
         text: "As senhas não conferem.",
@@ -170,10 +175,11 @@ export default function AuthForm() {
     }
 
     if (Object.values(requirements).includes(false)) {
-      return Swal.fire({
+      return swalWithTheme({
         icon: "error",
         title: "Senha Inválida! Tente novamente",
         text: "A senha não atende aos requisitos mínimos.",
+        confirmButtonText: "OK",
       });
     }
 
@@ -192,12 +198,12 @@ export default function AuthForm() {
       });
 
       if (res.status === 429) {
-        // Aqui é o limite de tentativas estourado, backend bloqueou
         const data = await res.json();
-        Swal.fire({
+        swalWithTheme({
           icon: "warning",
           title: "Muitas tentativas",
           text: data.error || "Você excedeu o limite de tentativas. Tente mais tarde.",
+          confirmButtonText: "OK",
         });
         return;
       }
@@ -207,31 +213,31 @@ export default function AuthForm() {
       if (!res.ok) {
         if (data.error) {
           if (data.error.includes("nome")) {
-            Swal.fire({
+            swalWithTheme({
               icon: "error",
               title: "Este nome de usuário já existe",
             });
           } else if (data.error.includes("email")) {
-            Swal.fire({
+            swalWithTheme({
               icon: "error",
               title: "Este e-mail de usuário já existe",
             });
           } else {
-            Swal.fire({
+            swalWithTheme({
               icon: "error",
               title: "Erro no cadastro",
               text: data.error,
             });
           }
         } else {
-          Swal.fire({
+          swalWithTheme({
             icon: "error",
             title: "Erro no cadastro",
             text: data.message || "Erro inesperado",
           });
         }
       } else {
-        Swal.fire({
+        swalWithTheme({
           icon: "success",
           title: `Cadastro realizado com sucesso!`,
           text: `Seja bem-vindo(a) ${data.user.name || firstName}`,
@@ -246,7 +252,7 @@ export default function AuthForm() {
         setMode("login");
       }
     } catch (error) {
-      Swal.fire({
+      swalWithTheme({
         icon: "error",
         title: "Erro na comunicação com o servidor.",
       });
@@ -263,7 +269,6 @@ export default function AuthForm() {
       .then(async (res) => {
         if (!res.ok) return;
         const user = await res.json();
-        console.log("Usuário logado:", user);
 
         if (user && user.id) {
           // Redireciona para o perfil

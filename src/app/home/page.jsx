@@ -3,8 +3,8 @@
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
-import LaunchCountdownCube from '@/components/LaunchCountdown';
-import GamesSection from '@/components/GamesSectionHome';
+import LaunchCountdown from '@/components/LaunchCountdown';
+import GamesSectionHome from '@/components/GamesSectionHome';
 import { DailyQuests, Newsletter } from '@/components/DailyQuests';
 
 const Homepage = () => {
@@ -17,8 +17,8 @@ const Homepage = () => {
   return (
     <div>
       <div className="overflow-x-hidden pt-16">
-        <LaunchCountdownCube />
-        <GamesSection />
+        <LaunchCountdown />
+        <GamesSectionHome />
         <DailyQuests />
         <Newsletter />
       </div>

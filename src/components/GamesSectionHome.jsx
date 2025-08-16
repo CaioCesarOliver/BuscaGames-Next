@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGamepad } from "@fortawesome/free-solid-svg-icons";
 import { FaHeart } from "react-icons/fa";
 import { FiHeart } from "react-icons/fi";
+import { motion } from "framer-motion";
 
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
@@ -19,8 +20,6 @@ export default function GamesSectionHome() {
   const { addToCart } = useCart();
   const { favorites, toggleFavorite, isFavorite } = useFavorites();
 
-  console.log("Favorites atuais:", favorites);
-
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -31,7 +30,6 @@ export default function GamesSectionHome() {
         console.error("Erro ao buscar os jogos:", error);
       }
     };
-
     fetchGames();
   }, []);
 
@@ -48,27 +46,63 @@ export default function GamesSectionHome() {
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
     for (let i = 0; i < fullStars; i++) {
-      stars.push(<svg key={`full-${i}`} className="w-5 h-5 text-yellow-400 inline-block" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.384 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.538 1.118L10 13.347l-3.384 2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 1 0 00-.364-1.118L3.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z" />
-      </svg>);
+      stars.push(
+        <svg
+          key={`full-${i}`}
+          className="w-5 h-5 text-yellow-400 inline-block"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.384 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.538 1.118L10 13.347l-3.384 2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 1 0 00-.364-1.118L3.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z" />
+        </svg>
+      );
     }
 
     if (halfStar) {
-      stars.push(<svg key="half" className="w-5 h-5 text-yellow-400 inline-block" fill="currentColor" viewBox="0 0 20 20">
-        <path d="M10 15.27l-5.18 3.03 1.11-6.49L.45 7.97l6.53-.95L10 1l2.99 5.02 6.53.95-4.52 4.84 1.11 6.49z" />
-      </svg>);
+      stars.push(
+        <svg
+          key="half"
+          className="w-5 h-5 text-yellow-400 inline-block"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M10 15.27l-5.18 3.03 1.11-6.49L.45 7.97l6.53-.95L10 1l2.99 5.02 6.53.95-4.52 4.84 1.11 6.49z" />
+        </svg>
+      );
     }
 
     for (let i = 0; i < emptyStars; i++) {
-      stars.push(<svg key={`empty-${i}`} className="w-5 h-5 text-gray-500 inline-block" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.384 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.538 1.118L12 13.347l-3.384 2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 1 0 00-.364-1.118L4.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z" />
-      </svg>);
+      stars.push(
+        <svg
+          key={`empty-${i}`}
+          className="w-5 h-5 text-gray-500 inline-block"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.178c.969 0 1.371 1.24.588 1.81l-3.384 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.538 1.118L12 13.347l-3.384 2.455c-.783.57-1.838-.196-1.538-1.118l1.287-3.966a1 1 0 00-.364-1.118L4.615 9.394c-.783-.57-.38-1.81.588-1.81h4.178a1 1 0 00.95-.69l1.286-3.967z"
+          />
+        </svg>
+      );
     }
 
     return stars;
   };
 
-  const featuredGames = games.slice(0, 4); // ou qualquer lógica que você queira
+  const featuredGames = games.slice(0, 4);
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.15, duration: 0.5 },
+    }),
+  };
 
   return (
     <section className="bg-white dark:bg-gray-900 py-16 px-4 transition-colors duration-500">
@@ -80,13 +114,20 @@ export default function GamesSectionHome() {
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {featuredGames.map((game) => {
+          {featuredGames.map((game, index) => {
             const imageUrl = game.image
               ? `http://localhost:4000/${encodeURI(game.image)}`
               : "/fallback-image.png";
 
             return (
-              <div key={game.id} className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-[0_0_15px_5px_rgba(135,206,250,0.5)]">
+              <motion.div
+                key={game.id}
+                custom={index}
+                variants={cardVariants}
+                initial="hidden"
+                animate="visible"
+                className="relative group overflow-hidden rounded-lg shadow-lg hover:shadow-[0_0_15px_5px_rgba(135,206,250,0.5)]"
+              >
                 <img
                   src={imageUrl}
                   alt={game.title ?? "Game image"}
@@ -102,7 +143,7 @@ export default function GamesSectionHome() {
                       <button
                         onClick={() => {
                           const alreadyFavorite = isFavorite(game.id);
-                          toggleFavorite(game); // passe o objeto completo
+                          toggleFavorite(game);
 
                           if (alreadyFavorite) {
                             setAlertMessage(`"${game.title}" removido dos favoritos.`);
@@ -112,7 +153,7 @@ export default function GamesSectionHome() {
                             setAlertType("success");
                           }
                         }}
-                        aria-label={isFavorite(game.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"} // corrigido
+                        aria-label={isFavorite(game.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
                         className="bg-black bg-opacity-60 hover:bg-opacity-80 rounded-full p-2 transition duration-200"
                       >
                         {isFavorite(game.id) ? (
@@ -121,7 +162,6 @@ export default function GamesSectionHome() {
                           <FiHeart className="text-white w-5 h-5" />
                         )}
                       </button>
-
                     </div>
 
                     <div className="text-lg font-bold text-green-400">
@@ -136,7 +176,7 @@ export default function GamesSectionHome() {
                     </button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
