@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faGamepad, faStar } from "@fortawesome/free-solid-svg-icons";
-import { FiHeart } from 'react-icons/fi';
+import { FiHeart, FiShoppingCart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 import { motion, AnimatePresence } from "framer-motion";
 import Alert from '@/components/Alert';
@@ -233,9 +233,10 @@ export default function GamesSection({
                     <div className="flex items-center gap-2">
                       <motion.button
                         whileTap={{ scale: 0.9 }}
-                        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold"
+                        className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-semibold flex items-center gap-2"
                         onClick={e => { e.stopPropagation(); handleAddToCart(game); }}
                       >
+                        <FiShoppingCart className="text-white" />
                         Adicionar
                       </motion.button>
                       <motion.button
