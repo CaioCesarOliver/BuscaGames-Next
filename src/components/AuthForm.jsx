@@ -392,37 +392,6 @@ export default function AuthForm() {
                 {loading ? "Carregando..." : "Entrar"}
               </button>
 
-              <button
-                onClick={() => window.location.href = "http://localhost:4000/auth/google"}
-                className="w-full bg-white text-gray-700 py-3 rounded-lg border border-gray-300 hover:bg-gray-100 flex items-center justify-center gap-3 transition"
-                type="button"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 533.5 544.3"
-                  className="w-6 h-6"
-                >
-                  <path
-                    fill="#4285f4"
-                    d="M533.5 278.4c0-18.4-1.5-36-4.6-52H272v98.9h146.9c-6.3 34-25.3 62.8-54 82v68h87.3c51-47 80.3-116 80.3-196.9z"
-                  />
-                  <path
-                    fill="#34a853"
-                    d="M272 544.3c73.7 0 135.7-24.4 180.9-66.3l-87.3-68c-24 16.3-54.7 25.9-93.6 25.9-71.9 0-132.9-48.5-154.9-113.9H26v71.3C70.2 485.6 165.6 544.3 272 544.3z"
-                  />
-                  <path
-                    fill="#fbbc05"
-                    d="M117.1 323.9c-5.7-17-9-35.1-9-53.9s3.3-36.9 9-53.9v-71.3H26c-18.5 37-29 78.5-29 124.6s10.5 87.6 29 124.6l91.1-71.3z"
-                  />
-                  <path
-                    fill="#ea4335"
-                    d="M272 107.7c39.7 0 75.3 13.7 103.3 40.7l77.5-77.5C406.7 24.4 344.7 0 272 0 165.6 0 70.2 58.7 26 146.7l91.1 71.3c22-65.4 83-113.9 154.9-113.9z"
-                  />
-                </svg>
-                Entrar com Google
-              </button>
-
-
             </form>
           ) : (
             <form id="signupForm" className="space-y-6" onSubmit={handleSignup}>

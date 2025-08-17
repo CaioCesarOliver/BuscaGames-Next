@@ -1,18 +1,12 @@
 "use client";
 
-import { FaHeart, FaSkull, FaCalendar, FaCheckCircle, FaSpinner, FaShoppingCart, FaSearch, FaTrophy, FaCommentAlt, FaShareAlt, FaUsers } from "react-icons/fa";
+import { FaHeart, FaSkull, FaCalendar, FaCheckCircle, FaSpinner } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const iconMap = {
   heart: FaHeart,
   skull: FaSkull,
   calendar: FaCalendar,
-  cart: FaShoppingCart,
-  lupa: FaSearch,
-  trophy: FaTrophy,
-  chat: FaCommentAlt,
-  share: FaShareAlt,
-  users: FaUsers
 };
 
 export default function QuestCard({ quest, index = 0 }) {
@@ -27,11 +21,15 @@ export default function QuestCard({ quest, index = 0 }) {
   if (isComplete) buttonText = "Resgatado";
   else if (progress > 0) buttonText = "Continuar";
 
-  // Variants do framer-motion
+  // Variants do Framer Motion com brilho azul neon
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { delay: index * 0.1, duration: 0.5, ease: "easeOut" } },
-    hover: { scale: 1.05, boxShadow: "0px 15px 30px rgba(0,0,0,0.3)" }
+    hover: {
+      scale: 1.05,
+      boxShadow: "0 0 15px 5px rgba(135,206,250,0.5), 0 0 30px 10px rgba(135,206,250,0.3)",
+      transition: { type: "spring", stiffness: 300, damping: 20 },
+    },
   };
 
   return (
@@ -77,8 +75,7 @@ export default function QuestCard({ quest, index = 0 }) {
       <div className="flex justify-between items-center">
         <span className="text-md font-medium text-green-600 dark:text-green-400">{points} XP</span>
         <button
-          className={`py-2 px-4 rounded-lg font-semibold text-white transition-colors ${isComplete ? "bg-green-600 cursor-default" : "bg-pink-600 hover:bg-green-700"
-            }`}
+          className={`py-2 px-4 rounded-lg font-semibold text-white transition-colors ${isComplete ? "bg-green-600 cursor-default" : "bg-pink-600 hover:bg-green-700"}`}
           disabled={isComplete}
         >
           {buttonText}
