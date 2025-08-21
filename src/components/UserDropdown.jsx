@@ -43,7 +43,7 @@ export default function UserDropdown({ user, onLogout }) {
           </DropdownMenuItem>
         </Link>
 
-        <Link href="/BackOffice" passHref>
+        <Link href="/admin" passHref>
           <DropdownMenuItem as="a" className="cursor-pointer">
             <LayoutDashboard className="w-4 h-4 mr-2" />
             Backoffice

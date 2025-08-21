@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
-import { swalWithTheme } from "../utils/swalWithTheme";
+import { swalWithTheme } from "../../utils/swalWithTheme";
 
 export default function Backoffice() {
   const [activeTab, setActiveTab] = useState("jogos");

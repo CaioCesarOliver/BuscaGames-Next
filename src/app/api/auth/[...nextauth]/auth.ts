@@ -1,9 +1,29 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import type { NextAuthOptions, DefaultSession } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 
-export const authOptions = {
+// Extend the built-in session types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      userName: string;
+      role: string;
+    } & DefaultSession["user"]
+  }
+}
+
+// Extend the built-in user type
+declare module "next-auth" {
+  interface User {
+    id: string;
+    userName: string;
+    role: string;
+  }
+}
+
+export const authOptions: NextAuthOptions = {
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "Credentials",
       credentials: {
         tokenizedUID: { label: "Tokenized UID", type: "text" },
@@ -37,17 +57,18 @@ export const authOptions = {
         token.name = user.name;
         token.email = user.email;
         token.userName = user.userName;
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
         session.user = {
-          id: token.id,
-          name: token.name,
-          email: token.email,
-          userName: token.userName,
-          role: token.role
+          id: token.id as string,
+          name: token.name as string,
+          email: token.email as string,
+          userName: token.userName as string,
+          role: token.role as string,
         };
       }
       return session;
@@ -56,7 +77,5 @@ export const authOptions = {
   pages: {
     signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET
 };
-
-export default NextAuth(authOptions); 

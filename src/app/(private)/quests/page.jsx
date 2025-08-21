@@ -3,14 +3,12 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
-import QuestCard from "@/components/QuestCards";
-import QuestHeader from "@/components/QuestHeader";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
-import CommunityLeaderboard from "@/components/CommunityLeaderboard";
-import LevelAchievement from "@/components/levelAchievement";
 import LoadingScreen from "@/components/LoadingScreen";
-import AccessDenied from "@/components/AccessDenied";
+
+import QuestCard from "./_components/QuestCards";
+import QuestHeader from "./_components/QuestHeader";
+import CommunityLeaderboard from "./_components/CommunityLeaderboard";
+import LevelAchievement from "./_components/LevelAchievement";
 
 export default function QuestsPage() {
     const { data: session, status } = useSession();
@@ -18,9 +16,7 @@ export default function QuestsPage() {
     const [loadingQuests, setLoadingQuests] = useState(false);
     const [error, setError] = useState(null);
 
-    // Busca quests se o usuário estiver logado
     useEffect(() => {
-        if (!session) return;
 
         const fetchQuests = async () => {
             setLoadingQuests(true);
@@ -41,8 +37,6 @@ export default function QuestsPage() {
 
     if (status === "loading") return <LoadingScreen />;
 
-    if (status === "unauthenticated") return <AccessDenied />; // 🔹 Renderiza AccessDenied se não estiver logado
-
     if (loadingQuests) return <p className="text-center mt-10">Carregando quests...</p>;
     if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
@@ -51,7 +45,6 @@ export default function QuestsPage() {
 
     return (
         <>
-            <Nav />
             <div className="mt-10">
                 <QuestHeader />
             </div>
@@ -90,7 +83,6 @@ export default function QuestsPage() {
 
             <div className="p-10 bg-white dark:bg-gray-900"><LevelAchievement /></div>
             <div className="p-10 bg-white dark:bg-gray-900"><CommunityLeaderboard /></div>
-            <Footer />
         </>
     );
 }

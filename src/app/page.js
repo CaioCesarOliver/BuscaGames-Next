@@ -1,7 +1,7 @@
 
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
-import Homepage from './home/page'
+import Homepage from '@/components/home'
 
 const page = () => {
   return (
