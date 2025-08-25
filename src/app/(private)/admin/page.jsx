@@ -382,10 +382,12 @@ export default function Backoffice() {
           {activeTab === "usuarios" && (
             <UsersList
               users={users}
+              setUsers={setUsers}
               selectedRoles={selectedRoles}
               setSelectedRoles={setSelectedRoles}
               updateUserRole={updateUserRole}
               loading={loading}
+              setLoading={setLoading}
             />
           )}
         </div>

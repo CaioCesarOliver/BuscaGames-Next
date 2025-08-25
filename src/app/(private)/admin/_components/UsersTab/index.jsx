@@ -1,16 +1,44 @@
-// src/app/BackOffice/_components/UsersList.jsx
 "use client";
 
-import AccessDenied from "@/components/AccessDenied";
+import { useEffect } from "react";
 import LoadingScreen from "@/components/LoadingScreen";
 
 export default function UsersList({
   users,
+  setUsers,
   selectedRoles,
   setSelectedRoles,
   updateUserRole,
   loading,
+  setLoading,
 }) {
+  // ---------- FETCH USERS ----------
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("http://localhost:4000/api/users", {
+          credentials: "include", // importante se precisar de cookies
+        });
+        if (!res.ok) throw new Error("Erro ao buscar usuários");
+        const data = await res.json();
+        setUsers(data);
+
+        // Inicializa os roles selecionados
+        const rolesState = {};
+        data.forEach((user) => (rolesState[user.id] = user.role));
+        setSelectedRoles(rolesState);
+      } catch (err) {
+        console.error(err);
+        alert("Erro ao buscar usuários: " + err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [setUsers, setSelectedRoles, setLoading]);
+
   if (loading) {
     return (
       <div className="text-center text-purple-700 dark:text-purple-300">
