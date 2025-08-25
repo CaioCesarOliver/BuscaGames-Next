@@ -1,14 +1,12 @@
-export const metadata = {
-  title: 'BuscaGames',
-  description: 'O Melhor Site de Ofertas de Jogos',
-};
+import Nav from "@/components/Nav";
+import Footer from "@/components/Footer";
 
-export default function RootLayout({ children }) {
+export default function PublicLayout({ children }) {
   return (
-    <html lang="pt-BR">
-        <div>
-            {children}
-        </div>
-    </html>
+    <div className="public-layout">
+      <Nav />
+      <main>{children}</main>
+      <Footer />
+    </div>
   );
 }

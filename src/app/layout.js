@@ -1,7 +1,7 @@
 import '../styles/globals.css';
 import AuthProvider from '@/provider/AuthProvider';
 import { CartProvider } from '@/context/CartContext';
-import { FavoritesProvider } from '@/context/FavoritesContext'; // 👈 importar aqui
+import { FavoritesProvider } from '@/context/FavoritesContext';
 
 export const metadata = {
   title: 'BuscaGames',
