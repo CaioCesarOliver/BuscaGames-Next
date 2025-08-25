@@ -4,7 +4,7 @@ import { useState } from "react";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import SidebarFilters from "@/components/SidebarFilters";
-import GamesSection from "@/app/(public)/games/_components/GamesSection";
+import GamesSection from "@/app/(public)/games/_components/GamesSection/index";
 import Search from "@/components/Search";
 
 const Games = () => {

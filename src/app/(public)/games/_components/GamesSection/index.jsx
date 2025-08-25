@@ -14,7 +14,7 @@ import { FaHeart } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useFavorites } from "@/context/FavoritesContext";
-import Alert from "../../../../components/Alert";
+import Alert from "@/components/Alert";
 
 // ⭐ Render Stars
 const renderStars = (rating) => {

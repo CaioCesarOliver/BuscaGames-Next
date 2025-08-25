@@ -642,7 +642,9 @@ export default function Backoffice() {
                             >
                               <option value="consumer">Consumer</option>
                               <option value="moderator">Moderator</option>
-                              <option value="administrator">Administrator</option>
+                              <option value="administrator">
+                                Administrator
+                              </option>
                             </select>
                           </td>
                           <td className="border border-purple-300 dark:border-purple-700 p-3 space-x-2">
