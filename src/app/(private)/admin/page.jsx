@@ -4,24 +4,40 @@ import { useState, useEffect, useRef } from "react";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import { swalWithTheme } from "../../utils/swalWithTheme";
+import GamesList from "./_components/GameList/index";
+import GameForm from "./_components/GameForm/index";
+import UsersList from "./_components/UsersTab/index"
 
 export default function Backoffice() {
   const [activeTab, setActiveTab] = useState("jogos");
   const [showForm, setShowForm] = useState(false);
   const [showList, setShowList] = useState(true);
   const [games, setGames] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingGame, setEditingGame] = useState(null);
-  const formRef = useRef(null);
-  const [users, setUsers] = useState([]);
   const [selectedRoles, setSelectedRoles] = useState({});
+  const formRef = useRef(null);
+  const [currentUser, setCurrentUser] = useState(null)
 
-  // Buscar usuários ao carregar a página
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    image: "",
+    price: "",
+    originalPrice: "",
+    rating: "",
+    platforms: [],
+    genres: [],
+    releaseDate: "",
+    developer: "",
+    publisher: "",
+    tags: "",
+  });
 
+  // ---------- FETCH USERS ----------
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:4000/api/users", {
         method: "GET",
@@ -31,11 +47,8 @@ export default function Backoffice() {
       const data = await res.json();
       setUsers(data);
 
-      // Inicializa o estado de selectedRoles com os roles atuais
       const rolesState = {};
-      data.forEach((user) => {
-        rolesState[user.id] = user.role;
-      });
+      data.forEach((user) => (rolesState[user.id] = user.role));
       setSelectedRoles(rolesState);
     } catch (err) {
       swalWithTheme({
@@ -44,10 +57,20 @@ export default function Backoffice() {
         text: err.message,
         showConfirmButton: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Atualizar role via PATCH
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === "usuarios") fetchUsers();
+  }, [activeTab]);
+
+  // ---------- UPDATE USER ROLE ----------
   const updateUserRole = async (userId) => {
     try {
       const newRole = selectedRoles[userId];
@@ -59,7 +82,6 @@ export default function Backoffice() {
           body: JSON.stringify({ role: newRole }),
         }
       );
-
       if (!res.ok) throw new Error("Erro ao atualizar role");
 
       const data = await res.json();
@@ -80,27 +102,7 @@ export default function Backoffice() {
     }
   };
 
-  // Buscar usuários quando a aba ativa mudar
-  useEffect(() => {
-    if (activeTab === "usuarios") fetchUsers();
-  }, [activeTab]);
-
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    image: "",
-    price: "",
-    originalPrice: "",
-    rating: "",
-    platforms: [],
-    genres: [],
-    releaseDate: "",
-    developer: "",
-    publisher: "",
-    tags: "",
-  });
-
-  // Fetch games
+  // ---------- FETCH GAMES ----------
   const fetchGames = async () => {
     setLoading(true);
     try {
@@ -124,7 +126,7 @@ export default function Backoffice() {
     if (activeTab === "jogos") fetchGames();
   }, [activeTab]);
 
-  // Input handlers
+  // ---------- FORM HANDLERS ----------
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((old) => ({ ...old, [name]: value }));
@@ -160,10 +162,8 @@ export default function Backoffice() {
     });
   };
 
-  // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (
       !formData.title.trim() ||
       !formData.description.trim() ||
@@ -187,14 +187,11 @@ export default function Backoffice() {
       ? parseFloat(formData.originalPrice)
       : price;
     const rating = formData.rating ? parseFloat(formData.rating) : 0;
-
     const discount =
       originalPrice > price
         ? Math.round(((originalPrice - price) / originalPrice) * 100)
         : 0;
-
     const releaseDate = new Date(formData.releaseDate).toISOString();
-
     const tags = formData.tags
       .split(",")
       .map((tag) => tag.trim())
@@ -233,7 +230,6 @@ export default function Backoffice() {
       }
 
       if (!res.ok) throw new Error("Erro ao salvar jogo");
-
       await fetchGames();
       clearForm();
       swalWithTheme({
@@ -270,7 +266,6 @@ export default function Backoffice() {
       publisher: game.publisher || "",
       tags: (game.tags || []).join(", "),
     });
-
     setShowForm(true);
     setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -284,7 +279,6 @@ export default function Backoffice() {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Erro ao deletar jogo");
-
       await fetchGames();
       swalWithTheme({
         icon: "success",
@@ -315,37 +309,28 @@ export default function Backoffice() {
           Backoffice
         </h1>
 
-        {/* Menu de abas */}
+        {/* Abas */}
         <div className="flex gap-4 mb-6">
-          <button
-            onClick={() => setActiveTab("jogos")}
-            className={`px-6 py-3 rounded-lg font-semibold transition
-                            ${
-                              activeTab === "jogos"
-                                ? "bg-gradient-to-r from-pink-600 to-purple-700 text-white"
-                                : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600"
-                            }`}
-          >
-            Jogos
-          </button>
-          <button
-            onClick={() => setActiveTab("usuarios")}
-            className={`px-6 py-3 rounded-lg font-semibold transition
-                            ${
-                              activeTab === "usuarios"
-                                ? "bg-gradient-to-r from-pink-600 to-purple-700 text-white"
-                                : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600"
-                            }`}
-          >
-            Usuários
-          </button>
+          {["jogos", "usuarios"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-3 rounded-lg font-semibold transition
+                ${
+                  activeTab === tab
+                    ? "bg-gradient-to-r from-pink-600 to-purple-700 text-white"
+                    : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600"
+                }`}
+            >
+              {tab === "jogos" ? "Jogos" : "Usuários"}
+            </button>
+          ))}
         </div>
 
-        {/* Conteúdo das abas */}
         <div className="transition-all duration-500">
+          {/* JOGOS */}
           {activeTab === "jogos" && (
             <div className="space-y-4">
-              {/* Botões para ocultar/mostrar formulário e lista */}
               <div className="flex justify-center gap-4 mb-4">
                 <button
                   type="button"
@@ -363,307 +348,45 @@ export default function Backoffice() {
                 </button>
               </div>
 
-              {/* Formulário */}
               <div
                 ref={formRef}
-                className={`overflow-hidden transition-all duration-700 ease-in-out
-                                    ${
-                                      showForm
-                                        ? "max-h-[2000px] p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
-                                        : "max-h-0 p-0"
-                                    }`}
+                className={`overflow-hidden transition-all duration-700 ease-in-out ${
+                  showForm
+                    ? "max-h-[2000px] p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
+                    : "max-h-0 p-0"
+                }`}
               >
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      name="title"
-                      placeholder="Título do jogo"
-                      value={formData.title}
-                      onChange={handleChange}
-                      required
-                      className={inputClass}
-                    />
-                    <input
-                      type="text"
-                      name="developer"
-                      placeholder="Desenvolvedor"
-                      value={formData.developer}
-                      onChange={handleChange}
-                      className={inputClass}
-                    />
-                    <textarea
-                      name="description"
-                      placeholder="Descrição detalhada"
-                      value={formData.description}
-                      onChange={handleChange}
-                      required
-                      className={inputClass + " md:col-span-2"}
-                      rows={4}
-                    />
-                    <input
-                      type="text"
-                      name="image"
-                      placeholder="URL da imagem"
-                      value={formData.image}
-                      onChange={handleChange}
-                      required
-                      className={inputClass + " md:col-span-2"}
-                    />
-                    <input
-                      type="number"
-                      name="price"
-                      placeholder="Preço atual"
-                      step="0.01"
-                      value={formData.price}
-                      onChange={handleChange}
-                      required
-                      className={inputClass}
-                    />
-                    <input
-                      type="number"
-                      name="originalPrice"
-                      placeholder="Preço original"
-                      step="0.01"
-                      value={formData.originalPrice}
-                      onChange={handleChange}
-                      className={inputClass}
-                    />
-                    <input
-                      type="number"
-                      name="rating"
-                      placeholder="Avaliação (ex: 4.5)"
-                      step="0.1"
-                      min="0"
-                      max="5"
-                      value={formData.rating}
-                      onChange={handleChange}
-                      className={inputClass}
-                    />
-                    <input
-                      type="text"
-                      name="publisher"
-                      placeholder="Publisher"
-                      value={formData.publisher}
-                      onChange={handleChange}
-                      className={inputClass}
-                    />
-                    <select
-                      multiple
-                      name="platforms"
-                      value={formData.platforms}
-                      onChange={handleMultiSelectChange}
-                      required
-                      className={inputClass}
-                    >
-                      <option value="PC">PC</option>
-                      <option value="Xbox">Xbox</option>
-                      <option value="PlayStation">PlayStation</option>
-                      <option value="Switch">Switch</option>
-                    </select>
-                    <input
-                      type="text"
-                      name="genres"
-                      placeholder="Gêneros (separados por vírgula)"
-                      value={formData.genres.join(", ")}
-                      onChange={(e) =>
-                        setFormData((old) => ({
-                          ...old,
-                          genres: e.target.value
-                            .split(",")
-                            .map((g) => g.trim())
-                            .filter((g) => g.length > 0),
-                        }))
-                      }
-                      className={inputClass}
-                    />
-                    <input
-                      type="date"
-                      name="releaseDate"
-                      placeholder="yyyy-mm-dd"
-                      value={formData.releaseDate}
-                      onChange={handleChange}
-                      required
-                      className={inputClass}
-                    />
-                    <input
-                      type="text"
-                      name="tags"
-                      placeholder="Tags separadas por vírgula"
-                      value={formData.tags}
-                      onChange={handleTagsChange}
-                      className={inputClass}
-                    />
-                  </div>
-                  <div className="flex space-x-4 justify-end mt-6">
-                    <button
-                      type="submit"
-                      className="bg-gradient-to-r from-pink-600 to-purple-600 
-                                                       dark:from-pink-900 dark:to-purple-800 
-                                                       text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition"
-                    >
-                      {editingGame ? "Atualizar Jogo" : "Adicionar Jogo"}
-                    </button>
-                    {editingGame && (
-                      <button
-                        type="button"
-                        onClick={clearForm}
-                        className="bg-gray-600 text-white px-6 py-3 rounded hover:bg-gray-700 transition"
-                      >
-                        Cancelar
-                      </button>
-                    )}
-                  </div>
-                </form>
+                <GameForm
+                  formData={formData}
+                  setFormData={setFormData}
+                  handleSubmit={handleSubmit}
+                  clearForm={clearForm}
+                  editingGame={editingGame}
+                  inputClass={inputClass}
+                />
               </div>
 
-              {/* Lista de jogos */}
-              <div
-                className={`overflow-hidden transition-all duration-700 ease-in-out
-                                    ${
-                                      showList
-                                        ? "max-h-[2000px] p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
-                                        : "max-h-0 p-0"
-                                    }`}
-              >
-                {loading ? (
-                  <p className="text-center text-purple-700 dark:text-purple-300">
-                    Carregando jogos...
-                  </p>
-                ) : (
-                  <table className="w-full table-auto border-collapse border border-purple-300 dark:border-purple-700 rounded-lg overflow-hidden">
-                    <thead className="bg-purple-100 dark:bg-purple-900">
-                      <tr>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Título
-                        </th>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Preço
-                        </th>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Plataformas
-                        </th>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Ações
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {games.map((game) => (
-                        <tr
-                          key={game.id}
-                          className="hover:bg-purple-50 dark:hover:bg-purple-800 transition-colors"
-                        >
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 text-gray-800 dark:text-gray-200">
-                            {game.title}
-                          </td>
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 text-gray-800 dark:text-gray-200">
-                            R$ {game.price.toFixed(2)}
-                          </td>
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 text-gray-800 dark:text-gray-200">
-                            {game.platforms.join(", ")}
-                          </td>
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 space-x-2">
-                            <button
-                              onClick={() => handleEdit(game)}
-                              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-                            >
-                              Editar
-                            </button>
-                            <button
-                              onClick={() => handleDelete(game.id)}
-                              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
-                            >
-                              Excluir
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
+              {showList && (
+                <GamesList
+                  games={games}
+                  loading={loading}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                  showList={showList}
+                />
+              )}
             </div>
           )}
 
+          {/* USUÁRIOS */}
           {activeTab === "usuarios" && (
-            <div className="space-y-4">
-              {loading ? (
-                <p className="text-center text-purple-700 dark:text-purple-300">
-                  Carregando usuários...
-                </p>
-              ) : (
-                <div className="overflow-hidden transition-all duration-700 ease-in-out bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-                  <table className="w-full table-auto border-collapse border border-purple-300 dark:border-purple-700 rounded-lg overflow-hidden">
-                    <thead className="bg-purple-100 dark:bg-purple-900">
-                      <tr>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Nome
-                        </th>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Username
-                        </th>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Email
-                        </th>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Role
-                        </th>
-                        <th className="border border-purple-300 dark:border-purple-700 p-3 text-left text-purple-900 dark:text-purple-300 font-semibold">
-                          Ações
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.map((user) => (
-                        <tr
-                          key={user.id}
-                          className="hover:bg-purple-50 dark:hover:bg-purple-800 transition-colors"
-                        >
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 text-gray-800 dark:text-gray-200">
-                            {user.name}
-                          </td>
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 text-gray-800 dark:text-gray-200">
-                            {user.userName}
-                          </td>
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 text-gray-800 dark:text-gray-200">
-                            {user.email}
-                          </td>
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 text-gray-800 dark:text-gray-200">
-                            <select
-                              value={selectedRoles[user.id]}
-                              onChange={(e) =>
-                                setSelectedRoles({
-                                  ...selectedRoles,
-                                  [user.id]: e.target.value,
-                                })
-                              }
-                              className="p-2 rounded border border-purple-300 dark:border-purple-700 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-purple-600"
-                            >
-                              <option value="consumer">Consumer</option>
-                              <option value="moderator">Moderator</option>
-                              <option value="administrator">
-                                Administrator
-                              </option>
-                            </select>
-                          </td>
-                          <td className="border border-purple-300 dark:border-purple-700 p-3 space-x-2">
-                            <button
-                              onClick={() =>
-                                updateUserRole(user.id, "consumer")
-                              }
-                              className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
-                            >
-                              Atualizar
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
+            <UsersList
+              users={users}
+              selectedRoles={selectedRoles}
+              setSelectedRoles={setSelectedRoles}
+              updateUserRole={updateUserRole}
+              loading={loading}
+            />
           )}
         </div>
       </main>
