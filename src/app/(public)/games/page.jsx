@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from 'react';
-import Footer from '@/components/Footer';
-import Nav from '@/components/Nav';
-import SidebarFilters from '@/components/SidebarFilters';
-import GamesSection from '@/components/GamesSection';
-import Search from '@/components/Search';
+import { useState } from "react";
+import Footer from "@/components/Footer";
+import Nav from "@/components/Nav";
+import SidebarFilters from "@/components/SidebarFilters";
+import GamesSection from "@/app/(public)/games/_components/GamesSection";
+import Search from "@/components/Search";
 
 const Games = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOption, setSortOption] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOption, setSortOption] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [price, setPrice] = useState(300);
   const [platforms, setPlatforms] = useState({
     pc: true,
@@ -25,7 +25,6 @@ const Games = () => {
       <main className="mt-16 px-4 md:px-8 min-h-[calc(100vh-56px)] bg-gray-300 dark:bg-zinc-900">
         {/* Layout principal: sidebar embaixo no mobile, à esquerda no desktop */}
         <div className="flex flex-col md:flex-row gap-6 md:gap-4">
-          
           {/* Sidebar de filtros */}
           <div className="w-full md:w-[220px] md:sticky md:top-20 md:self-start md:order-1 order-2">
             <SidebarFilters
@@ -44,7 +43,7 @@ const Games = () => {
                 setShowDiscounts(filters.showDiscounts);
               }}
               onResetFilters={() => {
-                setSelectedCategory('all');
+                setSelectedCategory("all");
                 setPrice(300);
                 setPlatforms({ pc: true, playstation: true, xbox: true });
                 setShowDiscounts(false);
