@@ -61,7 +61,9 @@ export default function AuthForm() {
 
   const checkUsernameExists = async (username) => {
     try {
-      const response = await fetch(`http://localhost:4000/api/auth/users/${username}`);
+      const response = await fetch(
+        `http://localhost:4000/api/auth/users/${username}`
+      );
       const data = await response.json();
 
       if (data.exists) {
@@ -70,7 +72,7 @@ export default function AuthForm() {
         setUsernameAvailable(true);
       }
     } catch (error) {
-      console.error('Erro ao verificar username:', error);
+      console.error("Erro ao verificar username:", error);
       setUsernameAvailable(null); // ou algum estado de erro
     }
   };
@@ -114,7 +116,7 @@ export default function AuthForm() {
       const result = await signIn("credentials", {
         tokenizedUID: data.tokenizedUID,
         userDetails: JSON.stringify(data.user),
-        redirect: false
+        redirect: false,
       });
 
       if (result?.ok) {
@@ -125,7 +127,6 @@ export default function AuthForm() {
           timer: 2000,
         });
         router.push("/");
-
       } else {
         swalWithTheme({
           icon: "error",
@@ -202,7 +203,9 @@ export default function AuthForm() {
         swalWithTheme({
           icon: "warning",
           title: "Muitas tentativas",
-          text: data.error || "Você excedeu o limite de tentativas. Tente mais tarde.",
+          text:
+            data.error ||
+            "Você excedeu o limite de tentativas. Tente mais tarde.",
           confirmButtonText: "OK",
         });
         return;
@@ -278,7 +281,6 @@ export default function AuthForm() {
       .catch((err) => console.error("Erro ao checar login:", err));
   }, []);
 
-
   return (
     <>
       <div className="max-w-5xl mx-auto bg-white dark:bg-black bg-opacity-90 rounded-2xl border border-purple-700 shadow-xl overflow-hidden px-4 sm:px-6 md:px-12">
@@ -286,10 +288,11 @@ export default function AuthForm() {
           <ul className="flex border-b border-purple-700 mb-6 select-none overflow-x-auto">
             <li className="mr-4 flex-shrink-0">
               <button
-                className={`py-2 px-5 font-semibold transition-colors whitespace-nowrap ${mode === "login"
-                  ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
-                  : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
-                  }`}
+                className={`py-2 px-5 font-semibold transition-colors whitespace-nowrap ${
+                  mode === "login"
+                    ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
+                    : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
+                }`}
                 onClick={() => setMode("login")}
                 type="button"
               >
@@ -299,10 +302,11 @@ export default function AuthForm() {
             </li>
             <li className="flex-shrink-0">
               <button
-                className={`py-2 px-5 font-semibold transition-colors whitespace-nowrap ${mode === "signup"
-                  ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
-                  : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
-                  }`}
+                className={`py-2 px-5 font-semibold transition-colors whitespace-nowrap ${
+                  mode === "signup"
+                    ? "text-blue-700 dark:text-blue-400 border-b-2 border-blue-400"
+                    : "text-purple-900 dark:text-white hover:bg-blue-300 dark:hover:bg-purple-900 rounded-t"
+                }`}
                 onClick={() => setMode("signup")}
                 type="button"
               >
@@ -355,14 +359,19 @@ export default function AuthForm() {
                     type="button"
                     onClick={() => togglePwd("login")}
                     className="absolute inset-y-0 right-3 flex items-center text-purple-900 dark:text-white"
-                    aria-label={showLoginPwd ? "Ocultar senha" : "Mostrar senha"}
+                    aria-label={
+                      showLoginPwd ? "Ocultar senha" : "Mostrar senha"
+                    }
                   >
                     <FontAwesomeIcon icon={showLoginPwd ? faEyeSlash : faEye} />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between mt-4">
-                  <label htmlFor="keepLoggedIn" className="flex items-center gap-2 cursor-pointer select-none">
+                  <label
+                    htmlFor="keepLoggedIn"
+                    className="flex items-center gap-2 cursor-pointer select-none"
+                  >
                     <input
                       type="checkbox"
                       id="keepLoggedIn"
@@ -391,7 +400,6 @@ export default function AuthForm() {
               >
                 {loading ? "Carregando..." : "Entrar"}
               </button>
-
             </form>
           ) : (
             <form id="signupForm" className="space-y-6" onSubmit={handleSignup}>
@@ -458,7 +466,6 @@ export default function AuthForm() {
                 />
               </div>
 
-
               <div>
                 <label
                   htmlFor="signupEmail"
@@ -498,19 +505,21 @@ export default function AuthForm() {
                   <button
                     type="button"
                     onClick={() => togglePwd("signup")}
-                    className="absolute inset-y-0 right-10 flex items-center text-purple-900 dark:text-white"
-                    aria-label={showSignupPwd ? "Ocultar senha" : "Mostrar senha"}
+                    className="absolute inset-y-0 right-3 flex items-center text-purple-900 dark:text-white"
+                    aria-label={
+                      showSignupPwd ? "Ocultar senha" : "Mostrar senha"
+                    }
                   >
-                    <FontAwesomeIcon icon={showSignupPwd ? faEyeSlash : faEye} />
+                    <FontAwesomeIcon
+                      icon={showSignupPwd ? faEyeSlash : faEye}
+                    />
                   </button>
                 </div>
 
                 <ul className="text-xs mt-1 space-y-0.5">
                   <li
                     className={
-                      requirements.length
-                        ? "text-green-600"
-                        : "text-red-600"
+                      requirements.length ? "text-green-600" : "text-red-600"
                     }
                   >
                     {requirements.length ? (
@@ -522,9 +531,7 @@ export default function AuthForm() {
                   </li>
                   <li
                     className={
-                      requirements.uppercase
-                        ? "text-green-600"
-                        : "text-red-600"
+                      requirements.uppercase ? "text-green-600" : "text-red-600"
                     }
                   >
                     {requirements.uppercase ? (
@@ -536,9 +543,7 @@ export default function AuthForm() {
                   </li>
                   <li
                     className={
-                      requirements.lowercase
-                        ? "text-green-600"
-                        : "text-red-600"
+                      requirements.lowercase ? "text-green-600" : "text-red-600"
                     }
                   >
                     {requirements.lowercase ? (
@@ -550,9 +555,7 @@ export default function AuthForm() {
                   </li>
                   <li
                     className={
-                      requirements.number
-                        ? "text-green-600"
-                        : "text-red-600"
+                      requirements.number ? "text-green-600" : "text-red-600"
                     }
                   >
                     {requirements.number ? (
@@ -564,9 +567,7 @@ export default function AuthForm() {
                   </li>
                   <li
                     className={
-                      requirements.special
-                        ? "text-green-600"
-                        : "text-red-600"
+                      requirements.special ? "text-green-600" : "text-red-600"
                     }
                   >
                     {requirements.special ? (
@@ -601,9 +602,13 @@ export default function AuthForm() {
                     type="button"
                     onClick={() => togglePwd("confirm")}
                     className="absolute inset-y-0 right-3 flex items-center text-purple-900 dark:text-white"
-                    aria-label={showConfirmPwd ? "Ocultar senha" : "Mostrar senha"}
+                    aria-label={
+                      showConfirmPwd ? "Ocultar senha" : "Mostrar senha"
+                    }
                   >
-                    <FontAwesomeIcon icon={showConfirmPwd ? faEyeSlash : faEye} />
+                    <FontAwesomeIcon
+                      icon={showConfirmPwd ? faEyeSlash : faEye}
+                    />
                   </button>
                 </div>
               </div>
@@ -623,7 +628,10 @@ export default function AuthForm() {
                 </label>
 
                 {/* Segundo checkbox */}
-                <label htmlFor="acceptLGPD" className="inline-flex items-center space-x-2 cursor-pointer">
+                <label
+                  htmlFor="acceptLGPD"
+                  className="inline-flex items-center space-x-2 cursor-pointer"
+                >
                   <input
                     type="checkbox"
                     id="acceptLGPD"
@@ -674,47 +682,100 @@ export default function AuthForm() {
             </h2>
 
             <div className="prose dark:prose-invert max-w-none text-sm leading-relaxed max-h-[60vh] overflow-y-auto text-gray-700 dark:text-gray-300">
-              <p className="text-2xl mb-3 text-center"><strong>Última atualização:</strong> 10 de junho de 2025</p>
+              <p className="text-2xl mb-3 text-center">
+                <strong>Última atualização:</strong> 10 de junho de 2025
+              </p>
 
-              <p className="text-xl my-3 text">Seja bem-vindo à nossa plataforma!</p>
+              <p className="text-xl my-3 text">
+                Seja bem-vindo à nossa plataforma!
+              </p>
 
-              <p>Estes Termos de Uso (“Termos”) regulam o acesso e o uso dos serviços oferecidos por este site. Ao se cadastrar, acessar ou utilizar nossos serviços, você concorda com os presentes Termos.</p>
+              <p>
+                Estes Termos de Uso (“Termos”) regulam o acesso e o uso dos
+                serviços oferecidos por este site. Ao se cadastrar, acessar ou
+                utilizar nossos serviços, você concorda com os presentes Termos.
+              </p>
 
               <h3 className="text-2xl my-4 font-bold">Aceitação dos Termos</h3>
-              <p>Ao criar uma conta ou utilizar qualquer funcionalidade do site, você declara que leu, entendeu e concorda com estes Termos de Uso. Caso não concorde, por favor, não utilize o serviço.</p>
+              <p>
+                Ao criar uma conta ou utilizar qualquer funcionalidade do site,
+                você declara que leu, entendeu e concorda com estes Termos de
+                Uso. Caso não concorde, por favor, não utilize o serviço.
+              </p>
 
-              <h3 className="text-2xl my-4 font-bold">Cadastro e Conta de Usuário</h3>
+              <h3 className="text-2xl my-4 font-bold">
+                Cadastro e Conta de Usuário
+              </h3>
               <ul>
-                <li>Para acessar certas funcionalidades, é necessário criar uma conta, fornecendo informações verdadeiras, completas e atualizadas.</li>
-                <li>Você é responsável por manter a confidencialidade de sua senha e conta.</li>
+                <li>
+                  Para acessar certas funcionalidades, é necessário criar uma
+                  conta, fornecendo informações verdadeiras, completas e
+                  atualizadas.
+                </li>
+                <li>
+                  Você é responsável por manter a confidencialidade de sua senha
+                  e conta.
+                </li>
                 <li>O uso da sua conta é pessoal e intransferível.</li>
               </ul>
 
               <h3 className="text-2xl my-4 font-bold">Uso da Plataforma</h3>
               <p className=" text-xl">Você se compromete a:</p>
               <ul className="list-disc">
-                <li className="mx-5">Não utilizar o serviço para fins ilegais, abusivos ou discriminatórios.</li>
-                <li className="mx-5">Não tentar obter acesso não autorizado ao sistema.</li>
-                <li className="mx-5">Respeitar a legislação vigente e os direitos de terceiros.</li>
+                <li className="mx-5">
+                  Não utilizar o serviço para fins ilegais, abusivos ou
+                  discriminatórios.
+                </li>
+                <li className="mx-5">
+                  Não tentar obter acesso não autorizado ao sistema.
+                </li>
+                <li className="mx-5">
+                  Respeitar a legislação vigente e os direitos de terceiros.
+                </li>
               </ul>
 
               <h3 className="text-2xl my-4 font-bold">Privacidade</h3>
-              <p>Suas informações pessoais serão tratadas de acordo com nossa <strong>Política de Privacidade</strong>, a qual está disponível para leitura e aceitação durante o processo de cadastro.</p>
+              <p>
+                Suas informações pessoais serão tratadas de acordo com nossa{" "}
+                <strong>Política de Privacidade</strong>, a qual está disponível
+                para leitura e aceitação durante o processo de cadastro.
+              </p>
 
-              <h3 className="text-2xl my-4 font-bold">Propriedade Intelectual</h3>
-              <p>Todos os direitos sobre o conteúdo da plataforma (textos, imagens, códigos, marca, logotipo etc.) pertencem ao titular do site ou são usados com autorização. É proibida a reprodução ou uso não autorizado.</p>
+              <h3 className="text-2xl my-4 font-bold">
+                Propriedade Intelectual
+              </h3>
+              <p>
+                Todos os direitos sobre o conteúdo da plataforma (textos,
+                imagens, códigos, marca, logotipo etc.) pertencem ao titular do
+                site ou são usados com autorização. É proibida a reprodução ou
+                uso não autorizado.
+              </p>
 
-              <h3 className="text-2xl my-4 font-bold">Modificações nos Termos</h3>
-              <p>Reservamo-nos o direito de alterar estes Termos a qualquer momento. As modificações entrarão em vigor após a publicação no site. O uso contínuo dos serviços após essa data representa sua concordância com as novas condições.</p>
+              <h3 className="text-2xl my-4 font-bold">
+                Modificações nos Termos
+              </h3>
+              <p>
+                Reservamo-nos o direito de alterar estes Termos a qualquer
+                momento. As modificações entrarão em vigor após a publicação no
+                site. O uso contínuo dos serviços após essa data representa sua
+                concordância com as novas condições.
+              </p>
 
               <h3 className="text-2xl my-4 font-bold">Encerramento de Conta</h3>
-              <p>Podemos suspender ou encerrar sua conta a qualquer momento, caso você viole estes Termos ou haja suspeita de uso indevido.</p>
+              <p>
+                Podemos suspender ou encerrar sua conta a qualquer momento, caso
+                você viole estes Termos ou haja suspeita de uso indevido.
+              </p>
 
               <h3 className="text-2xl my-4 font-bold">Contato</h3>
-              <p>Caso tenha dúvidas ou precise de suporte, entre em contato conosco pelo email: <strong>equipebuscagames@gmail.com</strong>.</p>
+              <p>
+                Caso tenha dúvidas ou precise de suporte, entre em contato
+                conosco pelo email: <strong>equipebuscagames@gmail.com</strong>.
+              </p>
 
               <p className="pt-2 font-medium text-gray-900 dark:text-white">
-                Ao utilizar a plataforma, você declara ter lido, compreendido e aceito integralmente os presentes Termos de Uso.
+                Ao utilizar a plataforma, você declara ter lido, compreendido e
+                aceito integralmente os presentes Termos de Uso.
               </p>
             </div>
           </div>
