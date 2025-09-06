@@ -23,9 +23,6 @@ const data = [
 export default function UsersGraph() {
   return (
     <div className="bg-gray-900 p-4 rounded-2xl shadow-xl w-full h-80 space-y-6">
-      <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300">
-        Estimativa de Crescimento Exponencial de Usuários
-      </h2>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data}>
           <CartesianGrid stroke="#333" strokeDasharray="3 3" />
