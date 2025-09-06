@@ -6,7 +6,8 @@ import Footer from "@/components/Footer";
 import { swalWithTheme } from "../../utils/swalWithTheme";
 import GamesList from "./_components/GameList/index";
 import GameForm from "./_components/GameForm/index";
-import UsersList from "./_components/UsersTab/index"
+import UsersList from "./_components/UsersTab/index";
+import UsersGraph from "./_components/UsersGraph";
 
 export default function Backoffice() {
   const [activeTab, setActiveTab] = useState("jogos");
@@ -18,7 +19,7 @@ export default function Backoffice() {
   const [editingGame, setEditingGame] = useState(null);
   const [selectedRoles, setSelectedRoles] = useState({});
   const formRef = useRef(null);
-  const [currentUser, setCurrentUser] = useState(null)
+  const [currentUser, setCurrentUser] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -311,18 +312,22 @@ export default function Backoffice() {
 
         {/* Abas */}
         <div className="flex gap-4 mb-6">
-          {["jogos", "usuarios"].map((tab) => (
+          {["jogos", "usuarios", "gerenciamento"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-6 py-3 rounded-lg font-semibold transition
-                ${
-                  activeTab === tab
-                    ? "bg-gradient-to-r from-pink-600 to-purple-700 text-white"
-                    : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600"
-                }`}
+        ${
+          activeTab === tab
+            ? "bg-gradient-to-r from-pink-600 to-purple-700 text-white"
+            : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600"
+        }`}
             >
-              {tab === "jogos" ? "Jogos" : "Usuários"}
+              {tab === "jogos"
+                ? "Jogos"
+                : tab === "usuarios"
+                ? "Usuários"
+                : "Gerenciamento"}
             </button>
           ))}
         </div>
@@ -390,6 +395,17 @@ export default function Backoffice() {
               setLoading={setLoading}
             />
           )}
+
+          {/* GERENCIAMENTO */}
+          {activeTab === "gerenciamento" && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300">
+                Gerenciamento de Usuários
+              </h2>
+              <UsersGraph />
+            </div>
+          )}
+          
         </div>
       </main>
       <Footer />
