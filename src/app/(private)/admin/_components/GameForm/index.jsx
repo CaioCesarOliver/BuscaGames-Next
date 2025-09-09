@@ -28,124 +28,219 @@ export default function GameForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="title"
-          placeholder="Título do jogo"
-          value={formData.title}
-          onChange={handleChange}
-          required
-          className={inputClass}
-        />
-        <input
-          type="text"
-          name="developer"
-          placeholder="Desenvolvedor"
-          value={formData.developer}
-          onChange={handleChange}
-          className={inputClass}
-        />
-        <textarea
-          name="description"
-          placeholder="Descrição detalhada"
-          value={formData.description}
-          onChange={handleChange}
-          required
-          className={inputClass + " md:col-span-2"}
-          rows={4}
-        />
-        <input
-          type="text"
-          name="image"
-          placeholder="URL da imagem"
-          value={formData.image}
-          onChange={handleChange}
-          required
-          className={inputClass + " md:col-span-2"}
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Preço atual"
-          step="0.01"
-          value={formData.price}
-          onChange={handleChange}
-          required
-          className={inputClass}
-        />
-        <input
-          type="number"
-          name="originalPrice"
-          placeholder="Preço original"
-          step="0.01"
-          value={formData.originalPrice}
-          onChange={handleChange}
-          className={inputClass}
-        />
-        <input
-          type="number"
-          name="rating"
-          placeholder="Avaliação (ex: 4.5)"
-          step="0.1"
-          min="0"
-          max="5"
-          value={formData.rating}
-          onChange={handleChange}
-          className={inputClass}
-        />
-        <input
-          type="text"
-          name="publisher"
-          placeholder="Publisher"
-          value={formData.publisher}
-          onChange={handleChange}
-          className={inputClass}
-        />
-        <select
-          multiple
-          name="platforms"
-          value={formData.platforms}
-          onChange={handleMultiSelectChange}
-          required
-          className={inputClass}
-        >
-          <option value="PC">PC</option>
-          <option value="Xbox">Xbox</option>
-          <option value="PlayStation">PlayStation</option>
-          <option value="Switch">Switch</option>
-        </select>
-        <input
-          type="text"
-          name="genres"
-          placeholder="Gêneros (separados por vírgula)"
-          value={formData.genres.join(", ")}
-          onChange={(e) =>
-            setFormData((old) => ({
-              ...old,
-              genres: e.target.value
-                .split(",")
-                .map((g) => g.trim())
-                .filter((g) => g.length > 0),
-            }))
-          }
-          className={inputClass}
-        />
-        <input
-          type="date"
-          name="releaseDate"
-          value={formData.releaseDate}
-          onChange={handleChange}
-          required
-          className={inputClass}
-        />
-        <input
-          type="text"
-          name="tags"
-          placeholder="Tags separadas por vírgula"
-          value={formData.tags}
-          onChange={handleTagsChange}
-          className={inputClass}
-        />
+        {/* Título */}
+        <div className="relative w-full">
+          <label htmlFor="title" className="sr-only">
+            Título do jogo
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="Título do jogo"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            className={inputClass}
+          />
+        </div>
+
+        {/* Desenvolvedor */}
+        <div className="relative w-full">
+          <label htmlFor="developer" className="sr-only">
+            Desenvolvedor
+          </label>
+          <input
+            type="text"
+            id="developer"
+            name="developer"
+            placeholder="Desenvolvedor"
+            value={formData.developer}
+            onChange={handleChange}
+            className={inputClass}
+          />
+        </div>
+
+        {/* Descrição */}
+        <div className="relative w-full md:col-span-2">
+          <label htmlFor="description" className="sr-only">
+            Descrição detalhada
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Descrição detalhada"
+            value={formData.description}
+            onChange={handleChange}
+            required
+            className={inputClass}
+            rows={4}
+          />
+        </div>
+
+        {/* Imagem */}
+        <div className="relative w-full md:col-span-2">
+          <label htmlFor="image" className="sr-only">
+            URL da imagem
+          </label>
+          <input
+            type="text"
+            id="image"
+            name="image"
+            placeholder="URL da imagem"
+            value={formData.image}
+            onChange={handleChange}
+            required
+            className={inputClass}
+          />
+        </div>
+
+        {/* Preço */}
+        <div className="relative w-full">
+          <label htmlFor="price" className="sr-only">
+            Preço atual
+          </label>
+          <input
+            type="number"
+            id="price"
+            name="price"
+            placeholder="Preço atual"
+            step="0.01"
+            value={formData.price}
+            onChange={handleChange}
+            required
+            className={inputClass}
+          />
+        </div>
+
+        {/* Preço original */}
+        <div className="relative w-full">
+          <label htmlFor="originalPrice" className="sr-only">
+            Preço original
+          </label>
+          <input
+            type="number"
+            id="originalPrice"
+            name="originalPrice"
+            placeholder="Preço original"
+            step="0.01"
+            value={formData.originalPrice}
+            onChange={handleChange}
+            className={inputClass}
+          />
+        </div>
+
+        {/* Avaliação */}
+        <div className="relative w-full">
+          <label htmlFor="rating" className="sr-only">
+            Avaliação
+          </label>
+          <input
+            type="number"
+            id="rating"
+            name="rating"
+            placeholder="Avaliação (ex: 4.5)"
+            step="0.1"
+            min="0"
+            max="5"
+            value={formData.rating}
+            onChange={handleChange}
+            className={inputClass}
+          />
+        </div>
+
+        {/* Publisher */}
+        <div className="relative w-full">
+          <label htmlFor="publisher" className="sr-only">
+            Publisher
+          </label>
+          <input
+            type="text"
+            id="publisher"
+            name="publisher"
+            placeholder="Publisher"
+            value={formData.publisher}
+            onChange={handleChange}
+            className={inputClass}
+          />
+        </div>
+
+        {/* Plataformas */}
+        <div className="relative w-full">
+          <label htmlFor="platforms" className="sr-only">
+            Plataformas
+          </label>
+          <select
+            id="platforms"
+            multiple
+            name="platforms"
+            value={formData.platforms}
+            onChange={handleMultiSelectChange}
+            required
+            className={inputClass}
+          >
+            <option value="PC">PC</option>
+            <option value="Xbox">Xbox</option>
+            <option value="PlayStation">PlayStation</option>
+            <option value="Switch">Switch</option>
+          </select>
+        </div>
+
+        {/* Gêneros */}
+        <div className="relative w-full">
+          <label htmlFor="genres" className="sr-only">
+            Gêneros
+          </label>
+          <input
+            type="text"
+            id="genres"
+            name="genres"
+            placeholder="Gêneros (separados por vírgula)"
+            value={formData.genres.join(", ")}
+            onChange={(e) =>
+              setFormData((old) => ({
+                ...old,
+                genres: e.target.value
+                  .split(",")
+                  .map((g) => g.trim())
+                  .filter((g) => g.length > 0),
+              }))
+            }
+            className={inputClass}
+          />
+        </div>
+
+        {/* Data de lançamento */}
+        <div className="relative w-full">
+          <label htmlFor="releaseDate" className="sr-only">
+            Data de lançamento
+          </label>
+          <input
+            type="date"
+            id="releaseDate"
+            name="releaseDate"
+            value={formData.releaseDate}
+            onChange={handleChange}
+            required
+            className={inputClass}
+          />
+        </div>
+
+        {/* Tags */}
+        <div className="relative w-full">
+          <label htmlFor="tags" className="sr-only">
+            Tags
+          </label>
+          <input
+            type="text"
+            id="tags"
+            name="tags"
+            placeholder="Tags separadas por vírgula"
+            value={formData.tags}
+            onChange={handleTagsChange}
+            className={inputClass}
+          />
+        </div>
       </div>
 
       <div className="flex space-x-4 justify-end mt-6">

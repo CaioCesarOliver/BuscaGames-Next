@@ -1,5 +1,4 @@
 "use client";
-
 import { useMemo } from "react";
 import {
   LineChart,
@@ -11,8 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Gera dados do hype index com crescimento/queda exponencial
-function generateHypeData(baseHype = 50, months = 12) {
+function generateHypeData(base = 50, months = 12) {
   const monthNames = [
     "Jan",
     "Fev",
@@ -29,62 +27,45 @@ function generateHypeData(baseHype = 50, months = 12) {
   ];
   const today = new Date();
   const data = [];
-
   for (let i = 0; i < months; i++) {
     const monthIndex = (today.getMonth() + i) % 12;
-
-    const exponentialGrowth = Math.pow(1.3, Math.min(i, 5));
-    const decayFactor = i > 5 ? Math.pow(0.95, i - 5) : 1;
-    const volatility = 1 + Math.sin(i / 2) * 0.1;
-
-    const hypeValue = Math.round(
-      baseHype * exponentialGrowth * decayFactor * volatility
-    );
-
-    data.push({ month: monthNames[monthIndex], hype: hypeValue });
+    const growth = Math.pow(1.3, Math.min(i, 5));
+    const decay = i > 5 ? Math.pow(0.95, i - 5) : 1;
+    const oscillation = 1 + Math.sin(i / 2) * 0.1;
+    data.push({
+      month: monthNames[monthIndex],
+      value: Math.round(base * growth * decay * oscillation),
+    });
   }
   return data;
 }
 
 export default function HypeIndexGraph({
   gameName = "Jogo Exemplo",
-  baseHype = 50,
+  base = 50,
+  months = 12,
 }) {
-  const data = useMemo(() => generateHypeData(baseHype, 12), [baseHype]);
-
+  const data = useMemo(() => generateHypeData(base, months), [base, months]);
   return (
-    <div className="bg-gray-900 p-4 rounded-2xl shadow-xl w-full">
-      <h2 className="text-xl font-bold text-white mb-4">
-        {gameName}
+    <div className="bg-white dark:bg-gray-900 p-4 rounded-2xl shadow-xl w-full h-80">
+      <h2 className="text-xl font-bold mb-4 dark:text-purple-300">
+        Hype — {gameName}
       </h2>
-      <div style={{ height: "500px" }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{ top: 20, right: 20, bottom: 50, left: 20 }}
-          >
-            <CartesianGrid stroke="#333" strokeDasharray="3 3" />
-            <XAxis dataKey="month" stroke="#fff" tick={{ fontSize: 14 }} />
-            <YAxis stroke="#fff" />
-            <Tooltip
-              formatter={(val) => [val, "Hype"]}
-              contentStyle={{
-                backgroundColor: "#1f2937",
-                border: "none",
-                borderRadius: "8px",
-                color: "#fff",
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="hype"
-              stroke="#3b82f6"
-              strokeWidth={3}
-              dot
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={data}>
+          <CartesianGrid stroke="#ccc" strokeDasharray="3 3" />
+          <XAxis dataKey="month" />
+          <YAxis />
+          <Tooltip formatter={(v) => [v, "Hype Index"]} />
+          <Line
+            type="monotone"
+            dataKey="value"
+            stroke="#3b82f6"
+            strokeWidth={3}
+            dot
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 }

@@ -7,8 +7,7 @@ import { swalWithTheme } from "../../utils/swalWithTheme";
 import GamesList from "./_components/GameList/index";
 import GameForm from "./_components/GameForm/index";
 import UsersList from "./_components/UsersTab/index";
-import UsersGraph from "./_components/UsersGraph";
-import HypeIndexGraph from "./_components/HypeIndexGraph";
+import ManagementDashboard from "./_components/ManagementDashboard"
 
 export default function Backoffice() {
   const [activeTab, setActiveTab] = useState("jogos");
@@ -399,28 +398,10 @@ export default function Backoffice() {
 
           {/* GERENCIAMENTO */}
           {activeTab === "gerenciamento" && (
-            <div className="flex flex-col gap-6 mb-3">
-              <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300">
-                Estimativa de Crescimento Exponencial de Usuários
-              </h2>
-              <UsersGraph />
-
-              <div className="space-y-5">
-                <h2 className="mt-6 text-2xl font-bold text-purple-900 dark:text-purple-300 py-3">
-                  Hype Index de Jogos
-                </h2>
-
-                <HypeIndexGraph gameName="Marvels Spider Man 2" baseHype={50} />
-                <HypeIndexGraph
-                  gameName="Resident Evil 4 Remake"
-                  baseHype={30}
-                />
-              </div>
-            </div>
+            <ManagementDashboard />
           )}
         </div>
       </main>
-      <Footer />
     </>
   );
 }

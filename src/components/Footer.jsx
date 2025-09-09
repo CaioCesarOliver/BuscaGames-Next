@@ -54,7 +54,7 @@ export default function Footer() {
 
                     {/* Navegação */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-4">Navegação</h4>
+                        <h1 className="text-lg font-semibold mb-4">Navegação</h1>
                         <ul className="space-y-2 text-purple-900 dark:text-gray-300">
                             {[
                                 { href: "/", label: "Home" },
@@ -78,7 +78,7 @@ export default function Footer() {
 
                     {/* Categorias */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-4">Categorias</h4>
+                        <h1 className="text-lg font-semibold mb-4">Categorias</h1>
                         <ul className="space-y-2 text-purple-900 dark:text-gray-300">
                             {[
                                 { href: "/games?category=rpg", label: "RPG" },
@@ -102,7 +102,7 @@ export default function Footer() {
 
                     {/* Contato */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-4">Contato</h4>
+                        <h1 className="text-lg font-semibold mb-4">Contato</h1>
                         <ul className="space-y-3 text-purple-900 dark:text-gray-300">
                             <li className="flex items-center">
                                 <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
